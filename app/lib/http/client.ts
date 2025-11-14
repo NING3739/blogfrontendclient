@@ -40,7 +40,7 @@ class HttpClient {
       baseURL:
         baseURL ||
         process.env.NEXT_PUBLIC_API_BASE_URL ||
-        "https://127.0.0.1:8000/api/v1",
+        "https://api.heyxiaoli.com/api/v1",
       timeout: 10000,
       withCredentials: true, // 重要：确保包含httpOnly cookie
       headers: {
