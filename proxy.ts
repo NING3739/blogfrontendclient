@@ -12,16 +12,15 @@ export default async function proxy(request: NextRequest) {
       const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/check-auth-token`;
 
       // 获取请求中的所有 cookies，构建 Cookie 头
-      // 注意：由于 cookies 的 domain 是 api.heyxiaoli.com，在 heyxiaoli.com 的请求中
-      // 浏览器不会发送这些 cookies，所以我们需要通过 API 调用来检查
+      // 由于后端设置了 domain=.heyxiaoli.com，cookie 可以在 heyxiaoli.com 和 api.heyxiaoli.com 之间共享
+      // Next.js middleware 可以读取这些共享的 cookies
       const cookies = request.cookies.getAll();
       const cookieHeader = cookies
         .map((cookie) => `${cookie.name}=${cookie.value}`)
         .join("; ");
 
       // 调用 API 检查认证状态
-      // API 服务器会检查它自己的 cookies（domain: api.heyxiaoli.com）
-      // 我们需要确保 API 能够正确读取这些 cookies
+      // 转发 cookies 到后端 API，后端会验证这些 cookies 的有效性
       const response = await fetch(apiUrl, {
         method: "GET",
         headers: {
@@ -31,8 +30,7 @@ export default async function proxy(request: NextRequest) {
           "User-Agent": request.headers.get("user-agent") || "",
           Accept: request.headers.get("accept") || "application/json",
         },
-        // 注意：在服务器端 fetch 中，credentials 选项可能不会自动包含跨域 cookies
-        // 但我们可以通过手动设置 Cookie 头来传递
+        credentials: "include", // 确保包含 cookies（虽然手动设置 Cookie 头已经足够）
       });
 
       if (response.ok) {
