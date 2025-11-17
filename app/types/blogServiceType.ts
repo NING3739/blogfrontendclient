@@ -37,10 +37,14 @@ export interface CreateBlogRequest
 }
 
 export interface UpdateBlogRequest
-  extends ChineseTitle,
+  extends SeoID,
+    BlogTags,
+    ChineseTitle,
     ChineseDescription,
     ChineseContent {
   blog_slug: string;
+  cover_id: number;
+  blog_tags: number[];
 }
 
 export interface GetBlogDetailsSeoRequest {

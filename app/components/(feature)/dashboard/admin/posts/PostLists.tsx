@@ -23,7 +23,6 @@ import BlogService from "@/app/lib/services/blogService";
 import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
 import PostInfoModel from "@/app/components/(feature)/dashboard/admin/posts/PostInfoModel";
 import type { BlogItemDashboardResponse } from "@/app/types/blogServiceType";
-import type { SupportedLocale } from "@/app/types/clientType";
 import type { OffsetPaginationResponse } from "@/app/types/commonType";
 
 interface PostListsProps {

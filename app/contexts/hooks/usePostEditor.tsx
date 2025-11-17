@@ -169,9 +169,12 @@ export const usePostEditor = ({
         // blogService.updateBlog 已经处理了 toast 显示
         await blogService.updateBlog({
           blog_slug: blogSlug,
+          seo_id: blogMetaData.selectedSeoId!,
+          cover_id: blogMetaData.selectedCoverImageId!,
           chinese_title: blogMetaData.title,
           chinese_description: blogMetaData.description,
           chinese_content: contentString,
+          blog_tags: blogMetaData.selectedTags,
         });
       }
     } catch (error: any) {
