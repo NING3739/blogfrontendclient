@@ -128,11 +128,11 @@ const UserListModel = ({ user, isOpen, onClose }: UserListModelProps) => {
                     </div>
                   )}
                   {user.ip_address && (
-                    <div className="flex justify-between">
-                      <span className="text-xs text-foreground-400">
+                    <div className="flex items-start gap-2">
+                      <span className="text-xs text-foreground-400 shrink-0 mt-0.5">
                         IP 地址
                       </span>
-                      <span className="text-sm text-foreground-300 font-mono">
+                      <span className="text-xs text-foreground-300 font-mono break-all leading-relaxed">
                         {user.ip_address}
                       </span>
                     </div>
