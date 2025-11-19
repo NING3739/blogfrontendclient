@@ -286,7 +286,7 @@ const CommentList = ({ type, targetId, isAuthenticated }: CommentListProps) => {
             <div className="hidden sm:flex items-center space-x-3">
               <span className="flex items-center">
                 <MapPin className={`${iconSize} mr-1`} />
-                <span>{comment.city?.toLowerCase() || "Unknown"}</span>
+                <span>{comment.city || ""}</span>
               </span>
               <span className="flex items-center">
                 <Clock className={`${iconSize} mr-1`} />
