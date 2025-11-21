@@ -1,13 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 const AUTH_PAGES = ["/login", "/register", "/reset-password"];
+const PROTECTED_PAGES = ["/dashboard"];
 
 export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   const isAuthPage = AUTH_PAGES.some((page) => pathname.startsWith(page));
+  const isProtectedPage = PROTECTED_PAGES.some((page) =>
+    pathname.startsWith(page)
+  );
 
-  if (isAuthPage) {
+  // 检查认证状态的通用函数
+  const checkAuth = async () => {
     try {
       const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/check-auth-token`;
 
@@ -37,21 +42,35 @@ export default async function proxy(request: NextRequest) {
         const result = await response.json();
         // 后端返回格式: { status: 200, message: "...", data: { access_token: true/false, refresh_token: true/false } }
         const data = result.data || result;
-        // 只检查 access_token：如果 access_token 有效，说明用户已登录且 token 未过期，应该重定向
-        // 如果 access_token 过期，应该通过自动刷新机制获取新的，而不是停留在登录页
-        if (data && data.access_token === true) {
-          return NextResponse.redirect(new URL("/", request.url));
-        }
+        return data && data.access_token === true;
       }
+      return false;
     } catch (error) {
-      // 静默处理连接错误，不打印到控制台
-      // 当API服务器不可用时，允许用户访问登录页面
-      console.debug("API server not available, allowing access to auth pages");
+      // 静默处理连接错误
+      console.debug("API server not available");
+      return false;
+    }
+  };
+
+  // 处理认证页面：已登录用户重定向到首页
+  if (isAuthPage) {
+    const isAuthenticated = await checkAuth();
+    if (isAuthenticated) {
+      return NextResponse.redirect(new URL("/", request.url));
     }
   }
+
+  // 处理受保护页面：未登录用户重定向到登录页
+  if (isProtectedPage) {
+    const isAuthenticated = await checkAuth();
+    if (!isAuthenticated) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/login", "/register", "/reset-password"],
+  matcher: ["/login", "/register", "/reset-password", "/dashboard/:path*"],
 };
