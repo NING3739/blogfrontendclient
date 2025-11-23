@@ -48,23 +48,34 @@ const FriendTextInput = ({
     }
     setIsSubmitting(true);
 
-    await friendService.createSingleFriend({
+    const response = await friendService.createSingleFriend({
       friend_id: friend_id,
       logo_url: friend_logo_url,
       site_url: friend_url,
       chinese_title: friend_name,
       chinese_description: friend_description,
     });
-    setFriendName("");
-    setFriendUrl("");
-    setFriendLogoUrl("");
-    setFriendDescription("");
-    setIsSubmitting(false);
 
-    // 更新UI - 重新获取友链列表
-    const friendListKey = "/friend/get-friend-lists";
-    // 使用 mutate 重新验证数据
-    mutate(friendListKey);
+    if (response.status === 200) {
+      toast.success(
+        "message" in response ? response.message : "Friend added successfully"
+      );
+      setFriendName("");
+      setFriendUrl("");
+      setFriendLogoUrl("");
+      setFriendDescription("");
+
+      // 更新UI - 重新获取友链列表
+      const friendListKey = "/friend/get-friend-lists";
+      // 使用 mutate 重新验证数据
+      mutate(friendListKey);
+    } else {
+      toast.error(
+        "error" in response ? response.error : "Failed to add friend"
+      );
+    }
+
+    setIsSubmitting(false);
   };
 
   return (

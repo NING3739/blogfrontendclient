@@ -141,8 +141,7 @@ export const usePostEditor = ({
         // 将JSONContent转换为字符串
         const contentString = JSON.stringify(content);
 
-        // blogService.createBlog 已经处理了 toast 显示
-        await blogService.createBlog({
+        const response = await blogService.createBlog({
           section_id: blogMetaData.selectedSectionId!,
           seo_id: blogMetaData.selectedSeoId!,
           chinese_title: blogMetaData.title,
@@ -151,6 +150,18 @@ export const usePostEditor = ({
           cover_id: blogMetaData.selectedCoverImageId!,
           blog_tags: blogMetaData.selectedTags,
         });
+
+        if (response.status === 200) {
+          toast.success(
+            "message" in response
+              ? response.message
+              : "Blog created successfully"
+          );
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to create blog"
+          );
+        }
       }
 
       // 更新已有博客
@@ -166,8 +177,7 @@ export const usePostEditor = ({
         // 将JSONContent转换为字符串
         const contentString = JSON.stringify(content);
 
-        // blogService.updateBlog 已经处理了 toast 显示
-        await blogService.updateBlog({
+        const response = await blogService.updateBlog({
           blog_slug: blogSlug,
           seo_id: blogMetaData.selectedSeoId!,
           cover_id: blogMetaData.selectedCoverImageId!,
@@ -176,10 +186,21 @@ export const usePostEditor = ({
           chinese_content: contentString,
           blog_tags: blogMetaData.selectedTags,
         });
+
+        if (response.status === 200) {
+          toast.success(
+            "message" in response
+              ? response.message
+              : "Blog updated successfully"
+          );
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to update blog"
+          );
+        }
       }
     } catch (error: any) {
-      // blogService 中的 handleToastResponse 已经处理了 toast 显示
-      // 这里只记录错误用于调试
+      toast.error("Failed to save blog");
       console.error("Blog save failed:", error);
     }
   };

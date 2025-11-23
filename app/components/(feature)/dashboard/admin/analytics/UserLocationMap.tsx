@@ -29,7 +29,7 @@ function PopupContent({
         </button>
       )}
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 bg-blue-50 rounded-sm flex-shrink-0">
+        <div className="p-2 bg-blue-50 rounded-sm shrink-0">
           <MapPin className="w-5 h-5 text-blue-500" />
         </div>
         <h4 className="text-base font-semibold text-foreground-50">{city}</h4>
@@ -74,9 +74,9 @@ export default function UserLocationMap({
   }, [locations]);
 
   useEffect(() => {
-    if (!mapContainer.current || map.current) return;
+    if (!mapContainer.current || map.current || isLoading || error) return;
 
-    // 动态导入 mapbox-gl
+    // 动态导入 mapbox-gl，只在有数据时才导入
     import("mapbox-gl").then((mapboxgl) => {
       if (!mapContainer.current) return;
 
@@ -117,7 +117,7 @@ export default function UserLocationMap({
         map.current = null;
       }
     };
-  }, []);
+  }, [isLoading, error]);
 
   // 更新地图上的标记
   useEffect(() => {
@@ -346,7 +346,7 @@ export default function UserLocationMap({
         )}
         <div
           ref={mapContainer}
-          className="w-full h-[500px] min-h-[500px] bg-background-200 rounded-sm [&_.mapboxgl-ctrl-logo]:!hidden [&_.mapboxgl-ctrl-attrib]:!hidden [&_.mapboxgl-popup-content]:!bg-card-50 [&_.mapboxgl-popup-content]:!border [&_.mapboxgl-popup-content]:!border-border-50 [&_.mapboxgl-popup-content]:!rounded-sm [&_.mapboxgl-popup-content]:!shadow-sm [&_.mapboxgl-popup-content]:!p-0 [&_.mapboxgl-popup-tip]:!border-t-card-50"
+          className="w-full h-[500px] min-h-[500px] bg-background-200 rounded-sm [&_.mapboxgl-ctrl-logo]:hidden! [&_.mapboxgl-ctrl-attrib]:hidden! [&_.mapboxgl-popup-content]:bg-card-50! [&_.mapboxgl-popup-content]:border! [&_.mapboxgl-popup-content]:border-border-50! [&_.mapboxgl-popup-content]:rounded-sm! [&_.mapboxgl-popup-content]:shadow-sm! [&_.mapboxgl-popup-content]:p-0! [&_.mapboxgl-popup-tip]:border-t-card-50!"
         />
         {!isLoading && (!locations || locations.length === 0) && (
           <div className="absolute inset-0 flex items-center justify-center">

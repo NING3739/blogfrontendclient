@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import React, { useState, useEffect, useRef } from "react";
 import { Editor } from "@tiptap/react";
 import {
@@ -28,9 +29,16 @@ import {
   Unlink,
 } from "lucide-react";
 
-import VideoPickerModal from "./VideoPickerModal";
-import ImagePickerModal from "./ImagePickerModal";
-import AudioPickerModal from "./AudioPickerModal";
+// 懒加载模态框组件，只在需要时才加载
+const VideoPickerModal = dynamic(() => import("./VideoPickerModal"), {
+  ssr: false,
+});
+const ImagePickerModal = dynamic(() => import("./ImagePickerModal"), {
+  ssr: false,
+});
+const AudioPickerModal = dynamic(() => import("./AudioPickerModal"), {
+  ssr: false,
+});
 
 interface MenuBarProps {
   editor: Editor;

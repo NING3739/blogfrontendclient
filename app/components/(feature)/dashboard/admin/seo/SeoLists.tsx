@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { motion } from "motion/react";
 import { Trash2, Edit } from "lucide-react";
 import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
@@ -47,17 +48,28 @@ const SeoLists = ({
 
       try {
         // Call API in background
-        await SeoService.deleteSeo({
+        const response = await SeoService.deleteSeo({
           seo_id: seoId,
         });
 
-        // Refresh list after successful delete to update pagination/total count
-        if (onDataChange) {
-          onDataChange();
+        if (response.status === 200) {
+          toast.success(
+            "message" in response ? response.message : "SEO deleted"
+          );
+          // Refresh list after successful delete to update pagination/total count
+          if (onDataChange) {
+            onDataChange();
+          }
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to delete SEO"
+          );
+          setOptimisticSeoItems(seoItems);
         }
       } catch (error) {
         // Rollback on error
         console.error("Failed to delete SEO item:", error);
+        toast.error("Failed to delete SEO");
         setOptimisticSeoItems(seoItems);
       }
     }

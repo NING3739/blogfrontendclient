@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { Button } from "@/app/components/ui/button/butten";
 import Modal from "@/app/components/ui/modal/Modal";
 import FriendService from "@/app/lib/services/friendService";
@@ -61,17 +62,27 @@ function UpdateFriendModel({
     setIsSubmitting(true);
 
     try {
-      await FriendService.updateFriendListType({
+      const response = await FriendService.updateFriendListType({
         friend_list_id: friendId,
         type: selectedType,
       });
 
-      // FriendService 中的 handleToastResponse 已经处理了 toast 显示
-      onSuccess();
-      onClose();
+      if (response.status === 200) {
+        toast.success(
+          "message" in response ? response.message : "Friend type updated"
+        );
+        onSuccess();
+        onClose();
+      } else {
+        toast.error(
+          "error" in response ? response.error : "Failed to update friend type"
+        );
+        onClose();
+      }
     } catch (error) {
       // 处理未预期的错误
       console.error("更新友链类型失败:", error);
+      toast.error("Failed to update friend type");
       onClose();
     } finally {
       setIsSubmitting(false);

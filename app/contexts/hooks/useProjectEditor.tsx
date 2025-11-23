@@ -166,8 +166,7 @@ export const useProjectEditor = ({
         // 将JSONContent转换为字符串
         const contentString = JSON.stringify(content);
 
-        // projectService.createProject 已经处理了 toast 显示
-        await projectService.createProject({
+        const response = await projectService.createProject({
           project_type: projectMetaData.projectType.toString(),
           section_id: projectSectionId,
           seo_id: projectMetaData.selectedSeoId!,
@@ -178,6 +177,18 @@ export const useProjectEditor = ({
           price: projectMetaData.price || 0,
           attachment_id: projectMetaData.selectedDocumentId || undefined,
         });
+
+        if (response.status === 200) {
+          toast.success(
+            "message" in response
+              ? response.message
+              : "Project created successfully"
+          );
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to create project"
+          );
+        }
       }
 
       // 更新已有项目
@@ -194,8 +205,7 @@ export const useProjectEditor = ({
         // 将JSONContent转换为字符串
         const contentString = JSON.stringify(content);
 
-        // projectService.updateProject 已经处理了 toast 显示
-        await projectService.updateProject({
+        const response = await projectService.updateProject({
           project_slug: projectSlug,
           project_type: projectMetaData.projectType.toString(),
           section_id: projectSectionId,
@@ -207,6 +217,18 @@ export const useProjectEditor = ({
           price: projectMetaData.price || 0,
           attachment_id: projectMetaData.selectedDocumentId || undefined,
         });
+
+        if (response.status === 200) {
+          toast.success(
+            "message" in response
+              ? response.message
+              : "Project updated successfully"
+          );
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to update project"
+          );
+        }
       } else {
         console.log("No matching condition for project save", {
           type,
@@ -215,8 +237,7 @@ export const useProjectEditor = ({
         });
       }
     } catch (error: any) {
-      // projectService 中的 handleToastResponse 已经处理了 toast 显示
-      // 这里只记录错误用于调试
+      toast.error("Failed to save project");
       console.error("Project save failed:", error);
     }
   };

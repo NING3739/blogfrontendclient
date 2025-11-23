@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { FolderOpen, Trash2, Eye, Edit, Globe, Archive } from "lucide-react";
@@ -86,15 +87,28 @@ const ProjectLists = ({
         };
 
         // Call API in background
-        await ProjectService.togglePublishStatus(payload);
+        const response = await ProjectService.togglePublishStatus(payload);
 
-        // Refresh list after successful toggle
-        if (onDataChange) {
-          onDataChange();
+        if (response.status === 200) {
+          toast.success(
+            "message" in response ? response.message : "Project status updated"
+          );
+          // Refresh list after successful toggle
+          if (onDataChange) {
+            onDataChange();
+          }
+        } else {
+          toast.error(
+            "error" in response
+              ? response.error
+              : "Failed to update project status"
+          );
+          setOptimisticProjects(projectItems);
         }
       } catch (error) {
         // Rollback on error
         console.error("Failed to toggle publish status:", error);
+        toast.error("Failed to update project status");
         setOptimisticProjects(projectItems);
       }
     } else if (action === "delete") {
@@ -105,17 +119,28 @@ const ProjectLists = ({
 
       try {
         // Call API in background
-        await ProjectService.deleteProject({
+        const response = await ProjectService.deleteProject({
           project_id: projectId,
         });
 
-        // Refresh list after successful delete to update pagination/total count
-        if (onDataChange) {
-          onDataChange();
+        if (response.status === 200) {
+          toast.success(
+            "message" in response ? response.message : "Project deleted"
+          );
+          // Refresh list after successful delete to update pagination/total count
+          if (onDataChange) {
+            onDataChange();
+          }
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to delete project"
+          );
+          setOptimisticProjects(projectItems);
         }
       } catch (error) {
         // Rollback on error
         console.error("Failed to delete project:", error);
+        toast.error("Failed to delete project");
         setOptimisticProjects(projectItems);
       }
     }

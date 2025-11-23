@@ -6,7 +6,6 @@ import type {
   UpdateProjectRequest,
   PublishOrUnpublishProjectRequest,
 } from "@/app/types/projectServiceType";
-import { handleToastResponse } from "../utils/handleToastResponse";
 
 class ProjectService {
   async getProjectDetailsSeo(payload: GetProjectDetailsSeoRequest) {
@@ -25,7 +24,6 @@ class ProjectService {
         `/dashboard/preview/?projectSlug=${response.data}&type=project`
       );
     }
-    handleToastResponse(response);
     return response;
   }
 
@@ -39,7 +37,6 @@ class ProjectService {
         `/dashboard/preview?projectSlug=${response.data}&type=project`
       );
     }
-    handleToastResponse(response);
     return response;
   }
 
@@ -48,7 +45,6 @@ class ProjectService {
       `/project/admin/publish-or-unpublish-project`,
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -56,7 +52,6 @@ class ProjectService {
     const response = await httpClient.delete(
       `/project/admin/delete-project/${payload.project_id}`
     );
-    handleToastResponse(response);
     return response;
   }
 }

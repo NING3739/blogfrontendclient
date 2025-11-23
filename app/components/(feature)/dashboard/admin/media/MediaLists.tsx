@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import Image from "next/image";
 import { motion } from "motion/react";
 import {
@@ -124,15 +125,28 @@ const MediaLists = ({
         );
 
         // Call API in background
-        await MediaService.deleteMedia({ media_ids: [mediaId] });
+        const response = await MediaService.deleteMedia({
+          media_ids: [mediaId],
+        });
 
-        // Refresh list after successful deletion
-        if (onDataChange) {
-          onDataChange();
+        if (response.status === 200) {
+          toast.success(
+            "message" in response ? response.message : "Media deleted"
+          );
+          // Refresh list after successful deletion
+          if (onDataChange) {
+            onDataChange();
+          }
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to delete media"
+          );
+          setOptimisticMedia(mediaItems);
         }
       } catch (error) {
         // Rollback on error
         console.error("Failed to delete media:", error);
+        toast.error("Failed to delete media");
         setOptimisticMedia(mediaItems);
       }
     }
@@ -258,7 +272,7 @@ const MediaLists = ({
                 >
                   <td className="py-3 lg:py-4 px-3 lg:px-4">
                     <div className="flex items-center space-x-2 lg:space-x-3">
-                      <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center shrink-0">
                         {renderMediaPreview(media)}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -350,7 +364,7 @@ const MediaLists = ({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
-                  <div className="w-14 h-14 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center flex-shrink-0">
+                  <div className="w-14 h-14 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center shrink-0">
                     {renderMediaPreview(media)}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -427,7 +441,7 @@ const MediaLists = ({
               {/* Media Header */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2 flex-1 min-w-0">
-                  <div className="w-12 h-12 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center shrink-0">
                     {renderMediaPreview(media)}
                   </div>
                   <div className="min-w-0 flex-1">

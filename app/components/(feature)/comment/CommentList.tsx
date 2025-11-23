@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
+import toast from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -80,21 +81,35 @@ const CommentList = ({ type, targetId, isAuthenticated }: CommentListProps) => {
   // 处理删除评论
   const handleDelete = async (commentId: number) => {
     try {
+      let response;
       if (type === CommentType.BLOG) {
-        await blogService.deleteBlogComment({ comment_id: commentId });
+        response = await blogService.deleteBlogComment({
+          comment_id: commentId,
+        });
       } else {
-        await boardService.deleteBoardComment({ board_comment_id: commentId });
+        response = await boardService.deleteBoardComment({
+          board_comment_id: commentId,
+        });
       }
 
-      // 从本地状态中移除已删除的评论，避免重新获取
-      setAllComments((prevComments) =>
-        prevComments.filter((comment) => comment.comment_id !== commentId)
-      );
-
-      // 重新获取评论列表（可选，用于确保数据一致性）
-      mutate(getInitialApiEndpoint());
+      if (response.status === 200) {
+        toast.success(
+          "message" in response ? response.message : "Comment deleted"
+        );
+        // 从本地状态中移除已删除的评论，避免重新获取
+        setAllComments((prevComments) =>
+          prevComments.filter((comment) => comment.comment_id !== commentId)
+        );
+        // 重新获取评论列表（可选，用于确保数据一致性）
+        mutate(getInitialApiEndpoint());
+      } else {
+        toast.error(
+          "error" in response ? response.error : "Failed to delete comment"
+        );
+      }
     } catch (error) {
       console.error("Failed to delete comment:", error);
+      toast.error("Failed to delete comment");
     } finally {
       setDeletingComment(null);
     }

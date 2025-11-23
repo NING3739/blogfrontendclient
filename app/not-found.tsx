@@ -11,7 +11,7 @@ export default function NotFoundPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background-50 via-background-50 to-background-100 w-full overflow-hidden relative">
+    <div className="min-h-screen bg-linear-to-br from-background-50 via-background-50 to-background-100 w-full overflow-hidden relative">
       <DefaultBackground />
 
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4 sm:px-6 py-12">
@@ -35,9 +35,9 @@ export default function NotFoundPage() {
               className="relative inline-block"
             >
               {/* 发光效果 */}
-              <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 via-primary-400/20 to-primary-500/20 blur-3xl" />
+              <div className="absolute inset-0 bg-linear-to-r from-primary-500/20 via-primary-400/20 to-primary-500/20 blur-3xl" />
 
-              <h1 className="relative text-[120px] sm:text-[180px] font-black text-transparent bg-clip-text bg-gradient-to-br from-primary-400 via-primary-500 to-primary-600 leading-none select-none">
+              <h1 className="relative text-[120px] sm:text-[180px] font-black text-transparent bg-clip-text bg-linear-to-br from-primary-400 via-primary-500 to-primary-600 leading-none select-none">
                 404
               </h1>
             </motion.div>
@@ -85,7 +85,7 @@ export default function NotFoundPage() {
               variant="primary"
               size="lg"
               onClick={() => router.push("/")}
-              className="group min-w-[160px]"
+              className="group min-w-40"
             >
               <Home className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
               回到首页
@@ -94,7 +94,7 @@ export default function NotFoundPage() {
               variant="secondary"
               size="lg"
               onClick={() => router.back()}
-              className="group min-w-[160px]"
+              className="group min-w-40"
             >
               <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
               返回上页

@@ -9,10 +9,10 @@ import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import EmptyState from "@/app/components/ui/error/EmptyState";
 import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import { Tag } from "lucide-react";
-import * as echarts from "echarts";
 import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
 import type { GetTagItemResponse } from "@/app/types/tagServiceType";
 import type { OffsetPaginationResponse } from "@/app/types/commonType";
+import type * as echarts from "echarts";
 
 const TagPage = () => {
   const router = useRouter();
@@ -55,10 +55,14 @@ const TagPage = () => {
   const chartRef = useRef<echarts.EChartsType | null>(null);
 
   useEffect(() => {
-    // Dynamically import echarts-wordcloud only on client side
+    // 动态导入 echarts 和 echarts-wordcloud，只在客户端且有数据时才加载
     const initChart = async () => {
-      if (typeof window === "undefined") return;
+      if (typeof window === "undefined" || words.length === 0) return;
 
+      // 动态导入 echarts
+      const echarts = await import("echarts");
+
+      // 动态导入 echarts-wordcloud
       await import("echarts-wordcloud");
 
       const el = containerRef.current;

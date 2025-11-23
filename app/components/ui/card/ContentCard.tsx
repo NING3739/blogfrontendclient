@@ -65,7 +65,7 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onClick }) => {
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
           {/* 渐变遮罩 */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/20 to-transparent" />
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-t from-black/20 to-transparent" />
 
           {/* 标签 - 右上角 */}
           {content.tags && content.tags.length > 0 && (
@@ -102,9 +102,7 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onClick }) => {
           {/* 创建时间 */}
           <div className="flex items-center gap-1.5 text-xs text-foreground-300">
             <Clock className="w-3.5 h-3.5" strokeWidth={2} />
-            <span>
-              {handleDateFormat(content.created_at, format)}
-            </span>
+            <span>{handleDateFormat(content.created_at, format)}</span>
           </div>
 
           {/* 统计信息 */}

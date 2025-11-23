@@ -4,7 +4,6 @@ import type {
   DownloadMediaRequest,
   DeleteMediaRequest,
 } from "@/app/types/mediaServiceType";
-import { handleToastResponse } from "../utils/handleToastResponse";
 
 class MediaService {
   async uploadMedia(
@@ -24,7 +23,6 @@ class MediaService {
         uploadProgress: onProgress,
       }
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -36,7 +34,6 @@ class MediaService {
     const response = await httpClient.delete("/media/admin/delete-media", {
       data: payload,
     });
-    handleToastResponse(response);
     return response;
   }
 }

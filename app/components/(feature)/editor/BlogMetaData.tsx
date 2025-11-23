@@ -463,7 +463,7 @@ export const BlogMetaData = ({
 
                 {isSeoDropdownOpen && (
                   <div className="absolute z-50 w-full mt-2 bg-card-50 border border-border-100 rounded-sm shadow-lg max-h-80 overflow-hidden flex flex-col">
-                    <div className="p-3 border-b border-border-100 bg-card-100 flex-shrink-0">
+                    <div className="p-3 border-b border-border-100 bg-card-100 shrink-0">
                       <input
                         type="text"
                         placeholder="搜索 SEO 设置..."
@@ -594,7 +594,7 @@ export const BlogMetaData = ({
 
                 {isTagDropdownOpen && (
                   <div className="absolute z-50 w-full mt-2 bg-card-50 border border-border-100 rounded-sm shadow-lg max-h-80 overflow-hidden flex flex-col">
-                    <div className="p-3 border-b border-border-100 bg-card-100 flex-shrink-0">
+                    <div className="p-3 border-b border-border-100 bg-card-100 shrink-0">
                       <input
                         type="text"
                         placeholder="搜索标签..."

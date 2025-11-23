@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useCallback } from "react";
+import toast from "react-hot-toast";
 import { motion } from "motion/react";
 import {
   Upload,
@@ -168,8 +169,9 @@ const MediaUploadModal = ({
         }
       );
 
-      if ("message" in response) {
+      if (response.status === 200 && "message" in response) {
         // SuccessResponse
+        toast.success(response.message);
         // Update status to success
         setFiles((prev) =>
           prev.map((f) =>
@@ -189,9 +191,13 @@ const MediaUploadModal = ({
         onClose();
       } else {
         // ErrorResponse
-        throw new Error(response.error || "Upload failed");
+        const errorMsg = "error" in response ? response.error : "Upload failed";
+        toast.error(errorMsg);
+        throw new Error(errorMsg);
       }
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "Upload failed";
+      toast.error(errorMsg);
       // Update status to error
       setFiles((prev) =>
         prev.map((f) =>
@@ -199,7 +205,7 @@ const MediaUploadModal = ({
             ? {
                 ...f,
                 status: "error" as const,
-                error: error instanceof Error ? error.message : "Upload failed",
+                error: errorMsg,
               }
             : f
         )
@@ -310,7 +316,7 @@ const MediaUploadModal = ({
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
-                      <div className="flex-shrink-0">
+                      <div className="shrink-0">
                         <IconComponent className="w-5 h-5 text-foreground-300" />
                       </div>
                       <div className="min-w-0 flex-1">

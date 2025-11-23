@@ -144,7 +144,7 @@ export default function ContentDetailsPreviewPage() {
             {/* Price - Only for projects */}
             {type === "project" && (
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1.5 sm:p-2 bg-background-100 rounded-sm flex-shrink-0">
+                <div className="p-1.5 sm:p-2 bg-background-100 rounded-sm shrink-0">
                   <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-foreground-300" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -160,7 +160,7 @@ export default function ContentDetailsPreviewPage() {
 
             {/* Created At - Always shown */}
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1.5 sm:p-2 bg-background-100 rounded-sm flex-shrink-0">
+              <div className="p-1.5 sm:p-2 bg-background-100 rounded-sm shrink-0">
                 <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-foreground-300" />
               </div>
               <div className="min-w-0 flex-1">
@@ -174,7 +174,7 @@ export default function ContentDetailsPreviewPage() {
             {/* Attachment/Content - Only for projects */}
             {type === "project" && (
               <div className="flex items-center gap-2 sm:gap-3 sm:col-span-2 lg:col-span-1">
-                <div className="p-1.5 sm:p-2 bg-background-100 rounded-sm flex-shrink-0">
+                <div className="p-1.5 sm:p-2 bg-background-100 rounded-sm shrink-0">
                   <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-foreground-300" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -189,7 +189,7 @@ export default function ContentDetailsPreviewPage() {
             {/* Tag - Only for blogs */}
             {type === "blog" && (
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1.5 sm:p-2 bg-background-100 rounded-sm flex-shrink-0">
+                <div className="p-1.5 sm:p-2 bg-background-100 rounded-sm shrink-0">
                   <Tag className="w-4 h-4 sm:w-5 sm:h-5 text-foreground-300" />
                 </div>
                 <div className="min-w-0 flex-1">

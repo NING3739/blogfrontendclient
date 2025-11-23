@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import type { CreateSeoRequest } from "@/app/types/seoServiceType";
 import { Button } from "@/app/components/ui/button/butten";
 import InputField from "@/app/components/ui/input/InputField";
@@ -91,16 +92,23 @@ export const CreateSeoModal = ({
         response = await seoService.createSeo(formData as CreateSeoRequest);
       }
 
-      // seoService 中的 handleToastResponse 已经处理了 toast 显示
-      if ("data" in response && response.data) {
+      if (response.status === 200 && "data" in response && response.data) {
+        toast.success(
+          "message" in response
+            ? response.message
+            : seoId
+            ? "SEO updated"
+            : "SEO created"
+        );
         // 调用成功回调
         if (onSuccess) {
           onSuccess(response.data.seo_id || seoId);
         }
         onClose();
       } else {
-        // 失败时也关闭模态框，让用户看到toast错误信息
-        // handleToastResponse 已经显示了错误toast
+        toast.error(
+          "error" in response ? response.error : "Failed to save SEO"
+        );
         onClose();
       }
     } catch (error) {

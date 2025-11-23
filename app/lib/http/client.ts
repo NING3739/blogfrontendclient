@@ -121,19 +121,9 @@ class HttpClient {
 
     window.addEventListener("locale:changed", this.localeChangeHandler);
 
-    // 监听 cookie 变化（备用方案）
-    let lastCheckedLocale = this.currentLocale;
-    const checkCookieChange = () => {
-      const cookieLocale = this.getLocaleFromBrowser();
-      if (cookieLocale !== lastCheckedLocale) {
-        lastCheckedLocale = cookieLocale;
-        this.setLocale(cookieLocale);
-      }
-    };
-
-    // 定期检查 cookie 变化，但频率降低并添加防抖
-    // 保存定时器引用以便清理
-    this.localeCheckInterval = setInterval(checkCookieChange, 5000); // 降低到5秒检查一次
+    // 注意：不再需要定时检查cookie变化
+    // 因为LanguageSwitcher使用window.location.reload()会完全刷新页面
+    // 这样可以减少不必要的定时器开销
   }
 
   /**

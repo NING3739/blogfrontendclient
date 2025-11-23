@@ -52,7 +52,7 @@ const VideoPreview = ({
     <AnimatePresence mode="wait">
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-0 sm:p-4"
+          className="fixed inset-0 z-9999 flex items-center justify-center p-0 sm:p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -76,7 +76,7 @@ const VideoPreview = ({
             onClick={(e) => e.stopPropagation()}
           >
             {/* 头部工具栏 */}
-            <div className="flex items-center justify-between gap-2 sm:gap-4 bg-card-100 border-b border-border-100 px-4 sm:px-6 py-3 sm:py-4 flex-shrink-0">
+            <div className="flex items-center justify-between gap-2 sm:gap-4 bg-card-100 border-b border-border-100 px-4 sm:px-6 py-3 sm:py-4 shrink-0">
               {/* 左侧：视频信息 */}
               <div className="flex items-center gap-2 min-w-0 flex-1">
                 <h2 className="text-base sm:text-lg font-semibold text-foreground-50 truncate">
@@ -89,7 +89,7 @@ const VideoPreview = ({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={onClose}
-                className="p-1.5 sm:p-2 rounded-sm bg-card-50 text-foreground-300 hover:bg-error-50 hover:text-error-500 border border-border-100 flex-shrink-0"
+                className="p-1.5 sm:p-2 rounded-sm bg-card-50 text-foreground-300 hover:bg-error-50 hover:text-error-500 border border-border-100 shrink-0"
                 title="关闭 (ESC)"
                 aria-label="关闭"
               >
@@ -110,7 +110,7 @@ const VideoPreview = ({
             </div>
 
             {/* 底部提示栏 - 在移动端隐藏 */}
-            <div className="hidden sm:flex items-center justify-center gap-4 bg-card-100 border-t border-border-100 px-6 py-3 flex-shrink-0">
+            <div className="hidden sm:flex items-center justify-center gap-4 bg-card-100 border-t border-border-100 px-6 py-3 shrink-0">
               <span className="text-xs text-foreground-400">
                 按{" "}
                 <kbd className="px-1.5 py-0.5 bg-background-100 border border-border-100 rounded text-foreground-200 font-mono">

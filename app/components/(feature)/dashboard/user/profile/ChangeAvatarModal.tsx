@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Upload, RotateCcw } from "lucide-react";
+import toast from "react-hot-toast";
 import Image from "next/image";
 import Cropper from "react-easy-crop";
 import Modal from "@/app/components/ui/modal/Modal";
@@ -132,11 +133,23 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
     setIsUploading(true);
     try {
       const croppedFile = await getCroppedImg(preview, croppedAreaPixels);
-      await userService.changeMyAvatar({ file: croppedFile });
-      onSuccess?.();
-      handleReset();
+      const response = await userService.changeMyAvatar({ file: croppedFile });
+      if (response.status === 200) {
+        toast.success(
+          "message" in response
+            ? response.message
+            : "Avatar updated successfully"
+        );
+        onSuccess?.();
+        handleReset();
+      } else {
+        toast.error(
+          "error" in response ? response.error : "Failed to update avatar"
+        );
+      }
     } catch (error) {
       console.error("上传头像失败:", error);
+      toast.error("Failed to upload avatar");
     } finally {
       setIsUploading(false);
     }

@@ -8,12 +8,10 @@ import {
   DeleteUserRequest,
 } from "@/app/types/userServiceType";
 import { OffsetPagination } from "@/app/types/commonType";
-import { handleToastResponse } from "../utils/handleToastResponse";
 
 class UserService {
   async updateMyBio(payload: UpdateMyBioRequest) {
     const response = await httpClient.patch("/user/me/update-my-bio", payload);
-    handleToastResponse(response);
     return response;
   }
 
@@ -30,7 +28,6 @@ class UserService {
         },
       }
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -57,7 +54,6 @@ class UserService {
       "/user/admin/enable-disable-user",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -65,7 +61,6 @@ class UserService {
     const response = await httpClient.delete(
       `/user/admin/delete-user/${payload.user_id}`
     );
-    handleToastResponse(response);
     return response;
   }
 }

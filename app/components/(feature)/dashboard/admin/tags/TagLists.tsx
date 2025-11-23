@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { motion } from "motion/react";
 import { Trash2, Edit } from "lucide-react";
 import { useLocale, useFormatter } from "next-intl";
@@ -51,17 +52,28 @@ const TagLists = ({
 
       try {
         // Call API in background
-        await TagService.deleteTag({
+        const response = await TagService.deleteTag({
           tag_id: tagId,
         });
 
-        // Refresh list after successful delete to update pagination/total count
-        if (onDataChange) {
-          onDataChange();
+        if (response.status === 200) {
+          toast.success(
+            "message" in response ? response.message : "Tag deleted"
+          );
+          // Refresh list after successful delete to update pagination/total count
+          if (onDataChange) {
+            onDataChange();
+          }
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to delete tag"
+          );
+          setOptimisticTagItems(tagItems);
         }
       } catch (error) {
         // Rollback on error
         console.error("Failed to delete tag item:", error);
+        toast.error("Failed to delete tag");
         setOptimisticTagItems(tagItems);
       }
     }

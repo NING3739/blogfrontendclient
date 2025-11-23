@@ -6,7 +6,6 @@ import type {
   DeleteSingleFriendRequest,
   UpdateFriendListTypeRequest,
 } from "@/app/types/friendServiceType";
-import { handleToastResponse } from "../utils/handleToastResponse";
 
 class FriendService {
   async getFriendDetails() {
@@ -26,7 +25,6 @@ class FriendService {
       "/friend/admin/update-friend",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -35,7 +33,6 @@ class FriendService {
       "/friend/create-single-friend",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -43,7 +40,6 @@ class FriendService {
     const response = await httpClient.delete(
       `/friend/delete-single-friend/${payload.friend_list_id}`
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -52,7 +48,6 @@ class FriendService {
       "/friend/admin/update-friend-list-type",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 }

@@ -38,9 +38,9 @@ const variantClasses: Record<ButtonVariant, string> = {
 
 const gradientClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 focus:ring-primary-500 shadow-md hover:shadow-lg",
+    "bg-linear-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 focus:ring-primary-500 shadow-md hover:shadow-lg",
   secondary:
-    "bg-gradient-to-r from-card-100 to-card-200 text-foreground-50 border border-border-100 hover:from-background-300 hover:to-background-300 focus:ring-border-200 shadow-sm hover:shadow-md",
+    "bg-linear-to-r from-card-100 to-card-200 text-foreground-50 border border-border-100 hover:from-background-300 hover:to-background-300 focus:ring-border-200 shadow-sm hover:shadow-md",
   ghost:
     "text-foreground-200 hover:bg-background-300 hover:text-foreground-50 focus:ring-primary-500",
   outline:

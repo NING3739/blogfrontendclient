@@ -6,7 +6,6 @@ import type {
   UpdateBoardCommentRequest,
   DeleteBoardCommentRequest,
 } from "@/app/types/boardServiceType";
-import { handleToastResponse } from "../utils/handleToastResponse";
 
 class BoardService {
   async updateBoard(payload: UpdateBoardRequest) {
@@ -14,7 +13,6 @@ class BoardService {
       "/board/admin/update-board",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -23,7 +21,6 @@ class BoardService {
       "/board/create-board-comment",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -32,7 +29,6 @@ class BoardService {
       "/board/update-board-comment",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -40,7 +36,6 @@ class BoardService {
     const response = await httpClient.delete(
       `/board/delete-board-comment/${payload.board_comment_id}`
     );
-    handleToastResponse(response);
     return response;
   }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import Image from "next/image";
 import { motion } from "motion/react";
 import {
@@ -102,18 +103,31 @@ const PostLists = ({
         );
 
         // Call API in background
-        await BlogService.updateBlogStatus({
+        const response = await BlogService.updateBlogStatus({
           blog_id: postId,
           [statusType]: newValue,
         });
 
-        // Refresh list after successful update
-        if (onDataChange) {
-          onDataChange();
+        if (response.status === 200) {
+          toast.success(
+            "message" in response ? response.message : "Blog status updated"
+          );
+          // Refresh list after successful update
+          if (onDataChange) {
+            onDataChange();
+          }
+        } else {
+          toast.error(
+            "error" in response
+              ? response.error
+              : "Failed to update blog status"
+          );
+          setOptimisticPosts(postItems);
         }
       } catch (error) {
         // Rollback on error
         console.error(`Failed to update ${statusType}:`, error);
+        toast.error("Failed to update blog status");
         setOptimisticPosts(postItems);
       }
     } else if (action === "delete") {
@@ -125,17 +139,28 @@ const PostLists = ({
         );
 
         // Call API in background
-        await BlogService.deleteBlog({
+        const response = await BlogService.deleteBlog({
           blog_id: postId,
         });
 
-        // Refresh list after successful deletion
-        if (onDataChange) {
-          onDataChange();
+        if (response.status === 200) {
+          toast.success(
+            "message" in response ? response.message : "Blog deleted"
+          );
+          // Refresh list after successful deletion
+          if (onDataChange) {
+            onDataChange();
+          }
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to delete blog"
+          );
+          setOptimisticPosts(postItems);
         }
       } catch (error) {
         // Rollback on error
         console.error("Failed to delete blog:", error);
+        toast.error("Failed to delete blog");
         setOptimisticPosts(postItems);
       }
     }

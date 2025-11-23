@@ -1,6 +1,5 @@
 import httpClient from "../http/client";
 import type { Email } from "@/app/types/authServiceType";
-import { handleToastResponse } from "../utils/handleToastResponse";
 
 export const SubscriberService = {
   getSubscriberLists: async (page: number, size: number) => {
@@ -14,7 +13,6 @@ export const SubscriberService = {
       "/subscriber/create-subscriber",
       payload
     );
-    handleToastResponse(response);
     return response;
   },
 
@@ -23,7 +21,6 @@ export const SubscriberService = {
       "/subscriber/unsubscribe-subscriber",
       payload
     );
-    handleToastResponse(response);
     return response;
   },
 };

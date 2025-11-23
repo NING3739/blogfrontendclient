@@ -43,7 +43,7 @@ export default function RegisterPage() {
     };
   }, [countdown]);
 
-  // 前端表单验证（格式验证），API业务逻辑错误由authService中的handleToastResponse处理
+  // 前端表单验证（格式验证），API业务逻辑错误由UI层处理toast
   const validateForm = () => {
     const result = Validator.validateRegisterForm(
       username,
@@ -73,11 +73,22 @@ export default function RegisterPage() {
 
     setIsSendingCode(true);
     try {
-      await authService.sendVerificationCode({ email });
-      // 开始60秒倒计时
-      setCountdown(60);
+      const response = await authService.sendVerificationCode({ email });
+      if (response.status === 200) {
+        toast.success(
+          "message" in response ? response.message : "Verification code sent"
+        );
+        // 开始60秒倒计时
+        setCountdown(60);
+      } else {
+        toast.error(
+          "error" in response
+            ? response.error
+            : "Failed to send verification code"
+        );
+      }
     } catch {
-      // No need to log or handle errors here
+      toast.error("Failed to send verification code");
     } finally {
       setIsSendingCode(false);
     }
@@ -101,9 +112,15 @@ export default function RegisterPage() {
     });
 
     if (response.status === 200) {
-      toast.success(authT("registerSuccess"));
+      toast.success(
+        "message" in response ? response.message : authT("registerSuccess")
+      );
       // 注册成功后静默自动登录（不显示登录成功的toast）
       await silentAccountLogin({ email, password });
+    } else {
+      toast.error(
+        "error" in response ? response.error : "Failed to create account"
+      );
     }
 
     setIsSubmitting(false);

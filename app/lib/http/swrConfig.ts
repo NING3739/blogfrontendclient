@@ -9,6 +9,11 @@ export const swrConfig: SWRConfiguration = {
   revalidateOnReconnect: true,
   errorRetryCount: 3,
   errorRetryInterval: 1000,
+  dedupingInterval: 2000, // 2秒内的相同请求只发送一次
+  // 只在非401错误时重试（401由httpClient处理）
+  shouldRetryOnError: (error) => {
+    return error?.status !== 401;
+  },
 };
 
 // 添加语言变化监听，自动重新验证所有数据
@@ -23,7 +28,6 @@ if (typeof window !== "undefined") {
       // 重新验证所有缓存
       mutate(() => true, undefined, { revalidate: true }).finally(() => {
         isRevalidating = false;
-        console.log("[swrConfig] Revalidation complete");
       });
     });
   });

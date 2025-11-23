@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-
+import dynamic from "next/dynamic";
 import React, { useState, useEffect } from "react";
 import { JSONContent } from "@tiptap/react";
 import { motion } from "motion/react";
@@ -15,8 +15,20 @@ import type { SectionListItem } from "@/app/types/sectionServiceType";
 import type { GetSeoItemResponse } from "@/app/types/seoServiceType";
 import { BlogMetaData } from "@/app/components/(feature)/editor/BlogMetaData";
 import { ProjectMetaData } from "@/app/components/(feature)/editor/ProjectMetaData";
-import TiptapEditor from "@/app/components/(feature)/editor/TiptapEditor";
 import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+
+// 懒加载 TiptapEditor，减少初始加载大小
+const TiptapEditor = dynamic(
+  () => import("@/app/components/(feature)/editor/TiptapEditor"),
+  {
+    loading: () => (
+      <div className="bg-card-50 border border-border-50 rounded-sm shadow-sm p-8 min-h-[500px] flex items-center justify-center">
+        <LoadingSpinner message="加载编辑器..." size="md" variant="wave" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
 
 export default function EditorPage() {
   const locale = useLocale();
@@ -105,21 +117,17 @@ export default function EditorPage() {
     try {
       // 处理项目保存
       if (type === "project" || (type === "update" && projectSlug)) {
-        console.log("Saving project...");
         await handleProjectSave();
         return;
       }
 
       // 处理博客保存
       if (type === "blog" || (type === "update" && blogSlug)) {
-        console.log("Saving blog...");
         await handleBlogSave();
         return;
       }
-
-      console.log("No matching save condition found");
     } catch (error: unknown) {
-      console.error("Save failed:", error);
+      // 错误已经在各自的 handler 中处理
     }
   };
 
@@ -155,13 +163,13 @@ export default function EditorPage() {
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground-50 mb-2 sm:mb-3">
               内容编辑器
             </h1>
-            <p className="text-xs sm:text-sm lg:text-base text-foreground-300 leading-relaxed break-words">
+            <p className="text-xs sm:text-sm lg:text-base text-foreground-300 leading-relaxed wrap-break-word">
               {type === "update"
                 ? "编辑和更新现有内容"
                 : "创建新的博客文章或项目内容"}
             </p>
           </div>
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <button
               onClick={handleSave}
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-primary-500 text-white rounded-sm hover:bg-primary-600 transition-colors text-sm sm:text-base"

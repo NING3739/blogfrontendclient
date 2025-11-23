@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
@@ -43,14 +44,24 @@ const SavedBlogLists: React.FC<SavedBlogListsProps> = ({
 
     try {
       // 调用取消收藏 API
-      await BlogService.saveBlogButton({ blog_id: blogId });
+      const response = await BlogService.saveBlogButton({ blog_id: blogId });
 
-      // 使用 mutate 重新获取数据
-      if (onDataChange) {
-        onDataChange();
+      if (response.status === 200) {
+        toast.success(
+          "message" in response ? response.message : "Blog unsaved"
+        );
+        // 使用 mutate 重新获取数据
+        if (onDataChange) {
+          onDataChange();
+        }
+      } else {
+        toast.error(
+          "error" in response ? response.error : "Failed to unsave blog"
+        );
       }
     } catch (error) {
       console.error("Failed to unsave blog:", error);
+      toast.error("Failed to unsave blog");
     } finally {
       setRemovingIds((prev) => prev.filter((id) => id !== blogId));
     }

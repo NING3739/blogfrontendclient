@@ -26,7 +26,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
       className={`group relative bg-card-50 border border-border-50 rounded-sm p-6 sm:p-7 hover:border-primary-300/60 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden ${className}`}
     >
       {/* 左侧装饰条 */}
-      <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-500/0 via-primary-500/50 to-primary-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-primary-500/0 via-primary-500/50 to-primary-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="flex items-start justify-between gap-5 sm:gap-6">
         {/* 左侧内容 */}
@@ -41,7 +41,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
             {/* 发布日期 */}
             <div className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Clock
-                className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground-400 flex-shrink-0"
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground-400 shrink-0"
                 strokeWidth={2}
               />
               <span className="text-foreground-300 font-medium whitespace-nowrap">
@@ -71,7 +71,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
         </div>
 
         {/* 右侧箭头图标 */}
-        <div className="flex-shrink-0 mt-1">
+        <div className="shrink-0 mt-1">
           <div className="relative">
             <ArrowRight
               className="w-5 h-5 sm:w-6 sm:h-6 text-foreground-400 group-hover:text-primary-500 transform group-hover:translate-x-1 group-hover:rotate-45 transition-all duration-300"
@@ -82,7 +82,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
       </div>
 
       {/* 悬停时的背景渐变效果 */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary-500/0 via-primary-500/3 to-primary-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-sm pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-r from-primary-500/0 via-primary-500/3 to-primary-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-sm pointer-events-none" />
     </div>
   );
 };

@@ -145,16 +145,26 @@ const CommentTextInput = (props: CommentTextInputProps) => {
           );
         }
         // 编辑评论
+        let response;
         if (type === CommentType.BLOG) {
-          await blogService.updateBlogComment({
+          response = await blogService.updateBlogComment({
             comment_id: commentId,
             comment: comment.trim(),
           });
         } else {
-          await boardService.updateBoardComment({
+          response = await boardService.updateBoardComment({
             board_comment_id: commentId,
             comment: comment.trim(),
           });
+        }
+        if (response.status === 200) {
+          toast.success(
+            "message" in response ? response.message : "Comment updated"
+          );
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to update comment"
+          );
         }
       } else {
         // 创建新评论
@@ -221,18 +231,28 @@ const CommentTextInput = (props: CommentTextInputProps) => {
           );
         }
 
+        let response;
         if (type === CommentType.BLOG) {
-          await blogService.createBlogComment({
+          response = await blogService.createBlogComment({
             blog_id: targetId,
             parent_id,
             comment: comment.trim(),
           });
         } else {
-          await boardService.createBoardComment({
+          response = await boardService.createBoardComment({
             board_id: targetId,
             parent_id,
             comment: comment.trim(),
           });
+        }
+        if (response.status === 200) {
+          toast.success(
+            "message" in response ? response.message : "Comment created"
+          );
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to create comment"
+          );
         }
       }
 

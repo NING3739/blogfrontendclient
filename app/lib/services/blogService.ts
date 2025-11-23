@@ -15,12 +15,10 @@ import type {
 } from "@/app/types/blogServiceType";
 
 import httpClient from "../http/client";
-import { handleToastResponse } from "../utils/handleToastResponse";
 
 class BlogService {
   async createBlog(payload: CreateBlogRequest) {
     const response = await httpClient.post("/blog/admin/create-blog", payload);
-    handleToastResponse(response);
     if (response.status === 200 && "data" in response) {
       window.location.replace(
         `/dashboard/preview/?blogSlug=${response.data}&type=blog`
@@ -30,7 +28,6 @@ class BlogService {
   }
   async updateBlog(payload: UpdateBlogRequest) {
     const response = await httpClient.patch("/blog/admin/update-blog", payload);
-    handleToastResponse(response);
     if (response.status === 200 && "data" in response) {
       window.location.replace(
         `/dashboard/preview/?blogSlug=${response.data}&type=blog`
@@ -61,7 +58,6 @@ class BlogService {
       "/blog/create-blog-comment",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
   async updateBlogComment(payload: UpdateBlogCommentRequest) {
@@ -69,25 +65,21 @@ class BlogService {
       "/blog/update-blog-comment",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
   async deleteBlogComment(payload: DeleteBlogCommentRequest) {
     const response = await httpClient.delete(
       `/blog/delete-blog-comment/${payload.comment_id}`
     );
-    handleToastResponse(response);
     return response;
   }
   async saveBlogButton(payload: SaveBlogButtonRequest) {
     const response = await httpClient.post("/blog/save-blog-button", payload);
-    handleToastResponse(response);
     return response;
   }
 
   async likeBlogButton(payload: LikeBlogButtonRequest) {
     const response = await httpClient.post("/blog/like-blog-button", payload);
-    handleToastResponse(response);
     return response;
   }
 
@@ -96,7 +88,6 @@ class BlogService {
       "/blog/update-blog-status",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -104,7 +95,6 @@ class BlogService {
     const response = await httpClient.delete(
       `/blog/admin/delete-blog/${payload.blog_id}`
     );
-    handleToastResponse(response);
     return response;
   }
 }

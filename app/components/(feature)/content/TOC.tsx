@@ -185,7 +185,7 @@ const TOC = () => {
                   {/* 激活状态指示器 */}
                   {isActive && (
                     <motion.div
-                      className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-500 to-primary-600 rounded-r-full"
+                      className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-primary-500 to-primary-600 rounded-r-full"
                       initial={{ scaleY: 0 }}
                       animate={{ scaleY: 1 }}
                       transition={{ duration: 0.3 }}
@@ -197,7 +197,7 @@ const TOC = () => {
                     {/* 层级数字 */}
                     <div
                       className={`
-                      flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-200
+                      shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-200
                       ${
                         item.level === 1
                           ? "bg-primary-100 text-primary-700 group-hover:bg-primary-200"
@@ -232,7 +232,7 @@ const TOC = () => {
                       whileHover={{ x: 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <ChevronDown className="w-3 h-3 text-primary-500 rotate-[-90deg]" />
+                      <ChevronDown className="w-3 h-3 text-primary-500 -rotate-90" />
                     </motion.div>
                   </div>
                 </motion.div>

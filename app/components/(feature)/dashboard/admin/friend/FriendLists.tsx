@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Trash2, FileText, Edit } from "lucide-react";
@@ -65,17 +66,28 @@ const FriendLists = ({
 
     try {
       // Call API in background
-      await FriendService.deleteSingleFriend({
+      const response = await FriendService.deleteSingleFriend({
         friend_list_id: friendListId,
       });
 
-      // Refresh list after successful delete to update pagination/total count
-      if (onDataChange) {
-        onDataChange();
+      if (response.status === 200) {
+        toast.success(
+          "message" in response ? response.message : "Friend deleted"
+        );
+        // Refresh list after successful delete to update pagination/total count
+        if (onDataChange) {
+          onDataChange();
+        }
+      } else {
+        toast.error(
+          "error" in response ? response.error : "Failed to delete friend"
+        );
+        setOptimisticFriends(friendItems);
       }
     } catch (error) {
       // Rollback on error
       console.error("Failed to delete friend:", error);
+      toast.error("Failed to delete friend");
       setOptimisticFriends(friendItems);
     } finally {
       setDeletingIds((prev) => prev.filter((id) => id !== friendListId));

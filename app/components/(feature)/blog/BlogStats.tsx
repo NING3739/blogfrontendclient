@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import useSWR from "swr";
+import toast from "react-hot-toast";
 import { useAuth } from "@/app/contexts/hooks/useAuth";
 import { Eye, Heart, MessageCircle, Bookmark } from "lucide-react";
 import type { GetBlogStatsResponse } from "@/app/types/blogServiceType";
@@ -45,15 +46,26 @@ const BlogStats = ({
         if (response.data === true) {
           // 保存成功，切换保存状态
           setIsSaved(true);
+          toast.success(
+            "message" in response ? response.message : "Blog saved"
+          );
         } else if (response.data === false) {
           // 取消保存，切换保存状态
           setIsSaved(false);
+          toast.success(
+            "message" in response ? response.message : "Blog unsaved"
+          );
         }
         // 无论保存还是取消保存，都重新获取统计数据以更新收藏数
         mutate();
+      } else {
+        toast.error(
+          "error" in response ? response.error : "Failed to save blog"
+        );
       }
     } catch (error) {
       console.error("Failed to save blog:", error);
+      toast.error("Failed to save blog");
     } finally {
       setIsSaving(false);
     }
@@ -71,16 +83,27 @@ const BlogStats = ({
           // 点赞成功，更新状态和 cookie
           setIsLiked(true);
           setBlogLikeStatus(blogId, true);
+          toast.success(
+            "message" in response ? response.message : "Blog liked"
+          );
         } else if (response.data === false) {
           // 取消点赞，更新状态和 cookie
           setIsLiked(false);
           setBlogLikeStatus(blogId, false);
+          toast.success(
+            "message" in response ? response.message : "Blog unliked"
+          );
         }
         // 无论点赞还是取消点赞，都重新获取统计数据以更新点赞数
         mutate();
+      } else {
+        toast.error(
+          "error" in response ? response.error : "Failed to like blog"
+        );
       }
     } catch (error) {
       console.error("Failed to like blog:", error);
+      toast.error("Failed to like blog");
     } finally {
       setIsLiking(false);
     }

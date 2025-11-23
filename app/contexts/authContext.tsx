@@ -49,9 +49,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const response = await authService.accountLogin(payload);
         if (response.status === 200 && "data" in response) {
           // 后端返回 data: true 表示登录成功
+          toast.success(
+            "message" in response ? response.message : "Login successful"
+          );
           setIsAuthenticated(response.data);
-          console.log(response.data);
           router.push("/");
+        } else {
+          const errorMsg =
+            "error" in response ? response.error : "Login failed";
+          setError(errorMsg);
+          toast.error(errorMsg);
         }
       } catch (error: any) {
         const errorMessage = error.error || "登录失败，请重试";
@@ -93,8 +100,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const response = await authService.accountLogout();
       if (response.status === 200 && "data" in response) {
         // 后端返回 data: true 表示登出成功
+        toast.success(
+          "message" in response ? response.message : "Logout successful"
+        );
         setIsAuthenticated(false);
         router.push("/login");
+      } else {
+        const errorMsg = "error" in response ? response.error : "Logout failed";
+        setError(errorMsg);
+        toast.error(errorMsg);
       }
     } catch (error: any) {
       const errorMessage = error.error || "登出失败，请重试";

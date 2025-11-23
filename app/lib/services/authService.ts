@@ -7,7 +7,6 @@ import type {
   ResetLoggedInUserPasswordRequest,
   AccountLoginRequest,
 } from "@/app/types/authServiceType";
-import { handleToastResponse } from "../utils/handleToastResponse";
 
 class AuthService {
   async sendVerificationCode(payload: SendVerificationCodeRequest) {
@@ -15,13 +14,11 @@ class AuthService {
       "/auth/send-verification-code",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
   async sendResetCode(payload: SendResetCodeRequest) {
     const response = await httpClient.post("/auth/send-reset-code", payload);
-    handleToastResponse(response);
     return response;
   }
 
@@ -30,7 +27,6 @@ class AuthService {
       "/auth/create-user-account",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -39,7 +35,6 @@ class AuthService {
       "/auth/reset-user-password",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
@@ -48,13 +43,11 @@ class AuthService {
       "/auth/reset-logged-in-user-password",
       payload
     );
-    handleToastResponse(response);
     return response;
   }
 
   async accountLogin(payload: AccountLoginRequest) {
     const response = await httpClient.post("/auth/account-login", payload);
-    handleToastResponse(response);
     return response;
   }
 
@@ -78,7 +71,6 @@ class AuthService {
 
   async accountLogout() {
     const response = await httpClient.delete("/auth/account-logout");
-    handleToastResponse(response);
     return response;
   }
 

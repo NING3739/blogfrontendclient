@@ -6,7 +6,6 @@ import type {
   CreateSectionRequest,
   DeleteSectionRequest,
 } from "@/app/types/sectionServiceType";
-import { handleToastResponse } from "../utils/handleToastResponse";
 
 class SectionService {
   async getSectionSeoBySlug(payload: GetSectionSeoBySlugRequest) {
@@ -26,7 +25,6 @@ class SectionService {
       `/section/admin/update-section`,
       payload
     );
-    handleToastResponse(response);
     return response;
   }
   async createSection(payload: CreateSectionRequest) {
@@ -34,14 +32,12 @@ class SectionService {
       `/section/admin/create-section`,
       payload
     );
-    handleToastResponse(response);
     return response;
   }
   async deleteSection(payload: DeleteSectionRequest) {
     const response = await httpClient.delete(
       `/section/admin/delete-section/${payload.section_id}`
     );
-    handleToastResponse(response);
     return response;
   }
 }

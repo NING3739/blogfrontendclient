@@ -48,7 +48,7 @@ export default function StatsCard({
           )}
         </div>
         <div
-          className={`p-3 sm:p-4 ${iconBgColor} rounded-sm flex-shrink-0 shadow-sm`}
+          className={`p-3 sm:p-4 ${iconBgColor} rounded-sm shrink-0 shadow-sm`}
         >
           <Icon className={`w-6 h-6 sm:w-7 sm:h-7 ${iconColor}`} />
         </div>

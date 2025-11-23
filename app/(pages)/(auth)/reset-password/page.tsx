@@ -42,7 +42,7 @@ export default function ResetPasswordPage() {
     };
   }, [countdown]);
 
-  // 前端表单验证（格式验证），API业务逻辑错误由authService中的handleToastResponse处理
+  // 前端表单验证（格式验证），API业务逻辑错误由UI层处理toast
   const validateForm = () => {
     const result = Validator.validateResetPasswordForm(email, code, password);
     return Validator.validateAndShowError(result, validationT, toast);
@@ -58,9 +58,18 @@ export default function ResetPasswordPage() {
 
     setIsSendingCode(true);
 
-    await authService.sendResetCode({ email });
-    // 开始60秒倒计时
-    setCountdown(60);
+    const response = await authService.sendResetCode({ email });
+    if (response.status === 200) {
+      toast.success(
+        "message" in response ? response.message : "Reset code sent"
+      );
+      // 开始60秒倒计时
+      setCountdown(60);
+    } else {
+      toast.error(
+        "error" in response ? response.error : "Failed to send reset code"
+      );
+    }
 
     setIsSendingCode(false);
   };
@@ -82,8 +91,15 @@ export default function ResetPasswordPage() {
     });
 
     if (response.status === 200) {
+      toast.success(
+        "message" in response ? response.message : "Password reset successfully"
+      );
       // 重置密码成功后静默自动登录（不显示登录成功的toast）
       await silentAccountLogin({ email, password });
+    } else {
+      toast.error(
+        "error" in response ? response.error : "Failed to reset password"
+      );
     }
 
     setIsSubmitting(false);

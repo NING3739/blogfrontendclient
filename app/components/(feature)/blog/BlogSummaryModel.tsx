@@ -108,7 +108,7 @@ const BlogSummaryModel = ({
               className="bg-card-50 border border-border-50 rounded-sm p-4 hover:bg-background-100 transition-colors"
             >
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-sm bg-primary-50 flex items-center justify-center">
+                <div className="shrink-0 w-8 h-8 rounded-sm bg-primary-50 flex items-center justify-center">
                   <span className="text-sm font-semibold text-primary-500">
                     {index + 1}
                   </span>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { US, CN } from "country-flag-icons/react/3x2";
@@ -11,26 +12,33 @@ const LanguageSwitcher = () => {
   const locale = useLocale();
   const router = useRouter();
 
-  const languageOptions = [
-    {
-      value: "zh",
-      label: t("chinese"),
-      flag: <CN className="w-4 h-4 rounded-sm" />,
-    },
-    {
-      value: "en",
-      label: t("english"),
-      flag: <US className="w-4 h-4 rounded-sm" />,
-    },
-  ];
+  // 使用 useMemo 缓存 languageOptions，避免每次渲染都重新创建
+  const languageOptions = useMemo(
+    () => [
+      {
+        value: "zh",
+        label: t("chinese"),
+        flag: <CN className="w-4 h-4 rounded-sm" />,
+      },
+      {
+        value: "en",
+        label: t("english"),
+        flag: <US className="w-4 h-4 rounded-sm" />,
+      },
+    ],
+    [t]
+  );
 
   const handleLanguageChange = async (newLocale: string) => {
     if (newLocale === locale) return;
 
     try {
+      // 设置 cookie
       document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000`;
+      // 触发 httpClient 的语言变化事件
       httpClient.triggerLocaleChange(newLocale);
-      router.refresh();
+      // 使用完整页面刷新确保所有内容都更新为新语言
+      window.location.reload();
     } catch (error) {
       console.error("Error changing language:", error);
     }

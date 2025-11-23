@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Trash2, Eye, UserCheck, UserX } from "lucide-react";
@@ -52,11 +53,29 @@ const UserLists = ({
 
       try {
         // Call API in background
-        await UserService.enableOrDisableUser({
+        const response = await UserService.enableOrDisableUser({
           user_id: userId,
           is_active: newActiveState,
         });
+        if (response.status === 200) {
+          toast.success(
+            "message" in response ? response.message : "User status updated"
+          );
+        } else {
+          toast.error(
+            "error" in response
+              ? response.error
+              : "Failed to update user status"
+          );
+          // Rollback on error
+          setOptimisticUsers(
+            optimisticUsers.map((u) =>
+              u.user_id === userId ? { ...u, is_active: !newActiveState } : u
+            )
+          );
+        }
       } catch {
+        toast.error("Failed to update user status");
         // Rollback on error
         setOptimisticUsers(
           optimisticUsers.map((u) =>
@@ -70,17 +89,28 @@ const UserLists = ({
 
       try {
         // Call API in background
-        await UserService.deleteUser({
+        const response = await UserService.deleteUser({
           user_id: userId,
         });
 
-        // Refresh list after successful delete to update pagination/total count
-        if (onDataChange) {
-          onDataChange();
+        if (response.status === 200) {
+          toast.success(
+            "message" in response ? response.message : "User deleted"
+          );
+          // Refresh list after successful delete to update pagination/total count
+          if (onDataChange) {
+            onDataChange();
+          }
+        } else {
+          toast.error(
+            "error" in response ? response.error : "Failed to delete user"
+          );
+          setOptimisticUsers(userItems);
         }
       } catch (error) {
         // Rollback on error
         console.error("Failed to delete user:", error);
+        toast.error("Failed to delete user");
         setOptimisticUsers(userItems);
       }
     }

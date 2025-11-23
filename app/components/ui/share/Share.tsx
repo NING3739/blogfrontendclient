@@ -311,16 +311,20 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
   }, [createdAtText, safeTitle, url]);
 
   useEffect(() => {
+    // 只在模态框打开且url存在时才生成QRCode，提高性能
+    if (!isOpen || !url) return;
+
     let mounted = true;
     QRCode.toDataURL(url, { width: 256, margin: 1 })
       .then((d: string) => {
         if (mounted) setQrPreviewDataUrl(d);
       })
       .catch((err: unknown) => console.error(err));
+
     return () => {
       mounted = false;
     };
-  }, [url]);
+  }, [url, isOpen]);
 
   return (
     <div className="flex justify-center">
@@ -352,7 +356,7 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
       >
         <div className="flex flex-col items-center">
           <div className="w-[320px] rounded-sm overflow-hidden border border-border-100 shadow-md bg-card-50">
-            <div className="h-2 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-600" />
+            <div className="h-2 bg-linear-to-r from-primary-500 via-primary-400 to-primary-600" />
             <div className="p-5 flex flex-col gap-4">
               <div className="flex flex-col">
                 <div className="w-16 h-16 rounded-sm overflow-hidden bg-card-100">
@@ -369,7 +373,7 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
                 </span>
               </div>
 
-              <div className="relative w-full h-44 rounded-sm overflow-hidden border border-border-100 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-600">
+              <div className="relative w-full h-44 rounded-sm overflow-hidden border border-border-100 bg-linear-to-r from-primary-500 via-primary-400 to-primary-600">
                 {/* Pattern overlay to match downloaded image banner */}
                 <div
                   className="absolute inset-0 pointer-events-none"
@@ -396,7 +400,7 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
                       HeyXiaoli
                     </div>
                   </div>
-                  <div className="w-[80px] h-[80px] rounded-sm border border-border-100 bg-card-100 flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-sm border border-border-100 bg-card-100 flex items-center justify-center">
                     {qrPreviewDataUrl ? (
                       <img
                         src={qrPreviewDataUrl}

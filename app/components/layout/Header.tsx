@@ -68,24 +68,38 @@ const Header = () => {
     });
   };
 
-  // 滚动监听效果
+  // 关闭移动菜单当路由变化时
   useEffect(() => {
+    setMobileMenuOpen(false);
+    setDropdownMenuOpen(false);
+  }, [pathname]);
+
+  // 滚动监听效果（带防抖优化）
+  useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
 
-      // 如果滚动距离小于100px，始终显示header
-      if (currentScrollY < 100) {
-        setIsHeaderVisible(true);
-      } else {
-        // 向下滚动时隐藏，向上滚动时显示
-        if (currentScrollY > lastScrollY && currentScrollY > 100) {
-          setIsHeaderVisible(false);
-        } else if (currentScrollY < lastScrollY) {
-          setIsHeaderVisible(true);
-        }
+          // 如果滚动距离小于100px，始终显示header
+          if (currentScrollY < 100) {
+            setIsHeaderVisible(true);
+          } else {
+            // 向下滚动时隐藏，向上滚动时显示
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+              setIsHeaderVisible(false);
+            } else if (currentScrollY < lastScrollY) {
+              setIsHeaderVisible(true);
+            }
+          }
+
+          setLastScrollY(currentScrollY);
+          ticking = false;
+        });
+        ticking = true;
       }
-
-      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });

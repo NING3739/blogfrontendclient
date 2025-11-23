@@ -66,7 +66,7 @@ const AuthBackground = ({ children, imageType }: AuthBackgroundProps) => {
         {/* 十字方格背景 - 原有网格带流动效果 */}
         <div className="absolute inset-0 opacity-3">
           <motion.div
-            className="w-full h-full bg-gradient-to-r from-transparent via-transparent to-transparent bg-[length:32px_32px] bg-[image:repeating-linear-gradient(0deg,currentColor_0px,currentColor_1px,transparent_1px,transparent_32px),repeating-linear-gradient(90deg,currentColor_0px,currentColor_1px,transparent_1px,transparent_32px)]"
+            className="w-full h-full bg-linear-to-r from-transparent via-transparent to-transparent bg-size-[32px_32px] bg-[repeating-linear-gradient(0deg,currentColor_0px,currentColor_1px,transparent_1px,transparent_32px),repeating-linear-gradient(90deg,currentColor_0px,currentColor_1px,transparent_1px,transparent_32px)]"
             animate={{
               backgroundPosition: ["0px 0px", "32px 32px"],
             }}
@@ -78,7 +78,7 @@ const AuthBackground = ({ children, imageType }: AuthBackgroundProps) => {
           />
         </div>
         {/* 添加渐变遮罩增强质感 */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/3 via-transparent to-primary-50/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-br from-white/3 via-transparent to-primary-50/10 pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-md">{children}</div>
       </div>

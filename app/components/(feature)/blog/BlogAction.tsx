@@ -106,7 +106,7 @@ const BlogAction: React.FC<BlogActionProps> = ({ blogId }) => {
         <div className="flex-1 group">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="w-full p-4 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-sm shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 active:translate-y-0"
+            className="w-full p-4 bg-linear-to-br from-primary-500 to-primary-600 text-white rounded-sm shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 active:translate-y-0"
             aria-label={blogT("action.summarySubtitle")}
           >
             <div className="flex items-center justify-center gap-3">
@@ -133,8 +133,8 @@ const BlogAction: React.FC<BlogActionProps> = ({ blogId }) => {
             onClick={handleAudioToggle}
             className={`w-full p-4 rounded-sm shadow-sm transition-all duration-300 hover:-translate-y-1 active:translate-y-0 ${
               playState === "playing"
-                ? "bg-gradient-to-br from-green-500 to-green-600 text-white shadow-md"
-                : "bg-gradient-to-br from-slate-100 to-slate-200 text-slate-700 hover:from-slate-200 hover:to-slate-300 hover:shadow-md"
+                ? "bg-linear-to-br from-green-500 to-green-600 text-white shadow-md"
+                : "bg-linear-to-br from-slate-100 to-slate-200 text-slate-700 hover:from-slate-200 hover:to-slate-300 hover:shadow-md"
             }`}
             aria-label={
               playState === "playing"

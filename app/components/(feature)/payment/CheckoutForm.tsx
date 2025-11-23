@@ -71,7 +71,7 @@ export default function CheckoutForm() {
         ) : (
           <div className="bg-warning-50 border border-warning-100 rounded-sm p-6">
             <div className="flex items-start">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <AlertTriangle className="h-5 w-5 text-warning-400" />
               </div>
               <div className="ml-3 flex-1">
@@ -111,7 +111,7 @@ export default function CheckoutForm() {
           {error && (
             <div className="bg-error-50 border border-error-100 rounded-sm p-4">
               <div className="flex">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <XCircle className="h-5 w-5 text-error-400" />
                 </div>
                 <div className="ml-3">

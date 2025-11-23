@@ -4,7 +4,7 @@ import SWRProvider from "./providers/SWRProvider";
 import { ThemeProvider } from "next-themes";
 import { NextIntlClientProvider } from "next-intl";
 import { AuthProvider } from "./contexts/authContext";
-import { getLocale } from "next-intl/server";
+import { getLocale, getMessages } from "next-intl/server";
 import {
   Crimson_Pro,
   JetBrains_Mono,
@@ -77,6 +77,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getLocale();
+  const messages = await getMessages();
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -90,7 +91,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NextIntlClientProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
             <SWRProvider>
               <Toaster position="top-center" reverseOrder={false} />
               <AuthProvider>{children}</AuthProvider>

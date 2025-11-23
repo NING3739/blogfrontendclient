@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Save } from "lucide-react";
+import toast from "react-hot-toast";
 import Modal from "@/app/components/ui/modal/Modal";
 import { Button } from "@/app/components/ui/button/butten";
 import userService from "@/app/lib/services/userService";
@@ -44,11 +45,21 @@ const ChangeBioModal: React.FC<ChangeBioModalProps> = ({
 
     setIsSubmitting(true);
     try {
-      await userService.updateMyBio({ bio: bio.trim() });
-      onSuccess?.();
-      onClose();
+      const response = await userService.updateMyBio({ bio: bio.trim() });
+      if (response.status === 200) {
+        toast.success(
+          "message" in response ? response.message : "Bio updated successfully"
+        );
+        onSuccess?.();
+        onClose();
+      } else {
+        toast.error(
+          "error" in response ? response.error : "Failed to update bio"
+        );
+      }
     } catch (error) {
       console.error("更新个人简介失败:", error);
+      toast.error("Failed to update bio");
     } finally {
       setIsSubmitting(false);
     }
