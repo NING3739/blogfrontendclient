@@ -21,9 +21,9 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60, // 缓存60秒
     // 在开发环境中禁用图片优化，避免私有 IP 限制
-    // ...(process.env.NODE_ENV === "development" && {
-    //   unoptimized: true,
-    // }),
+    ...(process.env.NODE_ENV === "development" && {
+      unoptimized: true,
+    }),
   },
 };
 
