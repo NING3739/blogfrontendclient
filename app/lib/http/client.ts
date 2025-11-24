@@ -1,15 +1,15 @@
 import axios, {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
+  type AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
 } from "axios";
 import type {
-  SuccessResponse,
-  ErrorResponse,
   APIResponse,
+  ErrorResponse,
   HttpMethod,
   RequestOptions,
+  SuccessResponse,
   SupportedLocale,
 } from "@/app/types/clientType";
 
@@ -31,16 +31,13 @@ class HttpClient {
   // 刷新次数限制（防止无限重试）
   private refreshRetryCount = 0;
   private readonly MAX_REFRESH_RETRIES = 2;
-  // 事件监听器和定时器引用（用于清理）
-  private localeCheckInterval?: NodeJS.Timeout;
+  // 事件监听器引用（用于清理）
   private localeChangeHandler?: (event: Event) => void;
 
   constructor(baseURL?: string) {
     this.axiosInstance = axios.create({
       baseURL:
-        baseURL ||
-        process.env.NEXT_PUBLIC_API_BASE_URL ||
-        "https://api.heyxiaoli.com/api/v1",
+        baseURL || process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.heyxiaoli.com/api/v1",
       timeout: 10000,
       withCredentials: true, // 重要：确保包含httpOnly cookie
       headers: {
@@ -77,10 +74,7 @@ class HttpClient {
    * 标准化语言代码，与后端保持一致
    */
   private normalizeLocale(locale: string): SupportedLocale {
-    const normalized = locale.toLowerCase();
-    if (normalized.startsWith("zh")) return "zh";
-    if (normalized.startsWith("en")) return "en";
-    return "en"; // 默认英文
+    return locale.toLowerCase().startsWith("zh") ? "zh" : "en";
   }
 
   /**
@@ -90,18 +84,13 @@ class HttpClient {
     if (typeof window === "undefined") return "en";
 
     // 1. 优先从cookie读取
-    const cookieLocale = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("NEXT_LOCALE="))
-      ?.split("=")[1];
-
-    if (cookieLocale) {
-      return this.normalizeLocale(cookieLocale);
+    const cookieMatch = document.cookie.match(/NEXT_LOCALE=([^;]+)/);
+    if (cookieMatch) {
+      return this.normalizeLocale(cookieMatch[1]);
     }
 
     // 2. 从浏览器语言设置获取
-    const browserLang = navigator.language || navigator.languages?.[0] || "en";
-    return this.normalizeLocale(browserLang);
+    return this.normalizeLocale(navigator.language || "en");
   }
 
   /**
@@ -110,20 +99,12 @@ class HttpClient {
   private setupLocaleListener() {
     if (typeof window === "undefined") return;
 
-    // 保存事件处理器引用，以便清理
     this.localeChangeHandler = (event: Event) => {
-      const customEvent = event as CustomEvent;
-      const newLocale = customEvent.detail?.locale;
-      if (newLocale) {
-        this.setLocale(newLocale);
-      }
+      const { locale } = (event as CustomEvent).detail || {};
+      if (locale) this.setLocale(locale);
     };
 
     window.addEventListener("locale:changed", this.localeChangeHandler);
-
-    // 注意：不再需要定时检查cookie变化
-    // 因为LanguageSwitcher使用window.location.reload()会完全刷新页面
-    // 这样可以减少不必要的定时器开销
   }
 
   /**
@@ -155,7 +136,7 @@ class HttpClient {
       window.dispatchEvent(
         new CustomEvent("locale:changed", {
           detail: { locale },
-        })
+        }),
       );
     }
   }
@@ -186,7 +167,7 @@ class HttpClient {
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     // 响应拦截器
@@ -198,11 +179,7 @@ class HttpClient {
         const originalRequest = error.config;
 
         // 处理401错误 - 根据endpoint类型决定是否需要token刷新
-        if (
-          error.response?.status === 401 &&
-          originalRequest &&
-          !(originalRequest as any)._retry
-        ) {
+        if (error.response?.status === 401 && originalRequest && !(originalRequest as any)._retry) {
           const url = originalRequest.url || "";
 
           // 定义不需要重试的端点
@@ -282,17 +259,15 @@ class HttpClient {
             this.isRefreshing = false;
 
             // 重新发送原始请求，如果再次401则登出
-            return this.axiosInstance(originalRequest).catch(
-              (retryError: any) => {
-                // 如果刷新后的请求仍然返回401，说明token仍有问题
-                if (retryError?.response?.status === 401) {
-                  // 重置计数并登出
-                  this.refreshRetryCount = 0;
-                  this.logoutAndClearTokens();
-                }
-                return Promise.reject(retryError);
+            return this.axiosInstance(originalRequest).catch((retryError: any) => {
+              // 如果刷新后的请求仍然返回401，说明token仍有问题
+              if (retryError?.response?.status === 401) {
+                // 重置计数并登出
+                this.refreshRetryCount = 0;
+                this.logoutAndClearTokens();
               }
-            );
+              return Promise.reject(retryError);
+            });
           } catch (refreshError: any) {
             // 刷新失败，处理队列中的所有请求
             this.processQueue(refreshError);
@@ -305,8 +280,7 @@ class HttpClient {
               (refreshError?.request ? 0 : 500);
 
             // 判断刷新失败的原因
-            const shouldLogout =
-              this.shouldLogoutOnRefreshFailure(refreshStatus);
+            const shouldLogout = this.shouldLogoutOnRefreshFailure(refreshStatus);
 
             if (shouldLogout) {
               // Token失效或不存在，需要登出
@@ -322,7 +296,7 @@ class HttpClient {
               status: refreshStatus,
               error: this.getRefreshErrorMessage(
                 refreshStatus,
-                refreshError?.error || refreshError?.response?.data?.error
+                refreshError?.error || refreshError?.response?.data?.error,
               ),
             };
             return Promise.reject(errorResponse);
@@ -370,7 +344,7 @@ class HttpClient {
         }
 
         return Promise.reject(errorResponse);
-      }
+      },
     );
   }
 
@@ -399,10 +373,7 @@ class HttpClient {
    * @param serverMessage 服务器返回的错误消息
    * @returns 本地化的错误消息
    */
-  private getRefreshErrorMessage(
-    status: number,
-    serverMessage?: string
-  ): string {
+  private getRefreshErrorMessage(status: number, serverMessage?: string): string {
     // 优先使用服务器返回的错误消息
     if (serverMessage) {
       return serverMessage;
@@ -417,17 +388,11 @@ class HttpClient {
           ? "认证令牌无效，请重新登录"
           : "Authentication token invalid. Please login again.";
       case 404:
-        return isZh
-          ? "刷新令牌不存在，请重新登录"
-          : "Refresh token not found. Please login again.";
+        return isZh ? "刷新令牌不存在，请重新登录" : "Refresh token not found. Please login again.";
       case 403:
-        return isZh
-          ? "权限不足，请重新登录"
-          : "Insufficient permissions. Please login again.";
+        return isZh ? "权限不足，请重新登录" : "Insufficient permissions. Please login again.";
       case 429:
-        return isZh
-          ? "请求过于频繁，请稍后重试"
-          : "Too many requests. Please try again later.";
+        return isZh ? "请求过于频繁，请稍后重试" : "Too many requests. Please try again later.";
       case 0:
         return isZh
           ? "网络连接失败，请检查网络后重试"
@@ -436,13 +401,9 @@ class HttpClient {
       case 502:
       case 503:
       case 504:
-        return isZh
-          ? "服务器错误，请稍后重试"
-          : "Server error. Please try again later.";
+        return isZh ? "服务器错误，请稍后重试" : "Server error. Please try again later.";
       default:
-        return isZh
-          ? "会话已过期，请重新登录"
-          : "Session expired. Please login again.";
+        return isZh ? "会话已过期，请重新登录" : "Session expired. Please login again.";
     }
   }
 
@@ -451,13 +412,7 @@ class HttpClient {
    * @param error 如果刷新失败，传入错误对象；如果刷新成功，传入null
    */
   private processQueue(error: any) {
-    this.failedQueue.forEach((promise) => {
-      if (error) {
-        promise.reject(error);
-      } else {
-        promise.resolve();
-      }
-    });
+    this.failedQueue.forEach((promise) => (error ? promise.reject(error) : promise.resolve()));
     this.failedQueue = [];
   }
 
@@ -467,7 +422,7 @@ class HttpClient {
   async request<T = any>(
     method: HttpMethod,
     url: string,
-    options: RequestOptions = {}
+    options: RequestOptions = {},
   ): Promise<APIResponse<T>> {
     try {
       const config: AxiosRequestConfig = {
@@ -503,53 +458,35 @@ class HttpClient {
   /**
    * GET请求
    */
-  async get<T = any>(
-    url: string,
-    options?: RequestOptions
-  ): Promise<APIResponse<T>> {
+  async get<T = any>(url: string, options?: RequestOptions): Promise<APIResponse<T>> {
     return this.request<T>("GET", url, options);
   }
 
   /**
    * POST请求
    */
-  async post<T = any>(
-    url: string,
-    data?: any,
-    options?: RequestOptions
-  ): Promise<APIResponse<T>> {
+  async post<T = any>(url: string, data?: any, options?: RequestOptions): Promise<APIResponse<T>> {
     return this.request<T>("POST", url, { ...options, data });
   }
 
   /**
    * PUT请求
    */
-  async put<T = any>(
-    url: string,
-    data?: any,
-    options?: RequestOptions
-  ): Promise<APIResponse<T>> {
+  async put<T = any>(url: string, data?: any, options?: RequestOptions): Promise<APIResponse<T>> {
     return this.request<T>("PUT", url, { ...options, data });
   }
 
   /**
    * DELETE请求
    */
-  async delete<T = any>(
-    url: string,
-    options?: RequestOptions
-  ): Promise<APIResponse<T>> {
+  async delete<T = any>(url: string, options?: RequestOptions): Promise<APIResponse<T>> {
     return this.request<T>("DELETE", url, options);
   }
 
   /**
    * PATCH请求
    */
-  async patch<T = any>(
-    url: string,
-    data?: any,
-    options?: RequestOptions
-  ): Promise<APIResponse<T>> {
+  async patch<T = any>(url: string, data?: any, options?: RequestOptions): Promise<APIResponse<T>> {
     return this.request<T>("PATCH", url, { ...options, data });
   }
 
@@ -559,7 +496,7 @@ class HttpClient {
   async upload<T = any>(
     url: string,
     file: File | FormData,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<APIResponse<T>> {
     const formData =
       file instanceof FormData
@@ -585,7 +522,7 @@ class HttpClient {
    */
   async download(
     url: string,
-    params?: Record<string, any>
+    params?: Record<string, any>,
   ): Promise<{ success: boolean; message: string }> {
     try {
       const response = await this.axiosInstance.get(url, {
@@ -668,7 +605,7 @@ class HttpClient {
       window.dispatchEvent(
         new CustomEvent("auth:logout", {
           detail: { reason: "token_expired" },
-        })
+        }),
       );
 
       // 跳转到登录页（如果当前不在登录页）
@@ -686,16 +623,10 @@ class HttpClient {
   }
 
   /**
-   * 清理资源 - 移除事件监听器和定时器
+   * 清理资源 - 移除事件监听器和请求队列
    * 主要用于组件卸载或应用关闭时清理资源，防止内存泄漏
    */
   destroy() {
-    // 清理定时器
-    if (this.localeCheckInterval) {
-      clearInterval(this.localeCheckInterval);
-      this.localeCheckInterval = undefined;
-    }
-
     // 清理事件监听器
     if (typeof window !== "undefined" && this.localeChangeHandler) {
       window.removeEventListener("locale:changed", this.localeChangeHandler);
@@ -703,9 +634,8 @@ class HttpClient {
     }
 
     // 清理请求队列
-    this.failedQueue.forEach((promise) => {
-      promise.reject(new Error("HttpClient destroyed"));
-    });
+    const destroyError = new Error("HttpClient destroyed");
+    this.failedQueue.forEach((promise) => promise.reject(destroyError));
     this.failedQueue = [];
 
     // 重置刷新相关状态

@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { EditorContent, useEditor, JSONContent } from "@tiptap/react";
-import { Placeholder } from "@tiptap/extensions";
-import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
+import { Placeholder } from "@tiptap/extensions";
+import { EditorContent, type JSONContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { useEffect, useRef } from "react";
+import MenuBar from "@/app/components/(feature)/editor/MenuBar";
+import { Audio } from "@/app/lib/extensions/audio";
 import { Image } from "@/app/lib/extensions/image";
 import { Video } from "@/app/lib/extensions/video";
-import { Audio } from "@/app/lib/extensions/audio";
-import MenuBar from "@/app/components/(feature)/editor/MenuBar";
 
 export default function TiptapEditor({
   content,

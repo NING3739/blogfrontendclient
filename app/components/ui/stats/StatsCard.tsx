@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
+import type { LucideIcon } from "lucide-react";
 import { motion } from "motion/react";
-import { LucideIcon } from "lucide-react";
 
 interface StatsCardProps {
   title: string;
@@ -38,18 +37,10 @@ export default function StatsCard({
           <p className="text-xs sm:text-sm font-medium text-foreground-400 mb-2 uppercase tracking-wide">
             {title}
           </p>
-          <p className="text-2xl sm:text-3xl font-bold text-foreground-50 truncate">
-            {value}
-          </p>
-          {subtitle && (
-            <p className="text-xs text-foreground-300 mt-2 line-clamp-2">
-              {subtitle}
-            </p>
-          )}
+          <p className="text-2xl sm:text-3xl font-bold text-foreground-50 truncate">{value}</p>
+          {subtitle && <p className="text-xs text-foreground-300 mt-2 line-clamp-2">{subtitle}</p>}
         </div>
-        <div
-          className={`p-3 sm:p-4 ${iconBgColor} rounded-sm shrink-0 shadow-sm`}
-        >
+        <div className={`p-3 sm:p-4 ${iconBgColor} rounded-sm shrink-0 shadow-sm`}>
           <Icon className={`w-6 h-6 sm:w-7 sm:h-7 ${iconColor}`} />
         </div>
       </div>

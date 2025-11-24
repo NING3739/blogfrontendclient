@@ -1,12 +1,12 @@
 "use client";
 
-import useSWR from "swr";
 import { useState } from "react";
-import Modal from "@/app/components/ui/modal/Modal";
+import useSWR from "swr";
 import MediaCard from "@/app/components/(feature)/editor/MediaCard";
-import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import Modal from "@/app/components/ui/modal/Modal";
+import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
 import type { MediaItem } from "@/app/types/mediaServiceType";
 import { MediaTypeEnum } from "@/app/types/mediaServiceType";
 
@@ -28,9 +28,7 @@ export default function TiptapEditorModel({
     data: mediaLists,
     error,
     isLoading,
-  } = useSWR(
-    `media/admin/get-media-lists?page=${currentPage}&size=4&media_type=${type}`
-  );
+  } = useSWR(`media/admin/get-media-lists?page=${currentPage}&size=4&media_type=${type}`);
 
   const handleSelect = (mediaId: number, url: string) => {
     if (onSelect) {
@@ -65,7 +63,7 @@ export default function TiptapEditorModel({
           (() => {
             const { items: mediaItems, pagination } = mediaLists;
             const filterMediaItems = mediaItems.filter(
-              (item: MediaItem) => item.media_type === MediaTypeEnum[type]
+              (item: MediaItem) => item.media_type === MediaTypeEnum[type],
             );
 
             if (filterMediaItems.length === 0) {
@@ -75,9 +73,7 @@ export default function TiptapEditorModel({
                     <p className="text-foreground-200 text-lg font-medium mb-2">
                       没有找到 {type} 类型的媒体文件
                     </p>
-                    <p className="text-foreground-400 text-sm">
-                      请先上传一些 {type} 文件
-                    </p>
+                    <p className="text-foreground-400 text-sm">请先上传一些 {type} 文件</p>
                   </div>
                 </div>
               );
@@ -87,17 +83,10 @@ export default function TiptapEditorModel({
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
                   {filterMediaItems.map((item: MediaItem) => (
-                    <MediaCard
-                      key={item.media_id}
-                      media={item}
-                      onSelect={handleSelect}
-                    />
+                    <MediaCard key={item.media_id} media={item} onSelect={handleSelect} />
                   ))}
                 </div>
-                <OffsetPagination
-                  pagination={pagination}
-                  onPageChange={setCurrentPage}
-                />
+                <OffsetPagination pagination={pagination} onPageChange={setCurrentPage} />
               </>
             );
           })()}

@@ -1,21 +1,21 @@
 "use client";
 
-import useSWR from "swr";
-import dynamic from "next/dynamic";
-import React, { useState, useEffect } from "react";
-import { JSONContent } from "@tiptap/react";
-import { motion } from "motion/react";
+import type { JSONContent } from "@tiptap/react";
 import { Save } from "lucide-react";
+import { motion } from "motion/react";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";
-import useSection from "@/app/contexts/hooks/useSection";
-import { useProjectEditor } from "@/app/contexts/hooks/useProjectEditor";
-import { usePostEditor } from "@/app/contexts/hooks/usePostEditor";
-import type { SectionListItem } from "@/app/types/sectionServiceType";
-import type { GetSeoItemResponse } from "@/app/types/seoServiceType";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
 import { BlogMetaData } from "@/app/components/(feature)/editor/BlogMetaData";
 import { ProjectMetaData } from "@/app/components/(feature)/editor/ProjectMetaData";
 import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import { usePostEditor } from "@/app/contexts/hooks/usePostEditor";
+import { useProjectEditor } from "@/app/contexts/hooks/useProjectEditor";
+import useSection from "@/app/contexts/hooks/useSection";
+import type { SectionListItem } from "@/app/types/sectionServiceType";
+import type { GetSeoItemResponse } from "@/app/types/seoServiceType";
 
 // 懒加载 TiptapEditor，减少初始加载大小
 const TiptapEditor = dynamic(
@@ -126,7 +126,7 @@ export default function EditorPage() {
         await handleBlogSave();
         return;
       }
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       // 错误已经在各自的 handler 中处理
     }
   };
@@ -171,6 +171,7 @@ export default function EditorPage() {
           </div>
           <div className="shrink-0">
             <button
+              type="button"
               onClick={handleSave}
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-primary-500 text-white rounded-sm hover:bg-primary-600 transition-colors text-sm sm:text-base"
             >

@@ -1,14 +1,13 @@
-import React from "react";
 import { useRouter } from "next/navigation";
 import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
 } from "recharts";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
@@ -37,9 +36,7 @@ export default function TopPerformersChart({
   const router = useRouter();
 
   if (isLoading) {
-    return (
-      <LoadingSpinner message={`加载${title}...`} size="sm" variant="pulse" />
-    );
+    return <LoadingSpinner message={`加载${title}...`} size="sm" variant="pulse" />;
   }
 
   if (error || !data) {
@@ -53,7 +50,7 @@ export default function TopPerformersChart({
     );
   }
   const chartData = data.map((item, index) => ({
-    name: item.title.length > 15 ? item.title.slice(0, 12) + "..." : item.title,
+    name: item.title.length > 15 ? `${item.title.slice(0, 12)}...` : item.title,
     fullName: item.title,
     value: item.value,
     blog_slug: item.blog_slug,
@@ -69,9 +66,7 @@ export default function TopPerformersChart({
 
   return (
     <div className="bg-card-50 border border-border-50 rounded-sm p-4 sm:p-6 shadow-sm w-full max-w-full overflow-hidden">
-      <h3 className="text-base sm:text-lg font-semibold text-foreground-50 mb-4">
-        {title}
-      </h3>
+      <h3 className="text-base sm:text-lg font-semibold text-foreground-50 mb-4">{title}</h3>
       <div className="w-full max-w-full" style={{ minHeight: "300px" }}>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
@@ -79,11 +74,7 @@ export default function TopPerformersChart({
             layout="vertical"
             margin={{ left: -20, right: 10, top: 5, bottom: 5 }}
           >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="var(--color-border-50)"
-              opacity={0.3}
-            />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-50)" opacity={0.3} />
             <XAxis
               type="number"
               stroke="var(--color-foreground-400)"
@@ -113,9 +104,7 @@ export default function TopPerformersChart({
                         maxWidth: "200px",
                       }}
                     >
-                      <p className="font-medium mb-1 break-words">
-                        {payload[0].payload.fullName}
-                      </p>
+                      <p className="font-medium mb-1 break-words">{payload[0].payload.fullName}</p>
                       <p className="text-foreground-400">
                         {payload[0].name}: {payload[0].value}
                       </p>

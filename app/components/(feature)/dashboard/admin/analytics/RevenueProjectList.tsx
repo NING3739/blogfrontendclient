@@ -1,12 +1,11 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { useFormatter } from "next-intl";
-import type { RevenueProject } from "@/app/types/analyticServiceType";
-import { formatCurrency } from "@/app/lib/utils/handleCurrencyFormat";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import { formatCurrency } from "@/app/lib/utils/handleCurrencyFormat";
+import type { RevenueProject } from "@/app/types/analyticServiceType";
 
 interface RevenueProjectListProps {
   projects?: RevenueProject[];
@@ -21,9 +20,7 @@ export default function RevenueProjectList({
 }: RevenueProjectListProps) {
   const format = useFormatter();
   if (isLoading) {
-    return (
-      <LoadingSpinner message="加载收入项目..." size="sm" variant="pulse" />
-    );
+    return <LoadingSpinner message="加载收入项目..." size="sm" variant="pulse" />;
   }
 
   if (error || !projects) {
@@ -38,9 +35,7 @@ export default function RevenueProjectList({
   }
   return (
     <div className="bg-card-50 border border-border-50 rounded-sm p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow w-full max-w-full overflow-hidden">
-      <h3 className="text-lg sm:text-xl font-semibold text-foreground-50 mb-5">
-        收入前十项目
-      </h3>
+      <h3 className="text-lg sm:text-xl font-semibold text-foreground-50 mb-5">收入前十项目</h3>
       <div className="space-y-2 w-full max-h-[400px] overflow-y-auto pr-1">
         {projects.map((project, index) => (
           <Link

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { createPortal } from "react-dom";
-import { motion } from "motion/react";
-import { X } from "lucide-react";
 import clsx from "clsx";
+import { X } from "lucide-react";
+import { motion } from "motion/react";
+import type React from "react";
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
   isOpen: boolean;
@@ -85,7 +86,7 @@ const Modal: React.FC<ModalProps> = ({
         className={clsx(
           "relative bg-card-50 border border-border-100 shadow-lg w-full",
           roundClasses[round],
-          sizeClasses[size]
+          sizeClasses[size],
         )}
         initial={{ scale: 0.95, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -96,9 +97,7 @@ const Modal: React.FC<ModalProps> = ({
         {/* 头部 */}
         {title && (
           <div className="flex items-center justify-between p-6 border-b border-border-100 bg-card-100">
-            <h2 className="text-xl font-semibold text-foreground-50">
-              {title}
-            </h2>
+            <h2 className="text-xl font-semibold text-foreground-50">{title}</h2>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -121,7 +120,7 @@ const Modal: React.FC<ModalProps> = ({
         )}
       </motion.div>
     </motion.div>,
-    document.body
+    document.body,
   );
 };
 

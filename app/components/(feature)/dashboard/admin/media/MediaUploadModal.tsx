@@ -1,23 +1,24 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
-import toast from "react-hot-toast";
-import { motion } from "motion/react";
 import {
-  Upload,
-  X,
-  FileText,
-  Image as ImageIcon,
-  Video,
-  FileAudio,
-  Folder,
-  CheckCircle,
   AlertCircle,
+  CheckCircle,
+  FileAudio,
+  FileText,
+  Folder,
+  Image as ImageIcon,
   Loader2,
+  Upload,
+  Video,
+  X,
 } from "lucide-react";
-import MediaService from "@/app/lib/services/mediaService";
+import { motion } from "motion/react";
+import type React from "react";
+import { useCallback, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { Button } from "@/app/components/ui/button/butten";
 import Modal from "@/app/components/ui/modal/Modal";
+import MediaService from "@/app/lib/services/mediaService";
 
 interface MediaUploadModalProps {
   isOpen: boolean;
@@ -33,11 +34,7 @@ interface UploadFile {
   error?: string;
 }
 
-const MediaUploadModal = ({
-  isOpen,
-  onClose,
-  onUploadSuccess,
-}: MediaUploadModalProps) => {
+const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModalProps) => {
   const [files, setFiles] = useState<UploadFile[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -80,7 +77,7 @@ const MediaUploadModal = ({
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return `${parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
   };
 
   const handleFiles = useCallback((fileList: FileList | File[]) => {
@@ -110,7 +107,7 @@ const MediaUploadModal = ({
       const droppedFiles = e.dataTransfer.files;
       handleFiles(droppedFiles);
     },
-    [handleFiles]
+    [handleFiles],
   );
 
   const handleFileInput = useCallback(
@@ -120,7 +117,7 @@ const MediaUploadModal = ({
         handleFiles(selectedFiles);
       }
     },
-    [handleFiles]
+    [handleFiles],
   );
 
   const removeFile = (fileId: string) => {
@@ -139,8 +136,8 @@ const MediaUploadModal = ({
         prev.map((f) =>
           filesToUpload.some((ftu) => ftu.id === f.id)
             ? { ...f, status: "uploading" as const, progress: 0 }
-            : f
-        )
+            : f,
+        ),
       );
 
       // Upload files with progress tracking
@@ -150,23 +147,19 @@ const MediaUploadModal = ({
         },
         (progressEvent) => {
           // Calculate overall progress
-          const totalSize = filesToUpload.reduce(
-            (sum, f) => sum + f.file.size,
-            0
-          );
+          const totalSize = filesToUpload.reduce((sum, f) => sum + f.file.size, 0);
           const uploadedSize = progressEvent.loaded || 0;
           const progress = Math.round((uploadedSize / totalSize) * 100);
 
           // Update progress for all uploading files
           setFiles((prev) =>
             prev.map((f) =>
-              filesToUpload.some((ftu) => ftu.id === f.id) &&
-              f.status === "uploading"
+              filesToUpload.some((ftu) => ftu.id === f.id) && f.status === "uploading"
                 ? { ...f, progress }
-                : f
-            )
+                : f,
+            ),
           );
-        }
+        },
       );
 
       if (response.status === 200 && "message" in response) {
@@ -177,8 +170,8 @@ const MediaUploadModal = ({
           prev.map((f) =>
             filesToUpload.some((ftu) => ftu.id === f.id)
               ? { ...f, status: "success" as const, progress: 100 }
-              : f
-          )
+              : f,
+          ),
         );
 
         // Call success callback
@@ -207,8 +200,8 @@ const MediaUploadModal = ({
                 status: "error" as const,
                 error: errorMsg,
               }
-            : f
-        )
+            : f,
+        ),
       );
     } finally {
       setIsUploading(false);
@@ -337,9 +330,7 @@ const MediaUploadModal = ({
                       {fileItem.status === "uploading" && (
                         <div className="flex items-center space-x-2">
                           <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
-                          <span className="text-xs text-foreground-300">
-                            {fileItem.progress}%
-                          </span>
+                          <span className="text-xs text-foreground-300">{fileItem.progress}%</span>
                         </div>
                       )}
                       {fileItem.status === "success" && (
@@ -382,9 +373,7 @@ const MediaUploadModal = ({
       {/* Error Message */}
       {hasErrorFiles && (
         <div className="mt-4 p-3 bg-error-50 border border-error-200 rounded-sm">
-          <p className="text-sm text-error-600">
-            部分文件上传失败，请检查文件格式和大小
-          </p>
+          <p className="text-sm text-error-600">部分文件上传失败，请检查文件格式和大小</p>
         </div>
       )}
     </Modal>

@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
+import { Bookmark, Clock, Eye, Heart, MessageCircle } from "lucide-react";
 import { motion } from "motion/react";
-import { Clock, Eye, Heart, MessageCircle, Bookmark } from "lucide-react";
+import Image from "next/image";
 import { useFormatter } from "next-intl";
+import type React from "react";
 import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
 
 interface Tag {
@@ -35,7 +35,7 @@ interface ContentCardProps {
 const ContentCard: React.FC<ContentCardProps> = ({ content, onClick }) => {
   const format = useFormatter();
 
-  const hasValidStats =
+  const _hasValidStats =
     content.stats &&
     (content.stats.views > 0 ||
       content.stats.likes > 0 ||
@@ -85,12 +85,12 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onClick }) => {
 
       <div className="p-6">
         {/* 标题 - 固定高度为2行 */}
-        <h2 className="text-xl font-bold mb-3 line-clamp-2 h-[2rem] transition-colors duration-200 text-foreground-50">
+        <h2 className="text-xl font-bold mb-3 line-clamp-2 h-8 transition-colors duration-200 text-foreground-50">
           {content.title}
         </h2>
 
         {/* 描述 - 固定高度为3行 */}
-        <p className="text-sm leading-relaxed line-clamp-3 h-[4rem] mb-4 text-foreground-300">
+        <p className="text-sm leading-relaxed line-clamp-3 h-16 mb-4 text-foreground-300">
           {content.description}
         </p>
 

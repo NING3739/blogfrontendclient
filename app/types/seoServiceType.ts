@@ -1,13 +1,10 @@
-import { SeoID, ChineseTitle, ChineseDescription } from "./commonType";
+import type { ChineseDescription, ChineseTitle, SeoID } from "./commonType";
 
 interface ChineseKeywords {
   chinese_keywords: string;
 }
 
-export interface CreateSeoRequest
-  extends ChineseTitle,
-    ChineseDescription,
-    ChineseKeywords {}
+export interface CreateSeoRequest extends ChineseTitle, ChineseDescription, ChineseKeywords {}
 
 export interface UpdateSeoRequest
   extends SeoID,

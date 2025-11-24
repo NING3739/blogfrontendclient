@@ -1,11 +1,10 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
+import { AlertCircle, ArrowLeft, Home } from "lucide-react";
 import { motion } from "motion/react";
-import { Home, ArrowLeft, AlertCircle } from "lucide-react";
-import { Button } from "@/app/components/ui/button/butten";
+import { useRouter } from "next/navigation";
 import DefaultBackground from "@/app/components/ui/background/DefaultBackground";
+import { Button } from "@/app/components/ui/button/butten";
 
 export default function NotFoundPage() {
   const router = useRouter();
@@ -64,9 +63,7 @@ export default function NotFoundPage() {
               >
                 <AlertCircle className="w-10 h-10 text-primary-500" />
               </motion.div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-foreground-50">
-                页面走丢了
-              </h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground-50">页面走丢了</h2>
             </div>
 
             <p className="text-foreground-300 text-lg sm:text-xl max-w-lg mx-auto">
@@ -108,9 +105,7 @@ export default function NotFoundPage() {
             transition={{ delay: 0.4, duration: 0.8 }}
             className="mt-8 text-center"
           >
-            <p className="text-xs text-foreground-400">
-              错误代码: 404 | 页面未找到
-            </p>
+            <p className="text-xs text-foreground-400">错误代码: 404 | 页面未找到</p>
           </motion.div>
         </div>
       </div>

@@ -1,12 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  useStripe,
-  useElements,
-  PaymentElement,
-} from "@stripe/react-stripe-js";
-import { CreditCard, AlertTriangle, Lock, XCircle } from "lucide-react";
+import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { AlertTriangle, CreditCard, Lock, XCircle } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
 import { Button } from "@/app/components/ui/button/butten";
 
 export default function CheckoutForm() {
@@ -61,9 +58,7 @@ export default function CheckoutForm() {
               <PaymentElement
                 onLoadError={(error) => {
                   console.error("PaymentElement load error:", error);
-                  setError(
-                    `支付组件加载失败: ${error.error?.message || "未知错误"}`
-                  );
+                  setError(`支付组件加载失败: ${error.error?.message || "未知错误"}`);
                 }}
               />
             </div>
@@ -115,9 +110,7 @@ export default function CheckoutForm() {
                   <XCircle className="h-5 w-5 text-error-400" />
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-error-500">
-                    支付失败
-                  </h3>
+                  <h3 className="text-sm font-medium text-error-500">支付失败</h3>
                   <div className="mt-2 text-sm text-error-500">
                     <p>{error}</p>
                   </div>

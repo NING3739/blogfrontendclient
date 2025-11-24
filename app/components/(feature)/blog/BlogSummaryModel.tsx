@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import Modal from "@/app/components/ui/modal/Modal";
+import { useEffect, useRef, useState } from "react";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import Modal from "@/app/components/ui/modal/Modal";
 
 interface BlogSummaryModelProps {
   isOpen: boolean;
@@ -13,6 +13,7 @@ interface BlogSummaryModelProps {
 }
 
 interface StreamItem {
+  id: string;
   text: string;
   isComplete: boolean;
 }
@@ -47,9 +48,13 @@ const BlogSummaryModel = ({
 
       items.forEach((fullText: string, itemIndex: number) => {
         const itemDelay = itemIndex * 200;
+        const itemId = `summary-item-${Date.now()}-${itemIndex}`;
 
         const timeout = setTimeout(() => {
-          setStreamItems((prev) => [...prev, { text: "", isComplete: false }]);
+          setStreamItems((prev) => [
+            ...prev,
+            { id: itemId, text: "", isComplete: false },
+          ]);
 
           const chars = fullText.split("");
           chars.forEach((char: string, charIndex: number) => {
@@ -58,6 +63,7 @@ const BlogSummaryModel = ({
                 const newItems = [...prev];
                 if (newItems[itemIndex]) {
                   newItems[itemIndex] = {
+                    id: itemId,
                     text: newItems[itemIndex].text + char,
                     isComplete: charIndex === chars.length - 1,
                   };
@@ -101,7 +107,7 @@ const BlogSummaryModel = ({
         <div className="space-y-4">
           {streamItems.map((item, index) => (
             <motion.div
-              key={index}
+              key={item.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}

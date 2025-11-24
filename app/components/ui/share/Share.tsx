@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import { Share2 } from "lucide-react";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
+import QRCode from "qrcode";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/app/components/ui/button/butten";
 import Modal from "@/app/components/ui/modal/Modal";
-import QRCode from "qrcode";
-import { useCallback, useMemo } from "react";
-import { useTranslations } from "next-intl";
 
 interface ShareProps {
   url: string;
@@ -29,7 +29,7 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
     y: number,
     width: number,
     height: number,
-    radius: number
+    radius: number,
   ) => {
     const r = Math.min(radius, width / 2, height / 2);
     ctx.beginPath();
@@ -50,19 +50,19 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
       img.src = src;
     });
 
-  const wrapText = (
+  const _wrapText = (
     ctx: CanvasRenderingContext2D,
     text: string,
     x: number,
     y: number,
     maxWidth: number,
-    lineHeight: number
+    lineHeight: number,
   ) => {
     const words = text.split(/\s+/);
     let line = "";
     const lines: string[] = [];
     for (let i = 0; i < words.length; i++) {
-      const testLine = line ? line + " " + words[i] : words[i];
+      const testLine = line ? `${line} ${words[i]}` : words[i];
       const metrics = ctx.measureText(testLine);
       if (metrics.width > maxWidth && line) {
         lines.push(line);
@@ -79,7 +79,7 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
   const getWrappedLines = (
     ctx: CanvasRenderingContext2D,
     text: string,
-    maxWidth: number
+    maxWidth: number,
   ): string[] => {
     if (!text) return [];
     // Split into tokens; for CJK text without spaces, fall back to per-character
@@ -103,9 +103,7 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
 
   const getThemeColor = (varName: string, fallback: string): string => {
     if (typeof window === "undefined") return fallback;
-    const cssValue = getComputedStyle(document.documentElement)
-      .getPropertyValue(varName)
-      .trim();
+    const cssValue = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
     return cssValue || fallback;
   };
 
@@ -172,14 +170,7 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
       // Inner panel border to match preview
       ctx.strokeStyle = getThemeColor("--color-border-100", "#e5e7eb");
       ctx.lineWidth = 1;
-      drawRoundedRect(
-        ctx,
-        innerX + 0.5,
-        innerY + 0.5,
-        innerW - 1,
-        innerH - 1,
-        6
-      );
+      drawRoundedRect(ctx, innerX + 0.5, innerY + 0.5, innerW - 1, innerH - 1, 6);
       ctx.stroke();
 
       // Top gradient bar inside card (matches preview h-2 gradient)
@@ -187,12 +178,7 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
       ctx.save();
       drawRoundedRect(ctx, innerX, innerY, innerW, innerH, 6);
       ctx.clip();
-      const grad = ctx.createLinearGradient(
-        innerX,
-        innerY,
-        innerX + innerW,
-        innerY
-      );
+      const grad = ctx.createLinearGradient(innerX, innerY, innerX + innerW, innerY);
       grad.addColorStop(0, getThemeColor("--color-primary-500", "#3b82f6"));
       grad.addColorStop(0.5, getThemeColor("--color-primary-400", "#60a5fa"));
       grad.addColorStop(1, getThemeColor("--color-primary-600", "#2563eb"));
@@ -219,8 +205,7 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
 
       currentY += avatarSize + 12;
       ctx.fillStyle = getThemeColor("--color-foreground-400", "#64748b");
-      ctx.font =
-        "500 20px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
+      ctx.font = "500 20px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
       ctx.textBaseline = "top";
       ctx.fillText(createdAtText, innerX + 20, currentY);
 
@@ -250,17 +235,15 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
 
       // Title over banner (centered horizontally and vertically)
       ctx.fillStyle = "#ffffff";
-      ctx.font =
-        "700 36px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
+      ctx.font = "700 36px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
       ctx.textAlign = "center";
       ctx.textBaseline = "top";
       const titleMaxWidth = bannerW - 48;
       const titleLines = getWrappedLines(ctx, safeTitle, titleMaxWidth);
       const totalTitleHeight = Math.max(titleLines.length, 1) * 44;
-      const startTitleY =
-        bannerY + Math.max(16, (bannerH - totalTitleHeight) / 2);
+      const startTitleY = bannerY + Math.max(16, (bannerH - totalTitleHeight) / 2);
       titleLines.forEach((ln, idx) =>
-        ctx.fillText(ln, bannerX + bannerW / 2, startTitleY + idx * 44)
+        ctx.fillText(ln, bannerX + bannerW / 2, startTitleY + idx * 44),
       );
       ctx.textAlign = "start";
 
@@ -290,12 +273,10 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
       ctx.textAlign = "start";
       const textBaseY = qrY + qrSize - 50;
       ctx.fillStyle = getThemeColor("--color-foreground-300", "#475569");
-      ctx.font =
-        "600 20px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
+      ctx.font = "600 20px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
       ctx.fillText(fixedAuthor, innerX + 20, textBaseY);
       ctx.fillStyle = getThemeColor("--color-foreground-400", "#334155");
-      ctx.font =
-        "700 28px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
+      ctx.font = "700 28px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
       ctx.fillText(fixedSiteName, innerX + 20, textBaseY + 30);
 
       const dataUrl = canvas.toDataURL("image/png");
@@ -308,7 +289,15 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
     } catch (e) {
       console.error(e);
     }
-  }, [createdAtText, safeTitle, url]);
+  }, [
+    createdAtText,
+    safeTitle,
+    url, // Clip to banner rounded rect
+    drawRoundedRect,
+    getThemeColor,
+    getWrappedLines,
+    loadImage,
+  ]);
 
   useEffect(() => {
     // 只在模态框打开且url存在时才生成QRCode，提高性能
@@ -368,9 +357,7 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
                     className="object-cover"
                   />
                 </div>
-                <span className="mt-2 text-xs text-foreground-300">
-                  {createdAtText}
-                </span>
+                <span className="mt-2 text-xs text-foreground-300">{createdAtText}</span>
               </div>
 
               <div className="relative w-full h-44 rounded-sm overflow-hidden border border-border-100 bg-linear-to-r from-primary-500 via-primary-400 to-primary-600">
@@ -393,24 +380,14 @@ const Share: React.FC<ShareProps> = ({ url, title, createdAtText }) => {
               <div className="mt-2 pt-4 border-t border-border-100">
                 <div className="flex items-end justify-between">
                   <div className="flex flex-col gap-1">
-                    <div className="text-sm text-foreground-300">
-                      小李生活志
-                    </div>
-                    <div className="text-xl font-bold text-foreground-400">
-                      HeyXiaoli
-                    </div>
+                    <div className="text-sm text-foreground-300">小李生活志</div>
+                    <div className="text-xl font-bold text-foreground-400">HeyXiaoli</div>
                   </div>
                   <div className="w-20 h-20 rounded-sm border border-border-100 bg-card-100 flex items-center justify-center">
                     {qrPreviewDataUrl ? (
-                      <img
-                        src={qrPreviewDataUrl}
-                        alt="QR Code"
-                        className="w-[72px] h-[72px]"
-                      />
+                      <img src={qrPreviewDataUrl} alt="QR Code" className="w-[72px] h-[72px]" />
                     ) : (
-                      <span className="text-[10px] text-foreground-300">
-                        生成中
-                      </span>
+                      <span className="text-[10px] text-foreground-300">生成中</span>
                     )}
                   </div>
                 </div>

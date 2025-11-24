@@ -13,7 +13,7 @@ export const setCookie = (name: string, value: string, days?: number): void => {
   if (days) {
     const date = new Date();
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    expires = "; expires=" + date.toUTCString();
+    expires = `; expires=${date.toUTCString()}`;
   }
   document.cookie = `${name}=${value}${expires}; path=/`;
 };
@@ -24,14 +24,8 @@ export const setCookie = (name: string, value: string, days?: number): void => {
  * @returns cookie 值或 null
  */
 export const getCookie = (name: string): string | null => {
-  const nameEQ = name + "=";
-  const ca = document.cookie.split(";");
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === " ") c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-  }
-  return null;
+  const match = document.cookie.match(new RegExp(`(^|;\\s*)(${name})=([^;]*)`));
+  return match ? decodeURIComponent(match[3]) : null;
 };
 
 /**
@@ -48,10 +42,9 @@ export const deleteCookie = (name: string): void => {
  * @returns 是否已点赞
  */
 export const isBlogLiked = (blogId: number): boolean => {
-  const likedBlogs = getCookie("liked_blogs");
-  if (!likedBlogs) return false;
-
   try {
+    const likedBlogs = getCookie("liked_blogs");
+    if (!likedBlogs) return false;
     const likedBlogIds = JSON.parse(likedBlogs);
     return Array.isArray(likedBlogIds) && likedBlogIds.includes(blogId);
   } catch {
@@ -65,34 +58,25 @@ export const isBlogLiked = (blogId: number): boolean => {
  * @param isLiked 是否点赞
  */
 export const setBlogLikeStatus = (blogId: number, isLiked: boolean): void => {
-  const likedBlogs = getCookie("liked_blogs");
   let likedBlogIds: number[] = [];
 
-  if (likedBlogs) {
-    try {
-      likedBlogIds = JSON.parse(likedBlogs);
-      if (!Array.isArray(likedBlogIds)) {
-        likedBlogIds = [];
-      }
-    } catch {
-      likedBlogIds = [];
+  try {
+    const likedBlogs = getCookie("liked_blogs");
+    if (likedBlogs) {
+      const parsed = JSON.parse(likedBlogs);
+      likedBlogIds = Array.isArray(parsed) ? parsed : [];
     }
+  } catch {
+    likedBlogIds = [];
   }
 
-  if (isLiked) {
-    // 添加点赞
-    if (!likedBlogIds.includes(blogId)) {
-      likedBlogIds.push(blogId);
-    }
-  } else {
-    // 取消点赞
-    likedBlogIds = likedBlogIds.filter((id) => id !== blogId);
-  }
+  likedBlogIds = isLiked
+    ? likedBlogIds.includes(blogId)
+      ? likedBlogIds
+      : [...likedBlogIds, blogId]
+    : likedBlogIds.filter((id) => id !== blogId);
 
-  // 更新 cookie
-  if (likedBlogIds.length > 0) {
-    setCookie("liked_blogs", JSON.stringify(likedBlogIds));
-  } else {
-    deleteCookie("liked_blogs");
-  }
+  likedBlogIds.length > 0
+    ? setCookie("liked_blogs", JSON.stringify(likedBlogIds))
+    : deleteCookie("liked_blogs");
 };

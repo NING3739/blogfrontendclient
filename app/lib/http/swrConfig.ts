@@ -1,6 +1,6 @@
-import { SWRConfiguration } from "swr";
-import fetcher from "./fetcher";
+import type { SWRConfiguration } from "swr";
 import httpClient from "./client";
+import fetcher from "./fetcher";
 
 // SWR 全局配置
 export const swrConfig: SWRConfiguration = {
@@ -9,26 +9,22 @@ export const swrConfig: SWRConfiguration = {
   revalidateOnReconnect: true,
   errorRetryCount: 3,
   errorRetryInterval: 1000,
-  dedupingInterval: 2000, // 2秒内的相同请求只发送一次
-  // 只在非401错误时重试（401由httpClient处理）
-  shouldRetryOnError: (error) => {
-    return error?.status !== 401;
-  },
+  dedupingInterval: 2000,
+  shouldRetryOnError: (error) => error?.status !== 401,
 };
 
 // 添加语言变化监听，自动重新验证所有数据
 if (typeof window !== "undefined") {
-  let isRevalidating = false; // 防止重复验证
-  httpClient.addLocaleChangeListener(() => {
-    if (isRevalidating) return;
-    isRevalidating = true;
+  let revalidatePromise: Promise<Array<undefined>> | null = null;
 
-    // 当语言变化时，重新验证所有 SWR 缓存
-    import("swr").then(({ mutate }) => {
-      // 重新验证所有缓存
-      mutate(() => true, undefined, { revalidate: true }).finally(() => {
-        isRevalidating = false;
+  httpClient.addLocaleChangeListener(() => {
+    // 如果已有重验证在进行，等待它完成
+    if (revalidatePromise) return;
+
+    revalidatePromise = import("swr")
+      .then(({ mutate }) => mutate(() => true, undefined, { revalidate: true }))
+      .finally(() => {
+        revalidatePromise = null;
       });
-    });
   });
 }

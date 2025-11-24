@@ -1,5 +1,6 @@
-import React, { ButtonHTMLAttributes, ReactNode } from "react";
 import clsx from "clsx";
+import type React from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "static";
 
@@ -32,8 +33,7 @@ const variantClasses: Record<ButtonVariant, string> = {
     "bg-transparent text-foreground-200 hover:bg-background-300 hover:text-foreground-50 focus:ring-primary-500",
   outline:
     "border-2 border-border-100 text-foreground-50 hover:bg-card-100 hover:border-border-200 focus:ring-primary-500",
-  static:
-    "bg-background-50 border border-border-100 text-foreground-50 focus:ring-primary-500",
+  static: "bg-background-50 border border-border-100 text-foreground-50 focus:ring-primary-500",
 };
 
 const gradientClasses: Record<ButtonVariant, string> = {
@@ -45,8 +45,7 @@ const gradientClasses: Record<ButtonVariant, string> = {
     "text-foreground-200 hover:bg-background-300 hover:text-foreground-50 focus:ring-primary-500",
   outline:
     "border-2 border-border-100 text-foreground-50 hover:bg-card-100 hover:border-border-200 focus:ring-primary-500",
-  static:
-    "bg-background-50 border border-border-100 text-foreground-50 focus:ring-primary-500",
+  static: "bg-background-50 border border-border-100 text-foreground-50 focus:ring-primary-500",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -78,7 +77,7 @@ export const Button: React.FC<ButtonProps> = ({
         sizeClasses[size],
         fullWidth && "w-full",
         isDisabled && "opacity-50 cursor-not-allowed hover:transform-none",
-        className
+        className,
       )}
       disabled={isDisabled}
       {...props}

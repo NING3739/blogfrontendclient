@@ -1,12 +1,4 @@
-import React from "react";
-import {
-  User,
-  Shield,
-  MapPin,
-  CheckCircle,
-  XCircle,
-  Clock,
-} from "lucide-react";
+import { CheckCircle, Clock, MapPin, Shield, User, XCircle } from "lucide-react";
 import Image from "next/image";
 import Modal from "@/app/components/ui/modal/Modal";
 import type { UserResponse } from "@/app/types/userServiceType";
@@ -19,13 +11,7 @@ interface UserListModelProps {
 
 const UserListModel = ({ user, isOpen, onClose }: UserListModelProps) => {
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="用户详情"
-      size="lg"
-      maxHeight="max-h-[90vh]"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="用户详情" size="lg" maxHeight="max-h-[90vh]">
       {/* User Info */}
       <div className="space-y-6">
         {/* Profile Header */}
@@ -57,12 +43,8 @@ const UserListModel = ({ user, isOpen, onClose }: UserListModelProps) => {
 
               {/* User Info */}
               <div className="flex-1 min-w-0">
-                <h3 className="text-xl font-bold text-foreground-50 truncate">
-                  {user.username}
-                </h3>
-                <p className="text-sm text-foreground-300 truncate mb-2">
-                  {user.email}
-                </p>
+                <h3 className="text-xl font-bold text-foreground-50 truncate">{user.username}</h3>
+                <p className="text-sm text-foreground-300 truncate mb-2">{user.email}</p>
                 <div className="flex items-center space-x-2">
                   <span className="px-2 py-1 text-xs font-medium rounded-sm bg-background-200 text-foreground-100">
                     {user.role}
@@ -83,12 +65,8 @@ const UserListModel = ({ user, isOpen, onClose }: UserListModelProps) => {
                   <User className="w-4 h-4 text-primary-500" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-sm font-semibold text-foreground-100">
-                    关于
-                  </h4>
-                  <p className="text-sm text-foreground-300 leading-relaxed">
-                    {user.bio}
-                  </p>
+                  <h4 className="text-sm font-semibold text-foreground-100">关于</h4>
+                  <p className="text-sm text-foreground-300 leading-relaxed">{user.bio}</p>
                 </div>
               </div>
             </div>
@@ -97,26 +75,19 @@ const UserListModel = ({ user, isOpen, onClose }: UserListModelProps) => {
           {/* Location & Account Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Location Card */}
-            {(user.city ||
-              user.latitude ||
-              user.longitude ||
-              user.ip_address) && (
+            {(user.city || user.latitude || user.longitude || user.ip_address) && (
               <div className="bg-card-50 border border-border-50 rounded-sm p-4">
                 <div className="flex items-center space-x-3 mb-3">
                   <div className="w-8 h-8 rounded-sm bg-success-50 flex items-center justify-center">
                     <MapPin className="w-4 h-4 text-success-500" />
                   </div>
-                  <h4 className="text-sm font-semibold text-foreground-100">
-                    位置信息
-                  </h4>
+                  <h4 className="text-sm font-semibold text-foreground-100">位置信息</h4>
                 </div>
                 <div className="space-y-2">
                   {user.city && (
                     <div className="flex justify-between">
                       <span className="text-xs text-foreground-400">城市</span>
-                      <span className="text-sm text-foreground-300 font-medium">
-                        {user.city}
-                      </span>
+                      <span className="text-sm text-foreground-300 font-medium">{user.city}</span>
                     </div>
                   )}
                   {user.latitude && user.longitude && (
@@ -129,9 +100,7 @@ const UserListModel = ({ user, isOpen, onClose }: UserListModelProps) => {
                   )}
                   {user.ip_address && (
                     <div className="flex items-start gap-2">
-                      <span className="text-xs text-foreground-400 shrink-0 mt-0.5">
-                        IP 地址
-                      </span>
+                      <span className="text-xs text-foreground-400 shrink-0 mt-0.5">IP 地址</span>
                       <span className="text-xs text-foreground-300 font-mono break-all leading-relaxed">
                         {user.ip_address}
                       </span>
@@ -147,22 +116,16 @@ const UserListModel = ({ user, isOpen, onClose }: UserListModelProps) => {
                 <div className="w-8 h-8 rounded-sm bg-info-50 flex items-center justify-center">
                   <Shield className="w-4 h-4 text-info-500" />
                 </div>
-                <h4 className="text-sm font-semibold text-foreground-100">
-                  账户信息
-                </h4>
+                <h4 className="text-sm font-semibold text-foreground-100">账户信息</h4>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-xs text-foreground-400">用户 ID</span>
-                  <span className="text-sm text-foreground-300 font-mono">
-                    #{user.user_id}
-                  </span>
+                  <span className="text-sm text-foreground-300 font-mono">#{user.user_id}</span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-xs text-foreground-400">
-                      账户状态
-                    </span>
+                    <span className="text-xs text-foreground-400">账户状态</span>
                     <div className="flex items-center space-x-1">
                       {user.is_deleted ? (
                         <XCircle className="w-3 h-3 text-error-500" />
@@ -175,9 +138,7 @@ const UserListModel = ({ user, isOpen, onClose }: UserListModelProps) => {
                     </div>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-xs text-foreground-400">
-                      验证状态
-                    </span>
+                    <span className="text-xs text-foreground-400">验证状态</span>
                     <div className="flex items-center space-x-1">
                       {user.is_verified ? (
                         <CheckCircle className="w-3 h-3 text-success-500" />
@@ -200,9 +161,7 @@ const UserListModel = ({ user, isOpen, onClose }: UserListModelProps) => {
               <div className="w-8 h-8 rounded-sm bg-warning-50 flex items-center justify-center">
                 <Clock className="w-4 h-4 text-warning-500" />
               </div>
-              <h4 className="text-sm font-semibold text-foreground-100">
-                时间线
-              </h4>
+              <h4 className="text-sm font-semibold text-foreground-100">时间线</h4>
             </div>
 
             <div className="relative">
@@ -214,9 +173,7 @@ const UserListModel = ({ user, isOpen, onClose }: UserListModelProps) => {
                   <div className="relative flex items-start space-x-3">
                     <div className="relative z-10 w-2 h-2 bg-success-500 rounded-full mt-1.5"></div>
                     <div className="flex-1">
-                      <p className="text-xs text-foreground-400 font-medium">
-                        账户创建
-                      </p>
+                      <p className="text-xs text-foreground-400 font-medium">账户创建</p>
                       <p className="text-sm text-foreground-300">
                         {new Date(user.created_at).toLocaleString()}
                       </p>
@@ -228,9 +185,7 @@ const UserListModel = ({ user, isOpen, onClose }: UserListModelProps) => {
                   <div className="relative flex items-start space-x-3">
                     <div className="relative z-10 w-2 h-2 bg-background-300 rounded-full mt-1.5"></div>
                     <div className="flex-1">
-                      <p className="text-xs text-foreground-400 font-medium">
-                        最后更新
-                      </p>
+                      <p className="text-xs text-foreground-400 font-medium">最后更新</p>
                       <p className="text-sm text-foreground-300">
                         {new Date(user.updated_at).toLocaleString()}
                       </p>

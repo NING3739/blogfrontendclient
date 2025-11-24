@@ -1,17 +1,16 @@
 "use client";
 
-import React from "react";
-import useSWR from "swr";
+import { ArrowLeft, Clock, DollarSign, Eye, FileText, Tag } from "lucide-react";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useFormatter, useLocale } from "next-intl";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Clock, DollarSign, FileText, Eye, ArrowLeft, Tag } from "lucide-react";
-import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
-import { formatCurrency } from "@/app/lib/utils/handleCurrencyFormat";
-import { Button } from "@/app/components/ui/button/butten";
+import useSWR from "swr";
 import TextContent from "@/app/components/(feature)/content/TextContent";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import { Button } from "@/app/components/ui/button/butten";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import { formatCurrency } from "@/app/lib/utils/handleCurrencyFormat";
+import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
 
 export default function ContentDetailsPreviewPage() {
   const router = useRouter();
@@ -42,12 +41,7 @@ export default function ContentDetailsPreviewPage() {
 
   if (isLoading) {
     return (
-      <LoadingSpinner
-        message="正在加载内容,请稍候..."
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message="正在加载内容,请稍候..." size="md" variant="wave" fullScreen={true} />
     );
   }
 
@@ -195,9 +189,7 @@ export default function ContentDetailsPreviewPage() {
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-foreground-400 truncate">标签</p>
                   <p className="text-sm sm:text-base font-semibold text-foreground-50 truncate">
-                    {data.blog_tags
-                      .map((tag: { tag_title: string }) => tag.tag_title)
-                      .join(", ")}
+                    {data.blog_tags.map((tag: { tag_title: string }) => tag.tag_title).join(", ")}
                   </p>
                 </div>
               </div>

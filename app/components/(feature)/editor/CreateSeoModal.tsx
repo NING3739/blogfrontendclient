@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import type { CreateSeoRequest } from "@/app/types/seoServiceType";
 import { Button } from "@/app/components/ui/button/butten";
 import InputField from "@/app/components/ui/input/InputField";
 import Modal from "@/app/components/ui/modal/Modal";
 import seoService from "@/app/lib/services/seoService";
+import type { CreateSeoRequest } from "@/app/types/seoServiceType";
 
 interface CreateSeoModalProps {
   isOpen: boolean;
@@ -67,11 +67,7 @@ export const CreateSeoModal = ({
   }, [isOpen, onClose]);
 
   const handleSubmit = async () => {
-    if (
-      !formData.chinese_title ||
-      !formData.chinese_description ||
-      !formData.chinese_keywords
-    ) {
+    if (!formData.chinese_title || !formData.chinese_description || !formData.chinese_keywords) {
       return;
     }
 
@@ -94,11 +90,7 @@ export const CreateSeoModal = ({
 
       if (response.status === 200 && "data" in response && response.data) {
         toast.success(
-          "message" in response
-            ? response.message
-            : seoId
-            ? "SEO updated"
-            : "SEO created"
+          "message" in response ? response.message : seoId ? "SEO updated" : "SEO created",
         );
         // 调用成功回调
         if (onSuccess) {
@@ -106,9 +98,7 @@ export const CreateSeoModal = ({
         }
         onClose();
       } else {
-        toast.error(
-          "error" in response ? response.error : "Failed to save SEO"
-        );
+        toast.error("error" in response ? response.error : "Failed to save SEO");
         onClose();
       }
     } catch (error) {
@@ -135,12 +125,7 @@ export const CreateSeoModal = ({
       size="sm"
       footer={
         <>
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={onClose}
-            disabled={isLoading}
-          >
+          <Button variant="secondary" size="md" onClick={onClose} disabled={isLoading}>
             取消
           </Button>
           <Button
@@ -149,9 +134,7 @@ export const CreateSeoModal = ({
             onClick={handleSubmit}
             loading={isLoading}
             disabled={
-              !formData.chinese_title ||
-              !formData.chinese_description ||
-              !formData.chinese_keywords
+              !formData.chinese_title || !formData.chinese_description || !formData.chinese_keywords
             }
           >
             {seoId ? "更新 SEO 设置" : "创建 SEO 设置"}
@@ -182,9 +165,7 @@ export const CreateSeoModal = ({
             type="textarea"
             id="chinese_description"
             value={formData.chinese_description}
-            onChange={(e) =>
-              handleInputChange("chinese_description", e.target.value)
-            }
+            onChange={(e) => handleInputChange("chinese_description", e.target.value)}
             placeholder="请输入SEO描述"
             required
             rows={3}
@@ -199,9 +180,7 @@ export const CreateSeoModal = ({
             type="text"
             id="chinese_keywords"
             value={formData.chinese_keywords}
-            onChange={(e) =>
-              handleInputChange("chinese_keywords", e.target.value)
-            }
+            onChange={(e) => handleInputChange("chinese_keywords", e.target.value)}
             placeholder="输入关键词，用逗号分隔"
             required
           />

@@ -1,25 +1,30 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { useSectionDetailsBySlug } from "@/app/contexts/hooks/useSection";
+import ArchivePage from "@/app/components/(feature)/archive/ArchivePage";
+import BlogDetails from "@/app/components/(feature)/blog/BlogDetails";
+import BlogPage from "@/app/components/(feature)/blog/BlogPage";
 import ForumPage from "@/app/components/(feature)/forum/ForumPage";
 import FriendPage from "@/app/components/(feature)/friend/FriendPage";
-import BlogPage from "@/app/components/(feature)/blog/BlogPage";
-import BlogDetails from "@/app/components/(feature)/blog/BlogDetails";
-import ProjectPage from "@/app/components/(feature)/project/ProjectPage";
 import ProjectDetails from "@/app/components/(feature)/project/ProjectDetails";
-import TagPage from "@/app/components/(feature)/tag/TagPage";
+import ProjectPage from "@/app/components/(feature)/project/ProjectPage";
 import TagDetails from "@/app/components/(feature)/tag/TagDetails";
-import ArchivePage from "@/app/components/(feature)/archive/ArchivePage";
+import TagPage from "@/app/components/(feature)/tag/TagPage";
 import UserPage from "@/app/components/(feature)/user/UserPage";
+import { useSectionDetailsBySlug } from "@/app/contexts/hooks/useSection";
 
 export default function ClientPage({ params }: { params: { slug: string[] } }) {
   const { slug } = params;
+  const pageSlug = slug[0];
+
+  // 始终调用 hook，但只在需要时传递有效的 slug
+  const needsSectionData =
+    slug.length === 1 &&
+    ["journal", "musings", "dev-notes", "projects", "forum", "blogroll"].includes(pageSlug);
+  const { section: sectionData } = useSectionDetailsBySlug(needsSectionData ? pageSlug : null);
 
   if (slug.length === 1) {
     // 第一级路由处理，使用 slug，如 /about, /journal, /musings, /dev-notes
-    const pageSlug = slug[0];
-
     const levelOneRoutes = [
       "tag",
       "archive",
@@ -50,16 +55,10 @@ export default function ClientPage({ params }: { params: { slug: string[] } }) {
       return <UserPage />;
     }
 
-    // 只有需要 section 数据的路由才调用 hook
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { section: sectionData } = useSectionDetailsBySlug(pageSlug);
-
     return (
       <>
         {/* 博客相关的子 section - blog 父 section 不提供直接访问 */}
-        {(pageSlug === "journal" ||
-          pageSlug === "musings" ||
-          pageSlug === "dev-notes") &&
+        {(pageSlug === "journal" || pageSlug === "musings" || pageSlug === "dev-notes") &&
           sectionData && <BlogPage sectionData={sectionData} />}
         {pageSlug === "projects" && <ProjectPage sectionData={sectionData} />}
         {pageSlug === "forum" && <ForumPage sectionData={sectionData} />}
@@ -69,13 +68,7 @@ export default function ClientPage({ params }: { params: { slug: string[] } }) {
   } else if (slug.length === 2) {
     const [sectionSlug, slugValue] = slug;
 
-    const leveltwoRoutes = [
-      "journal",
-      "musings",
-      "dev-notes",
-      "projects",
-      "tag",
-    ];
+    const leveltwoRoutes = ["journal", "musings", "dev-notes", "projects", "tag"];
 
     if (!leveltwoRoutes.includes(sectionSlug)) {
       notFound();
@@ -88,9 +81,7 @@ export default function ClientPage({ params }: { params: { slug: string[] } }) {
           sectionSlug === "musings" ||
           sectionSlug === "dev-notes") && <BlogDetails blogSlug={slugValue} />}
         {/* 项目相关的子 section 详情 */}
-        {sectionSlug === "projects" && (
-          <ProjectDetails projectSlug={slugValue} />
-        )}
+        {sectionSlug === "projects" && <ProjectDetails projectSlug={slugValue} />}
         {sectionSlug === "tag" && <TagDetails tagSlug={slugValue} />}
       </>
     );

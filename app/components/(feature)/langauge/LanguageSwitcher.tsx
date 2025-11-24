@@ -1,16 +1,15 @@
 "use client";
 
-import { useMemo } from "react";
+import { CN, US } from "country-flag-icons/react/3x2";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { US, CN } from "country-flag-icons/react/3x2";
+import { useLocale, useTranslations } from "next-intl";
+import { useMemo } from "react";
 import httpClient from "@/app/lib/http/client";
-import { useLocale } from "next-intl";
 
 const LanguageSwitcher = () => {
   const t = useTranslations("languageSwitcher");
   const locale = useLocale();
-  const router = useRouter();
+  const _router = useRouter();
 
   // 使用 useMemo 缓存 languageOptions，避免每次渲染都重新创建
   const languageOptions = useMemo(
@@ -51,6 +50,7 @@ const LanguageSwitcher = () => {
 
         return (
           <button
+            type="button"
             key={option.value}
             onClick={() => handleLanguageChange(option.value)}
             title={option.label}

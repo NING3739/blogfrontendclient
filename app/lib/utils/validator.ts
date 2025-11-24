@@ -41,10 +41,7 @@ export class Validator {
    * @param minLength 最小长度，默认8位
    * @returns 验证结果，包含错误代码和参数
    */
-  static validatePassword(
-    password: string,
-    minLength: number = 8
-  ): ValidationResult {
+  static validatePassword(password: string, minLength: number = 8): ValidationResult {
     // 检查是否为空
     if (!password.trim()) {
       return {
@@ -75,21 +72,11 @@ export class Validator {
   static validateLoginForm(
     email: string,
     password: string,
-    passwordMinLength: number = 8
+    passwordMinLength: number = 8,
   ): ValidationResult {
-    // 验证邮箱
-    const emailResult = this.validateEmail(email);
-    if (!emailResult.isValid) {
-      return emailResult;
-    }
-
-    // 验证密码
-    const passwordResult = this.validatePassword(password, passwordMinLength);
-    if (!passwordResult.isValid) {
-      return passwordResult;
-    }
-
-    return { isValid: true };
+    return Validator.validateEmail(email).isValid
+      ? Validator.validatePassword(password, passwordMinLength)
+      : Validator.validateEmail(email);
   }
 
   /**
@@ -98,10 +85,7 @@ export class Validator {
    * @param minLength 最小长度，默认3位
    * @returns 验证结果，包含错误代码
    */
-  static validateUsername(
-    username: string,
-    minLength: number = 3
-  ): ValidationResult {
+  static validateUsername(username: string, minLength: number = 3): ValidationResult {
     // 检查是否为空
     if (!username.trim()) {
       return {
@@ -153,28 +137,28 @@ export class Validator {
     email: string,
     code: string,
     password: string,
-    passwordMinLength: number = 8
+    passwordMinLength: number = 8,
   ): ValidationResult {
     // 验证用户名
-    const usernameResult = this.validateUsername(username);
+    const usernameResult = Validator.validateUsername(username);
     if (!usernameResult.isValid) {
       return usernameResult;
     }
 
     // 验证邮箱
-    const emailResult = this.validateEmail(email);
+    const emailResult = Validator.validateEmail(email);
     if (!emailResult.isValid) {
       return emailResult;
     }
 
     // 验证验证码
-    const codeResult = this.validateCode(code);
+    const codeResult = Validator.validateCode(code);
     if (!codeResult.isValid) {
       return codeResult;
     }
 
     // 验证密码
-    const passwordResult = this.validatePassword(password, passwordMinLength);
+    const passwordResult = Validator.validatePassword(password, passwordMinLength);
     if (!passwordResult.isValid) {
       return passwordResult;
     }
@@ -194,22 +178,22 @@ export class Validator {
     email: string,
     code: string,
     password: string,
-    passwordMinLength: number = 8
+    passwordMinLength: number = 8,
   ): ValidationResult {
     // 验证邮箱
-    const emailResult = this.validateEmail(email);
+    const emailResult = Validator.validateEmail(email);
     if (!emailResult.isValid) {
       return emailResult;
     }
 
     // 验证验证码
-    const codeResult = this.validateCode(code);
+    const codeResult = Validator.validateCode(code);
     if (!codeResult.isValid) {
       return codeResult;
     }
 
     // 验证密码
-    const passwordResult = this.validatePassword(password, passwordMinLength);
+    const passwordResult = Validator.validatePassword(password, passwordMinLength);
     if (!passwordResult.isValid) {
       return passwordResult;
     }
@@ -225,7 +209,7 @@ export class Validator {
    */
   static getValidationErrorMessage(
     result: ValidationResult,
-    validationT: (key: string, params?: any) => string
+    validationT: (key: string, params?: any) => string,
   ): string {
     if (!result.errorCode) return "输入信息有误";
 
@@ -243,10 +227,10 @@ export class Validator {
   static validateAndShowError(
     result: ValidationResult,
     validationT: (key: string, params?: any) => string,
-    toast: { error: (message: string) => void }
+    toast: { error: (message: string) => void },
   ): boolean {
     if (!result.isValid && result.errorCode) {
-      const errorMessage = this.getValidationErrorMessage(result, validationT);
+      const errorMessage = Validator.getValidationErrorMessage(result, validationT);
       toast.error(errorMessage);
       return false;
     }

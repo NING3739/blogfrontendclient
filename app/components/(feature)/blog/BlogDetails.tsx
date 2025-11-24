@@ -1,30 +1,28 @@
 "use client";
 
-import React from "react";
-import useSWR from "swr";
-import Image from "next/image";
+import { FileText, Tag } from "lucide-react";
 import { motion } from "motion/react";
-import { useRouter } from "next/navigation";
-import { Tag } from "lucide-react";
-import { useAuth } from "@/app/contexts/hooks/useAuth";
-import { useLocale, useTranslations, useFormatter } from "next-intl";
-import { usePathname } from "next/navigation";
-import TOC from "../content/TOC";
-import TextContent from "../content/TextContent";
-import { Button } from "@/app/components/ui/button/butten";
-import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
-import BlogNavigation from "./BlogNavigation";
-import CommentTextInput, { CommentType } from "../comment/CommentTextInput";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import type React from "react";
+import useSWR from "swr";
 import CommentList from "@/app/components/(feature)/comment/CommentList";
-import BlogAction from "./BlogAction";
-import BlogStats from "./BlogStats";
+import { Button } from "@/app/components/ui/button/butten";
 import CopyRight from "@/app/components/ui/copyright/CopyRight";
-import Share from "@/app/components/ui/share/Share";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import EmptyState from "@/app/components/ui/error/EmptyState";
-import { FileText } from "lucide-react";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import Share from "@/app/components/ui/share/Share";
+import { useAuth } from "@/app/contexts/hooks/useAuth";
+import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
 import type { GetBlogDetailsResponse } from "@/app/types/blogServiceType";
+import CommentTextInput, { CommentType } from "../comment/CommentTextInput";
+import TextContent from "../content/TextContent";
+import TOC from "../content/TOC";
+import BlogAction from "./BlogAction";
+import BlogNavigation from "./BlogNavigation";
+import BlogStats from "./BlogStats";
 
 interface BlogDetailsProps {
   blogSlug: string;
@@ -47,11 +45,8 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blogSlug }) => {
     error,
   } = useSWR<GetBlogDetailsResponse>(
     isAuthenticated && user?.user_id
-      ? [
-          `/blog/get-blog-details/${blogSlug}?is_editor=false&user_id=${user.user_id}`,
-          locale,
-        ]
-      : [`/blog/get-blog-details/${blogSlug}?is_editor=false`, locale]
+      ? [`/blog/get-blog-details/${blogSlug}?is_editor=false&user_id=${user.user_id}`, locale]
+      : [`/blog/get-blog-details/${blogSlug}?is_editor=false`, locale],
   );
 
   const handleTagClick = (tagSlug: string) => {
@@ -60,12 +55,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blogSlug }) => {
 
   if (isLoading) {
     return (
-      <LoadingSpinner
-        variant="wave"
-        size="lg"
-        message={commonT("loading")}
-        fullScreen={true}
-      />
+      <LoadingSpinner variant="wave" size="lg" message={commonT("loading")} fullScreen={true} />
     );
   }
 
@@ -89,25 +79,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blogSlug }) => {
       transition={{ duration: 0.5 }}
     >
       <div className="max-w-4xl mx-auto px-6 py-12">
-        {!blogDetails ? (
-          <motion.div
-            className="mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-          >
-            <EmptyState
-              icon={FileText}
-              title={commonT("notFound")}
-              description={commonT("notFoundMessage")}
-              iconSize="w-12 h-12"
-              iconBgSize="w-24 h-24"
-              iconColor="text-primary-400"
-              iconBgColor="bg-primary-50"
-              variant="default"
-            />
-          </motion.div>
-        ) : (
+        {blogDetails ? (
           <>
             {/* 博客封面区域 */}
             <motion.div
@@ -204,10 +176,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blogSlug }) => {
                         {commonT("updatedAt")}:
                       </span>
                       <span className="text-foreground-200 font-semibold text-sm">
-                        {handleDateFormat(
-                          blogDetails?.updated_at || "",
-                          format
-                        )}
+                        {handleDateFormat(blogDetails?.updated_at || "", format)}
                       </span>
                     </div>
                   </>
@@ -281,7 +250,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blogSlug }) => {
                 title={blogDetails?.blog_name || ""}
                 createdAtText={`${commonT("createdAt")}: ${handleDateFormat(
                   blogDetails?.created_at || "",
-                  format
+                  format,
                 )}`}
               />
             </motion.div>
@@ -354,6 +323,24 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blogSlug }) => {
               />
             </motion.div>
           </>
+        ) : (
+          <motion.div
+            className="mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+          >
+            <EmptyState
+              icon={FileText}
+              title={commonT("notFound")}
+              description={commonT("notFoundMessage")}
+              iconSize="w-12 h-12"
+              iconBgSize="w-24 h-24"
+              iconColor="text-primary-400"
+              iconBgColor="bg-primary-50"
+              variant="default"
+            />
+          </motion.div>
         )}
       </div>
     </motion.div>

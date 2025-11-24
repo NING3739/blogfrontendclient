@@ -1,13 +1,5 @@
-import React from "react";
+import { BarChart3, Bookmark, Eye, Heart, MessageCircle, Tag } from "lucide-react";
 import { motion } from "motion/react";
-import {
-  Tag,
-  Eye,
-  Heart,
-  MessageCircle,
-  Bookmark,
-  BarChart3,
-} from "lucide-react";
 import Image from "next/image";
 import Modal from "@/app/components/ui/modal/Modal";
 import type { BlogItemDashboardResponse } from "@/app/types/blogServiceType";
@@ -20,13 +12,7 @@ interface PostInfoModelProps {
 
 const PostInfoModel = ({ isOpen, onClose, blogData }: PostInfoModelProps) => {
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="文章信息"
-      size="md"
-      maxHeight="max-h-[90vh]"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="文章信息" size="md" maxHeight="max-h-[90vh]">
       {blogData && (
         <div className="space-y-6">
           {/* Post Header */}
@@ -73,17 +59,12 @@ const PostInfoModel = ({ isOpen, onClose, blogData }: PostInfoModelProps) => {
               <div className="w-8 h-8 rounded-sm bg-primary-50 flex items-center justify-center">
                 <Tag className="w-4 h-4 text-primary-500" />
               </div>
-              <h4 className="text-sm font-semibold text-foreground-100">
-                标签
-              </h4>
+              <h4 className="text-sm font-semibold text-foreground-100">标签</h4>
             </div>
             <div className="flex flex-wrap gap-2">
               {blogData.blog_tags && blogData.blog_tags.length > 0 ? (
                 blogData.blog_tags.map(
-                  (
-                    tag: { tag_id: number; tag_title: string },
-                    index: number
-                  ) => (
+                  (tag: { tag_id: number; tag_title: string }, index: number) => (
                     <motion.span
                       key={tag.tag_id}
                       initial={{ opacity: 0, scale: 0.8 }}
@@ -93,12 +74,10 @@ const PostInfoModel = ({ isOpen, onClose, blogData }: PostInfoModelProps) => {
                     >
                       {tag.tag_title}
                     </motion.span>
-                  )
+                  ),
                 )
               ) : (
-                <span className="text-sm text-foreground-300 italic">
-                  暂无标签
-                </span>
+                <span className="text-sm text-foreground-300 italic">暂无标签</span>
               )}
             </div>
           </div>
@@ -109,9 +88,7 @@ const PostInfoModel = ({ isOpen, onClose, blogData }: PostInfoModelProps) => {
               <div className="w-8 h-8 rounded-sm bg-info-50 flex items-center justify-center">
                 <BarChart3 className="w-4 h-4 text-info-500" />
               </div>
-              <h4 className="text-sm font-semibold text-foreground-100">
-                统计信息
-              </h4>
+              <h4 className="text-sm font-semibold text-foreground-100">统计信息</h4>
             </div>
             <div className="space-y-3">
               {/* Views */}
@@ -125,9 +102,7 @@ const PostInfoModel = ({ isOpen, onClose, blogData }: PostInfoModelProps) => {
                   <div className="w-8 h-8 rounded-sm bg-info-50 flex items-center justify-center">
                     <Eye className="w-4 h-4 text-info-500" />
                   </div>
-                  <span className="text-sm font-medium text-foreground-100">
-                    浏览量
-                  </span>
+                  <span className="text-sm font-medium text-foreground-100">浏览量</span>
                 </div>
                 <span className="text-lg font-bold text-foreground-50">
                   {blogData.blog_stats?.views || 0}
@@ -145,9 +120,7 @@ const PostInfoModel = ({ isOpen, onClose, blogData }: PostInfoModelProps) => {
                   <div className="w-8 h-8 rounded-sm bg-error-50 flex items-center justify-center">
                     <Heart className="w-4 h-4 text-error-500" />
                   </div>
-                  <span className="text-sm font-medium text-foreground-100">
-                    点赞数
-                  </span>
+                  <span className="text-sm font-medium text-foreground-100">点赞数</span>
                 </div>
                 <span className="text-lg font-bold text-foreground-50">
                   {blogData.blog_stats?.likes || 0}
@@ -165,9 +138,7 @@ const PostInfoModel = ({ isOpen, onClose, blogData }: PostInfoModelProps) => {
                   <div className="w-8 h-8 rounded-sm bg-success-50 flex items-center justify-center">
                     <MessageCircle className="w-4 h-4 text-success-500" />
                   </div>
-                  <span className="text-sm font-medium text-foreground-100">
-                    评论数
-                  </span>
+                  <span className="text-sm font-medium text-foreground-100">评论数</span>
                 </div>
                 <span className="text-lg font-bold text-foreground-50">
                   {blogData.blog_stats?.comments || 0}
@@ -185,9 +156,7 @@ const PostInfoModel = ({ isOpen, onClose, blogData }: PostInfoModelProps) => {
                   <div className="w-8 h-8 rounded-sm bg-warning-50 flex items-center justify-center">
                     <Bookmark className="w-4 h-4 text-warning-500" />
                   </div>
-                  <span className="text-sm font-medium text-foreground-100">
-                    收藏数
-                  </span>
+                  <span className="text-sm font-medium text-foreground-100">收藏数</span>
                 </div>
                 <span className="text-lg font-bold text-foreground-50">
                   {blogData.blog_stats?.saves || 0}

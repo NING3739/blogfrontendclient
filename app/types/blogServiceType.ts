@@ -1,14 +1,15 @@
-import {
+import type {
+  ChineseDescription,
+  ChineseTitle,
+  Comment,
   CursorPagination,
+  CursorPaginationResponse,
+  OffsetPaginationResponse,
+  ParentID,
   SectionID,
   SeoID,
-  ChineseTitle,
-  ChineseDescription,
-  ParentID,
-  Comment,
-  OffsetPaginationResponse,
-  CursorPaginationResponse,
 } from "./commonType";
+import type { TiptapContent } from "./tiptapType";
 
 interface BlogTags {
   blog_tags: number[];
@@ -23,7 +24,7 @@ interface CommentID {
 }
 
 interface ChineseContent {
-  chinese_content: string;
+  chinese_content: TiptapContent;
 }
 
 export interface CreateBlogRequest
@@ -44,7 +45,6 @@ export interface UpdateBlogRequest
     ChineseContent {
   blog_slug: string;
   cover_id: number;
-  blog_tags: number[];
 }
 
 export interface GetBlogDetailsSeoRequest {
@@ -220,7 +220,34 @@ export interface GetBlogListsByTagSlugResponse {
   pagination: OffsetPaginationResponse;
 }
 
+// Sitemap 专用类型
+export interface BlogSitemapItem {
+  blog_id: number;
+  blog_slug: string;
+  updated_at?: string;
+  created_at: string;
+}
+
 export interface GetArchivedBlogListsResponse {
   blogs: GetBlogListsItem[];
   pagination: CursorPaginationResponse;
+}
+
+// 博客编辑器专用类型
+export interface BlogTag {
+  tag_id: number;
+  tag_title: string;
+  tag_slug: string;
+}
+
+export interface GetBlogEditorDetailsResponse {
+  blog_id: number;
+  section_id: number;
+  seo_id: number | null;
+  cover_id: number;
+  cover_url: string;
+  chinese_title: string;
+  chinese_description: string;
+  chinese_content: TiptapContent;
+  blog_tags: BlogTag[];
 }

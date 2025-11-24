@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import { Calendar, Heart, MapPin } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Heart, MapPin, Calendar } from "lucide-react";
 import LanguageSwitcher from "../(feature)/langauge/LanguageSwitcher";
 import ThemeSwitcher from "../(feature)/theme/ThemeSwitcher";
 import SiteLogo from "../ui/logo/SiteLogo";

@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import toast from "react-hot-toast";
+import { Edit, Trash2 } from "lucide-react";
 import { motion } from "motion/react";
-import { Trash2, Edit } from "lucide-react";
-import { useLocale, useFormatter } from "next-intl";
-import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
+import { useFormatter, useLocale } from "next-intl";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import CreateTagModal from "@/app/components/(feature)/editor/CreateTagModal";
+import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
 import TagService from "@/app/lib/services/tagService";
 import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
-import type { GetTagItemResponse } from "@/app/types/tagServiceType";
 import type { OffsetPaginationResponse } from "@/app/types/commonType";
+import type { GetTagItemResponse } from "@/app/types/tagServiceType";
 
 interface TagListsProps {
   tagItems: GetTagItemResponse[];
@@ -19,18 +19,12 @@ interface TagListsProps {
   onDataChange?: () => void; // Optional callback for data refresh
 }
 
-const TagLists = ({
-  tagItems,
-  pagination,
-  setCurrentPage,
-  onDataChange,
-}: TagListsProps) => {
-  const locale = useLocale();
+const TagLists = ({ tagItems, pagination, setCurrentPage, onDataChange }: TagListsProps) => {
+  const _locale = useLocale();
   const format = useFormatter();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingTag, setEditingTag] = useState<GetTagItemResponse | null>(null);
-  const [optimisticTagItems, setOptimisticTagItems] =
-    useState<GetTagItemResponse[]>(tagItems);
+  const [optimisticTagItems, setOptimisticTagItems] = useState<GetTagItemResponse[]>(tagItems);
 
   // Update optimistic tag items when tagItems prop changes
   useEffect(() => {
@@ -46,9 +40,7 @@ const TagLists = ({
       }
     } else if (action === "delete") {
       // Optimistic update - immediately remove from UI
-      setOptimisticTagItems(
-        optimisticTagItems.filter((t) => t.tag_id !== tagId)
-      );
+      setOptimisticTagItems(optimisticTagItems.filter((t) => t.tag_id !== tagId));
 
       try {
         // Call API in background
@@ -57,17 +49,13 @@ const TagLists = ({
         });
 
         if (response.status === 200) {
-          toast.success(
-            "message" in response ? response.message : "Tag deleted"
-          );
+          toast.success("message" in response ? response.message : "Tag deleted");
           // Refresh list after successful delete to update pagination/total count
           if (onDataChange) {
             onDataChange();
           }
         } else {
-          toast.error(
-            "error" in response ? response.error : "Failed to delete tag"
-          );
+          toast.error("error" in response ? response.error : "Failed to delete tag");
           setOptimisticTagItems(tagItems);
         }
       } catch (error) {
@@ -111,63 +99,55 @@ const TagLists = ({
               </tr>
             </thead>
             <tbody>
-              {optimisticTagItems.map(
-                (tagItem: GetTagItemResponse, index: number) => (
-                  <motion.tr
-                    key={tagItem.tag_id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="border-b border-border-50 hover:bg-background-100 transition-colors bg-background-50"
-                  >
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs lg:text-sm font-medium text-foreground-50 truncate">
-                          {tagItem.title}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <p className="text-xs lg:text-sm text-foreground-200">
-                        {handleDateFormat(tagItem.created_at, format)}
+              {optimisticTagItems.map((tagItem: GetTagItemResponse, index: number) => (
+                <motion.tr
+                  key={tagItem.tag_id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="border-b border-border-50 hover:bg-background-100 transition-colors bg-background-50"
+                >
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs lg:text-sm font-medium text-foreground-50 truncate">
+                        {tagItem.title}
                       </p>
-                    </td>
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <p className="text-xs lg:text-sm text-foreground-200">
-                        {tagItem.updated_at
-                          ? handleDateFormat(tagItem.updated_at, format)
-                          : "-"}
-                      </p>
-                    </td>
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <div className="flex justify-end space-x-1 lg:space-x-2">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() =>
-                            handleActionClick("edit", tagItem.tag_id)
-                          }
-                          className="p-1.5 lg:p-2 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
-                          title="编辑标签"
-                        >
-                          <Edit className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() =>
-                            handleActionClick("delete", tagItem.tag_id)
-                          }
-                          className="p-1.5 lg:p-2 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors"
-                          title="删除标签"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-                        </motion.button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                )
-              )}
+                    </div>
+                  </td>
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <p className="text-xs lg:text-sm text-foreground-200">
+                      {handleDateFormat(tagItem.created_at, format)}
+                    </p>
+                  </td>
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <p className="text-xs lg:text-sm text-foreground-200">
+                      {tagItem.updated_at ? handleDateFormat(tagItem.updated_at, format) : "-"}
+                    </p>
+                  </td>
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <div className="flex justify-end space-x-1 lg:space-x-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleActionClick("edit", tagItem.tag_id)}
+                        className="p-1.5 lg:p-2 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
+                        title="编辑标签"
+                      >
+                        <Edit className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleActionClick("delete", tagItem.tag_id)}
+                        className="p-1.5 lg:p-2 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors"
+                        title="删除标签"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                      </motion.button>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -176,124 +156,111 @@ const TagLists = ({
       {/* 平板视图 */}
       <div className="hidden md:block lg:hidden">
         <div className="space-y-3">
-          {optimisticTagItems.map(
-            (tagItem: GetTagItemResponse, index: number) => (
-              <motion.div
-                key={tagItem.tag_id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="border border-border-50 rounded-sm p-4 hover:shadow-md transition-shadow bg-background-50"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-foreground-50 truncate flex-1">
-                      {tagItem.title}
-                    </h3>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p className="text-xs text-foreground-300">
-                      创建时间: {handleDateFormat(tagItem.created_at, format)}
-                    </p>
-                    <p className="text-xs text-foreground-400">
-                      更新时间:{" "}
-                      {tagItem.updated_at
-                        ? handleDateFormat(tagItem.updated_at, format)
-                        : "-"}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-end space-x-1">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleActionClick("edit", tagItem.tag_id)}
-                      className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
-                      title="编辑标签"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() =>
-                        handleActionClick("delete", tagItem.tag_id)
-                      }
-                      className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors"
-                      title="删除标签"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            )
-          )}
-        </div>
-      </div>
-
-      {/* 移动端卡片视图 */}
-      <div className="md:hidden space-y-3">
-        {optimisticTagItems.map(
-          (tagItem: GetTagItemResponse, index: number) => (
+          {optimisticTagItems.map((tagItem: GetTagItemResponse, index: number) => (
             <motion.div
               key={tagItem.tag_id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="border border-border-50 rounded-sm p-3 hover:shadow-md transition-shadow bg-background-50"
+              className="border border-border-50 rounded-sm p-4 hover:shadow-md transition-shadow bg-background-50"
             >
-              <div className="space-y-2.5">
-                {/* 标签头部 */}
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-medium text-foreground-50 truncate flex-1">
                     {tagItem.title}
                   </h3>
                 </div>
 
-                {/* 时间信息 */}
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <p className="text-xs text-foreground-300">
-                    创建: {handleDateFormat(tagItem.created_at, format)}
+                    创建时间: {handleDateFormat(tagItem.created_at, format)}
                   </p>
                   <p className="text-xs text-foreground-400">
-                    更新:{" "}
-                    {tagItem.updated_at
-                      ? handleDateFormat(tagItem.updated_at, format)
-                      : "-"}
+                    更新时间:{" "}
+                    {tagItem.updated_at ? handleDateFormat(tagItem.updated_at, format) : "-"}
                   </p>
                 </div>
 
-                {/* 操作 */}
-                <div className="flex justify-end -mr-1">
-                  <div className="flex space-x-1">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleActionClick("edit", tagItem.tag_id)}
-                      className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors active:bg-primary-100"
-                      title="编辑标签"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() =>
-                        handleActionClick("delete", tagItem.tag_id)
-                      }
-                      className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors active:bg-error-100"
-                      title="删除标签"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </motion.button>
-                  </div>
+                <div className="flex justify-end space-x-1">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleActionClick("edit", tagItem.tag_id)}
+                    className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
+                    title="编辑标签"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleActionClick("delete", tagItem.tag_id)}
+                    className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors"
+                    title="删除标签"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </motion.button>
                 </div>
               </div>
             </motion.div>
-          )
-        )}
+          ))}
+        </div>
+      </div>
+
+      {/* 移动端卡片视图 */}
+      <div className="md:hidden space-y-3">
+        {optimisticTagItems.map((tagItem: GetTagItemResponse, index: number) => (
+          <motion.div
+            key={tagItem.tag_id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className="border border-border-50 rounded-sm p-3 hover:shadow-md transition-shadow bg-background-50"
+          >
+            <div className="space-y-2.5">
+              {/* 标签头部 */}
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-foreground-50 truncate flex-1">
+                  {tagItem.title}
+                </h3>
+              </div>
+
+              {/* 时间信息 */}
+              <div className="space-y-1">
+                <p className="text-xs text-foreground-300">
+                  创建: {handleDateFormat(tagItem.created_at, format)}
+                </p>
+                <p className="text-xs text-foreground-400">
+                  更新: {tagItem.updated_at ? handleDateFormat(tagItem.updated_at, format) : "-"}
+                </p>
+              </div>
+
+              {/* 操作 */}
+              <div className="flex justify-end -mr-1">
+                <div className="flex space-x-1">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleActionClick("edit", tagItem.tag_id)}
+                    className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors active:bg-primary-100"
+                    title="编辑标签"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleActionClick("delete", tagItem.tag_id)}
+                    className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors active:bg-error-100"
+                    title="删除标签"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </motion.button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
 
       {/* 分页 */}

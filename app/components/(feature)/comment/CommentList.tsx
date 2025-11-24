@@ -1,28 +1,29 @@
-import React, { useState } from "react";
-import useSWR, { mutate } from "swr";
-import toast from "react-hot-toast";
+import {
+  Clock,
+  Edit3,
+  Loader2,
+  MapPin,
+  MessageCircle,
+  Trash2,
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  MapPin,
-  Clock,
-  MessageCircle,
-  Edit3,
-  Trash2,
-  Loader2,
-} from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-import { useTranslations, useFormatter } from "next-intl";
-import { useAuth } from "@/app/contexts/hooks/useAuth";
-import CommentTextInput, { CommentType } from "./CommentTextInput";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import { useFormatter, useTranslations } from "next-intl";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import useSWR, { mutate } from "swr";
 import EmptyState from "@/app/components/ui/error/EmptyState";
-import boardService from "@/app/lib/services/boardService";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import { useAuth } from "@/app/contexts/hooks/useAuth";
 import blogService from "@/app/lib/services/blogService";
+import boardService from "@/app/lib/services/boardService";
 import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
-import type { BoardCommentItem } from "@/app/types/boardServiceType";
 import type { BlogCommentItem } from "@/app/types/blogServiceType";
+import type { BoardCommentItem } from "@/app/types/boardServiceType";
+import type { APIResponse } from "@/app/types/clientType";
+import CommentTextInput, { CommentType } from "./CommentTextInput";
 
 // 联合类型，支持博客和论坛评论
 type CommentItem = BoardCommentItem | BlogCommentItem;
@@ -81,7 +82,7 @@ const CommentList = ({ type, targetId, isAuthenticated }: CommentListProps) => {
   // 处理删除评论
   const handleDelete = async (commentId: number) => {
     try {
-      let response;
+      let response: APIResponse<null>;
       if (type === CommentType.BLOG) {
         response = await blogService.deleteBlogComment({
           comment_id: commentId,
@@ -121,7 +122,13 @@ const CommentList = ({ type, targetId, isAuthenticated }: CommentListProps) => {
 
     setIsLoadingMore(true);
     try {
-      let response;
+      let response: APIResponse<{
+        comments: CommentItem[];
+        pagination: {
+          next_cursor: string | null;
+          has_next: boolean;
+        };
+      }>;
       if (type === CommentType.BLOG) {
         response = await blogService.getBlogCommentLists({
           blog_id: targetId,
@@ -358,6 +365,7 @@ const CommentList = ({ type, targetId, isAuthenticated }: CommentListProps) => {
         <div className="flex items-center space-x-1 sm:space-x-3">
           {isAuthenticated && showReply && (
             <button
+              type="button"
               onClick={() => setReplyingTo(comment.comment_id)}
               disabled={isAnyOperationInProgress(comment.comment_id)}
               className={buttonClass}
@@ -373,6 +381,7 @@ const CommentList = ({ type, targetId, isAuthenticated }: CommentListProps) => {
           <div className="flex items-center space-x-1 sm:space-x-2">
             {canEdit && (
               <button
+                type="button"
                 onClick={() => setEditingComment(comment.comment_id)}
                 disabled={isAnyOperationInProgress(comment.comment_id)}
                 className={buttonClass}
@@ -385,6 +394,7 @@ const CommentList = ({ type, targetId, isAuthenticated }: CommentListProps) => {
 
             {canDelete && (
               <button
+                type="button"
                 onClick={() => {
                   handleDeleteStart(comment.comment_id);
                   handleDelete(comment.comment_id);

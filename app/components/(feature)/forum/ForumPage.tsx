@@ -1,15 +1,14 @@
 "use client";
 
-import React from "react";
-import useSWR from "swr";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/app/contexts/hooks/useAuth";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import CommentTextInput, { CommentType } from "../comment/CommentTextInput";
+import useSWR from "swr";
 import CommentList from "@/app/components/(feature)/comment/CommentList";
-import { SectionListItem } from "@/app/types/sectionServiceType";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import { useAuth } from "@/app/contexts/hooks/useAuth";
+import type { SectionListItem } from "@/app/types/sectionServiceType";
+import CommentTextInput, { CommentType } from "../comment/CommentTextInput";
 
 interface ForumPageProps {
   sectionData: SectionListItem;
@@ -17,34 +16,20 @@ interface ForumPageProps {
 
 const ForumPage: React.FC<ForumPageProps> = ({ sectionData }) => {
   const commonT = useTranslations("common");
-  const {
-    data: boardDetails,
-    isLoading,
-    error,
-  } = useSWR("/board/get-board-details");
+  const { data: boardDetails, isLoading, error } = useSWR("/board/get-board-details");
   const { isAuthenticated } = useAuth();
 
   // 如果 sectionData 不存在，显示加载状态
   if (!sectionData) {
     return (
-      <LoadingSpinner
-        message={commonT("loading")}
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
     );
   }
 
   // 简洁的加载状态
   if (isLoading) {
     return (
-      <LoadingSpinner
-        message={commonT("loading")}
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
     );
   }
 

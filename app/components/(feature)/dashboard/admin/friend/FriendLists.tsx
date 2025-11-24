@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import toast from "react-hot-toast";
-import Image from "next/image";
+import { Edit, FileText, Trash2 } from "lucide-react";
 import { motion } from "motion/react";
-import { Trash2, FileText, Edit } from "lucide-react";
+import Image from "next/image";
 import { useFormatter } from "next-intl";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import UpdateFriendModel from "@/app/components/(feature)/dashboard/admin/friend/UpdateFriendModel";
 import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
 import FriendService from "@/app/lib/services/friendService";
 import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
+import type { OffsetPaginationResponse } from "@/app/types/commonType";
 import type { GetFriendListItemsResponse } from "@/app/types/friendServiceType";
 import { FriendType } from "@/app/types/friendServiceType";
-import type { OffsetPaginationResponse } from "@/app/types/commonType";
-import UpdateFriendModel from "@/app/components/(feature)/dashboard/admin/friend/UpdateFriendModel";
 
 interface FriendListsProps {
   friendItems: GetFriendListItemsResponse[];
@@ -32,8 +32,7 @@ const FriendLists = ({
     useState<GetFriendListItemsResponse[]>(friendItems);
   const [deletingIds, setDeletingIds] = useState<number[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingFriend, setEditingFriend] =
-    useState<GetFriendListItemsResponse | null>(null);
+  const [editingFriend, setEditingFriend] = useState<GetFriendListItemsResponse | null>(null);
 
   // Update optimistic friends when friendItems prop changes
   useEffect(() => {
@@ -60,9 +59,7 @@ const FriendLists = ({
     setDeletingIds((prev) => [...prev, friendListId]);
 
     // Optimistic update - immediately remove from UI
-    setOptimisticFriends(
-      optimisticFriends.filter((friend) => friend.id !== friendListId)
-    );
+    setOptimisticFriends(optimisticFriends.filter((friend) => friend.id !== friendListId));
 
     try {
       // Call API in background
@@ -71,17 +68,13 @@ const FriendLists = ({
       });
 
       if (response.status === 200) {
-        toast.success(
-          "message" in response ? response.message : "Friend deleted"
-        );
+        toast.success("message" in response ? response.message : "Friend deleted");
         // Refresh list after successful delete to update pagination/total count
         if (onDataChange) {
           onDataChange();
         }
       } else {
-        toast.error(
-          "error" in response ? response.error : "Failed to delete friend"
-        );
+        toast.error("error" in response ? response.error : "Failed to delete friend");
         setOptimisticFriends(friendItems);
       }
     } catch (error) {
@@ -143,93 +136,89 @@ const FriendLists = ({
               </tr>
             </thead>
             <tbody>
-              {optimisticFriends.map(
-                (friend: GetFriendListItemsResponse, index: number) => (
-                  <motion.tr
-                    key={friend.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="border-b border-border-50 hover:bg-background-100 transition-colors bg-background-50"
-                  >
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <a
-                        href={friend.site_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center space-x-2 lg:space-x-3 hover:opacity-80 transition-opacity"
-                      >
-                        <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center shrink-0 cursor-pointer">
-                          {friend.logo_url ? (
-                            <Image
-                              src={friend.logo_url}
-                              alt={friend.chinese_title}
-                              width={56}
-                              height={56}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <FileText className="w-6 h-6 text-foreground-200" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs lg:text-sm font-medium text-foreground-50 truncate cursor-pointer hover:text-primary-400 transition-colors">
-                            {friend.chinese_title}
-                          </p>
-                          {friend.chinese_description && (
-                            <p className="text-xs text-foreground-300 truncate mt-0.5">
-                              {friend.chinese_description}
-                            </p>
-                          )}
-                        </div>
-                      </a>
-                    </td>
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <span
-                        className={`inline-flex items-center px-2 py-1 rounded-sm text-xs font-medium ${getFriendTypeColor(
-                          friend.type
-                        )}`}
-                      >
-                        {getFriendTypeLabel(friend.type)}
-                      </span>
-                    </td>
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <p className="text-xs lg:text-sm text-foreground-200">
-                        {handleDateFormat(friend.created_at, format)}
-                      </p>
-                    </td>
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <div className="flex justify-end space-x-1 lg:space-x-2">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleEditType(friend)}
-                          className="p-1.5 lg:p-2 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
-                          title="更新类型"
-                        >
-                          <Edit className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleDelete(friend.id)}
-                          disabled={deletingIds.includes(friend.id)}
-                          className="p-1.5 lg:p-2 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors disabled:opacity-50"
-                          title="删除友链"
-                        >
-                          <Trash2
-                            className={`w-3.5 h-3.5 lg:w-4 lg:h-4 ${
-                              deletingIds.includes(friend.id)
-                                ? "animate-spin"
-                                : ""
-                            }`}
+              {optimisticFriends.map((friend: GetFriendListItemsResponse, index: number) => (
+                <motion.tr
+                  key={friend.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="border-b border-border-50 hover:bg-background-100 transition-colors bg-background-50"
+                >
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <a
+                      href={friend.site_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-2 lg:space-x-3 hover:opacity-80 transition-opacity"
+                    >
+                      <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center shrink-0 cursor-pointer">
+                        {friend.logo_url ? (
+                          <Image
+                            src={friend.logo_url}
+                            alt={friend.chinese_title}
+                            width={56}
+                            height={56}
+                            className="w-full h-full object-cover"
                           />
-                        </motion.button>
+                        ) : (
+                          <FileText className="w-6 h-6 text-foreground-200" />
+                        )}
                       </div>
-                    </td>
-                  </motion.tr>
-                )
-              )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs lg:text-sm font-medium text-foreground-50 truncate cursor-pointer hover:text-primary-400 transition-colors">
+                          {friend.chinese_title}
+                        </p>
+                        {friend.chinese_description && (
+                          <p className="text-xs text-foreground-300 truncate mt-0.5">
+                            {friend.chinese_description}
+                          </p>
+                        )}
+                      </div>
+                    </a>
+                  </td>
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-sm text-xs font-medium ${getFriendTypeColor(
+                        friend.type,
+                      )}`}
+                    >
+                      {getFriendTypeLabel(friend.type)}
+                    </span>
+                  </td>
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <p className="text-xs lg:text-sm text-foreground-200">
+                      {handleDateFormat(friend.created_at, format)}
+                    </p>
+                  </td>
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <div className="flex justify-end space-x-1 lg:space-x-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleEditType(friend)}
+                        className="p-1.5 lg:p-2 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
+                        title="更新类型"
+                      >
+                        <Edit className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleDelete(friend.id)}
+                        disabled={deletingIds.includes(friend.id)}
+                        className="p-1.5 lg:p-2 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors disabled:opacity-50"
+                        title="删除友链"
+                      >
+                        <Trash2
+                          className={`w-3.5 h-3.5 lg:w-4 lg:h-4 ${
+                            deletingIds.includes(friend.id) ? "animate-spin" : ""
+                          }`}
+                        />
+                      </motion.button>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -238,124 +227,32 @@ const FriendLists = ({
       {/* Tablet View */}
       <div className="hidden md:block lg:hidden">
         <div className="space-y-3">
-          {optimisticFriends.map(
-            (friend: GetFriendListItemsResponse, index: number) => (
-              <motion.div
-                key={friend.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="border border-border-50 rounded-sm p-4 hover:shadow-md transition-shadow bg-background-50"
-              >
-                <div className="space-y-3">
-                  <a
-                    href={friend.site_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-start space-x-3 hover:opacity-80 transition-opacity"
-                  >
-                    <div className="w-16 h-16 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center shrink-0 cursor-pointer">
-                      {friend.logo_url ? (
-                        <Image
-                          src={friend.logo_url}
-                          alt={friend.chinese_title}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <FileText className="w-7 h-7 text-foreground-200" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-foreground-50 truncate cursor-pointer hover:text-primary-400 transition-colors">
-                        {friend.chinese_title}
-                      </h3>
-                      {friend.chinese_description && (
-                        <p className="text-xs text-foreground-300 mt-1 line-clamp-2">
-                          {friend.chinese_description}
-                        </p>
-                      )}
-                    </div>
-                  </a>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span
-                        className={`inline-flex items-center px-2 py-1 rounded-sm text-xs font-medium ${getFriendTypeColor(
-                          friend.type
-                        )}`}
-                      >
-                        {getFriendTypeLabel(friend.type)}
-                      </span>
-                      <p className="text-xs text-foreground-300">
-                        {handleDateFormat(friend.created_at, format)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end space-x-1">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleEditType(friend)}
-                      className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
-                      title="更新类型"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleDelete(friend.id)}
-                      disabled={deletingIds.includes(friend.id)}
-                      className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors disabled:opacity-50"
-                      title="删除友链"
-                    >
-                      <Trash2
-                        className={`w-3.5 h-3.5 ${
-                          deletingIds.includes(friend.id) ? "animate-spin" : ""
-                        }`}
-                      />
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            )
-          )}
-        </div>
-      </div>
-
-      {/* Mobile Card View */}
-      <div className="md:hidden space-y-3">
-        {optimisticFriends.map(
-          (friend: GetFriendListItemsResponse, index: number) => (
+          {optimisticFriends.map((friend: GetFriendListItemsResponse, index: number) => (
             <motion.div
               key={friend.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="border border-border-50 rounded-sm p-3 hover:shadow-md transition-shadow bg-background-50"
+              className="border border-border-50 rounded-sm p-4 hover:shadow-md transition-shadow bg-background-50"
             >
-              <div className="space-y-2.5">
-                {/* Friend Header */}
+              <div className="space-y-3">
                 <a
                   href={friend.site_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start space-x-2.5 hover:opacity-80 transition-opacity"
+                  className="flex items-start space-x-3 hover:opacity-80 transition-opacity"
                 >
-                  <div className="w-12 h-12 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center shrink-0 cursor-pointer">
+                  <div className="w-16 h-16 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center shrink-0 cursor-pointer">
                     {friend.logo_url ? (
                       <Image
                         src={friend.logo_url}
                         alt={friend.chinese_title}
-                        width={48}
-                        height={48}
+                        width={64}
+                        height={64}
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <FileText className="w-5 h-5 text-foreground-200" />
+                      <FileText className="w-7 h-7 text-foreground-200" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -363,19 +260,18 @@ const FriendLists = ({
                       {friend.chinese_title}
                     </h3>
                     {friend.chinese_description && (
-                      <p className="text-xs text-foreground-300 line-clamp-2 mt-0.5">
+                      <p className="text-xs text-foreground-300 mt-1 line-clamp-2">
                         {friend.chinese_description}
                       </p>
                     )}
                   </div>
                 </a>
 
-                {/* Friend Meta */}
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span
                       className={`inline-flex items-center px-2 py-1 rounded-sm text-xs font-medium ${getFriendTypeColor(
-                        friend.type
+                        friend.type,
                       )}`}
                     >
                       {getFriendTypeLabel(friend.type)}
@@ -386,38 +282,127 @@ const FriendLists = ({
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex justify-end -mr-1">
-                  <div className="flex space-x-1">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleEditType(friend)}
-                      className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors active:bg-warning-100"
-                      title="更新类型"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleDelete(friend.id)}
-                      disabled={deletingIds.includes(friend.id)}
-                      className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors active:bg-error-100 disabled:opacity-50"
-                      title="删除友链"
-                    >
-                      <Trash2
-                        className={`w-3.5 h-3.5 ${
-                          deletingIds.includes(friend.id) ? "animate-spin" : ""
-                        }`}
-                      />
-                    </motion.button>
-                  </div>
+                <div className="flex justify-end space-x-1">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleEditType(friend)}
+                    className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
+                    title="更新类型"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleDelete(friend.id)}
+                    disabled={deletingIds.includes(friend.id)}
+                    className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors disabled:opacity-50"
+                    title="删除友链"
+                  >
+                    <Trash2
+                      className={`w-3.5 h-3.5 ${
+                        deletingIds.includes(friend.id) ? "animate-spin" : ""
+                      }`}
+                    />
+                  </motion.button>
                 </div>
               </div>
             </motion.div>
-          )
-        )}
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {optimisticFriends.map((friend: GetFriendListItemsResponse, index: number) => (
+          <motion.div
+            key={friend.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className="border border-border-50 rounded-sm p-3 hover:shadow-md transition-shadow bg-background-50"
+          >
+            <div className="space-y-2.5">
+              {/* Friend Header */}
+              <a
+                href={friend.site_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start space-x-2.5 hover:opacity-80 transition-opacity"
+              >
+                <div className="w-12 h-12 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center shrink-0 cursor-pointer">
+                  {friend.logo_url ? (
+                    <Image
+                      src={friend.logo_url}
+                      alt={friend.chinese_title}
+                      width={48}
+                      height={48}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <FileText className="w-5 h-5 text-foreground-200" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-medium text-foreground-50 truncate cursor-pointer hover:text-primary-400 transition-colors">
+                    {friend.chinese_title}
+                  </h3>
+                  {friend.chinese_description && (
+                    <p className="text-xs text-foreground-300 line-clamp-2 mt-0.5">
+                      {friend.chinese_description}
+                    </p>
+                  )}
+                </div>
+              </a>
+
+              {/* Friend Meta */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`inline-flex items-center px-2 py-1 rounded-sm text-xs font-medium ${getFriendTypeColor(
+                      friend.type,
+                    )}`}
+                  >
+                    {getFriendTypeLabel(friend.type)}
+                  </span>
+                  <p className="text-xs text-foreground-300">
+                    {handleDateFormat(friend.created_at, format)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-end -mr-1">
+                <div className="flex space-x-1">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleEditType(friend)}
+                    className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors active:bg-warning-100"
+                    title="更新类型"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleDelete(friend.id)}
+                    disabled={deletingIds.includes(friend.id)}
+                    className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors active:bg-error-100 disabled:opacity-50"
+                    title="删除友链"
+                  >
+                    <Trash2
+                      className={`w-3.5 h-3.5 ${
+                        deletingIds.includes(friend.id) ? "animate-spin" : ""
+                      }`}
+                    />
+                  </motion.button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
 
       {/* Pagination */}

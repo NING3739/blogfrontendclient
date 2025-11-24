@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import type React from "react";
+import { useEffect, useRef } from "react";
 
 interface BlogAudioResponse {
   blog_id: number;
@@ -13,11 +14,7 @@ interface BlogAudioProps {
   audioData: BlogAudioResponse | undefined;
 }
 
-const BlogAudio = ({
-  shouldPlay,
-  onPlayStateChange,
-  audioData,
-}: BlogAudioProps) => {
+const BlogAudio = ({ shouldPlay, onPlayStateChange, audioData }: BlogAudioProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // 当shouldPlay为true时自动播放，为false时暂停

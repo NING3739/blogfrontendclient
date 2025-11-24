@@ -1,12 +1,13 @@
-import React, { useState, useRef } from "react";
-import { Upload, RotateCcw } from "lucide-react";
-import toast from "react-hot-toast";
+import { RotateCcw, Upload } from "lucide-react";
 import Image from "next/image";
-import Cropper from "react-easy-crop";
-import Modal from "@/app/components/ui/modal/Modal";
-import { Button } from "@/app/components/ui/button/butten";
-import userService from "@/app/lib/services/userService";
 import { useTranslations } from "next-intl";
+import type React from "react";
+import { useRef, useState } from "react";
+import Cropper from "react-easy-crop";
+import toast from "react-hot-toast";
+import { Button } from "@/app/components/ui/button/butten";
+import Modal from "@/app/components/ui/modal/Modal";
+import userService from "@/app/lib/services/userService";
 
 interface ChangeAvatarModalProps {
   isOpen: boolean;
@@ -21,19 +22,13 @@ interface CropArea {
   height: number;
 }
 
-const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
-  isOpen,
-  onClose,
-  onSuccess,
-}) => {
+const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<CropArea | null>(
-    null
-  );
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<CropArea | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dashboardT = useTranslations("dashboard.myProfile");
@@ -62,10 +57,7 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
     }
   };
 
-  const onCropComplete = (
-    croppedArea: CropArea,
-    croppedAreaPixels: CropArea
-  ) => {
+  const onCropComplete = (_croppedArea: CropArea, croppedAreaPixels: CropArea) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
@@ -77,10 +69,7 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
       image.src = url;
     });
 
-  const getCroppedImg = async (
-    imageSrc: string,
-    pixelCrop: CropArea
-  ): Promise<File> => {
+  const getCroppedImg = async (imageSrc: string, pixelCrop: CropArea): Promise<File> => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -98,11 +87,7 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
     ctx.translate(safeArea / 2, safeArea / 2);
     ctx.translate(-safeArea / 2, -safeArea / 2);
 
-    ctx.drawImage(
-      image,
-      safeArea / 2 - image.width * 0.5,
-      safeArea / 2 - image.height * 0.5
-    );
+    ctx.drawImage(image, safeArea / 2 - image.width * 0.5, safeArea / 2 - image.height * 0.5);
 
     const data = ctx.getImageData(0, 0, safeArea, safeArea);
 
@@ -112,7 +97,7 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
     ctx.putImageData(
       data,
       Math.round(0 - safeArea / 2 + image.width * 0.5 - pixelCrop.x),
-      Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
+      Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y),
     );
 
     return new Promise((resolve) => {
@@ -135,17 +120,11 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
       const croppedFile = await getCroppedImg(preview, croppedAreaPixels);
       const response = await userService.changeMyAvatar({ file: croppedFile });
       if (response.status === 200) {
-        toast.success(
-          "message" in response
-            ? response.message
-            : "Avatar updated successfully"
-        );
+        toast.success("message" in response ? response.message : "Avatar updated successfully");
         onSuccess?.();
         handleReset();
       } else {
-        toast.error(
-          "error" in response ? response.error : "Failed to update avatar"
-        );
+        toast.error("error" in response ? response.error : "Failed to update avatar");
       }
     } catch (error) {
       console.error("上传头像失败:", error);
@@ -172,11 +151,7 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
     onClose();
   };
 
-  const modalFooter = !showCropper ? (
-    <Button onClick={handleClose} variant="outline" disabled={isUploading}>
-      {commonT("cancel")}
-    </Button>
-  ) : (
+  const modalFooter = showCropper ? (
     <>
       <Button
         variant="outline"
@@ -194,11 +169,7 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
         <RotateCcw className="w-4 h-4 mr-2" />
         {dashboardT("reselect")}
       </Button>
-      <Button
-        variant="primary"
-        onClick={handleUpload}
-        disabled={isUploading || !croppedAreaPixels}
-      >
+      <Button variant="primary" onClick={handleUpload} disabled={isUploading || !croppedAreaPixels}>
         {isUploading ? (
           <>
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
@@ -212,6 +183,10 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
         )}
       </Button>
     </>
+  ) : (
+    <Button onClick={handleClose} variant="outline" disabled={isUploading}>
+      {commonT("cancel")}
+    </Button>
   );
 
   return (
@@ -223,7 +198,43 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
       footer={showCropper ? modalFooter : undefined}
     >
       <div className="space-y-6">
-        {!showCropper ? (
+        {showCropper ? (
+          <>
+            {/* Cropper Section */}
+            <div className="relative w-full h-64 bg-background-50 rounded-sm overflow-hidden border border-border-100">
+              <Cropper
+                image={preview}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                cropShape="round"
+                showGrid={false}
+              />
+            </div>
+
+            {/* Zoom Control */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-foreground-200">
+                  {dashboardT("zoom")}
+                </label>
+                <span className="text-xs text-foreground-300">{zoom.toFixed(1)}x</span>
+              </div>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                onChange={(e) => setZoom(Number(e.target.value))}
+                className="w-full h-2 bg-border-100 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary-500 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:hover:bg-primary-600 [&::-webkit-slider-thumb]:transition-colors [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary-500 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-primary-600 [&::-moz-range-thumb]:transition-colors"
+              />
+            </div>
+          </>
+        ) : (
           <>
             {/* Upload Area */}
             <div
@@ -235,9 +246,7 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
                   ? dashboardT("selectedFile", { name: selectedFile.name })
                   : dashboardT("dragImageHere")}
               </p>
-              <p className="text-sm text-foreground-300 mb-4">
-                {dashboardT("supportedFormats")}
-              </p>
+              <p className="text-sm text-foreground-300 mb-4">{dashboardT("supportedFormats")}</p>
               <label className="inline-block">
                 <input
                   ref={fileInputRef}
@@ -271,44 +280,6 @@ const ChangeAvatarModal: React.FC<ChangeAvatarModalProps> = ({
                 </div>
               </div>
             )}
-          </>
-        ) : (
-          <>
-            {/* Cropper Section */}
-            <div className="relative w-full h-64 bg-background-50 rounded-sm overflow-hidden border border-border-100">
-              <Cropper
-                image={preview}
-                crop={crop}
-                zoom={zoom}
-                aspect={1}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={onCropComplete}
-                cropShape="round"
-                showGrid={false}
-              />
-            </div>
-
-            {/* Zoom Control */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-foreground-200">
-                  {dashboardT("zoom")}
-                </label>
-                <span className="text-xs text-foreground-300">
-                  {zoom.toFixed(1)}x
-                </span>
-              </div>
-              <input
-                type="range"
-                min={1}
-                max={3}
-                step={0.1}
-                value={zoom}
-                onChange={(e) => setZoom(Number(e.target.value))}
-                className="w-full h-2 bg-border-100 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary-500 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:hover:bg-primary-600 [&::-webkit-slider-thumb]:transition-colors [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary-500 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:hover:bg-primary-600 [&::-moz-range-thumb]:transition-colors"
-              />
-            </div>
           </>
         )}
       </div>

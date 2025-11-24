@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
-import { motion } from "motion/react";
 import { Loader2 } from "lucide-react";
+import { motion } from "motion/react";
+import type React from "react";
 
 interface LoadingSpinnerProps {
   message?: string;
@@ -33,9 +33,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
   // 简约旋转加载器
   const DefaultSpinner = () => (
-    <Loader2
-      className={`${sizeClasses[size]} text-foreground-300 animate-spin`}
-    />
+    <Loader2 className={`${sizeClasses[size]} text-foreground-300 animate-spin`} />
   );
 
   // 简约脉冲加载器
@@ -135,9 +133,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       <div className="text-center">
         {renderSpinner()}
         {message && (
-          <p className={`text-foreground-300 ${textSizeClasses[size]} mt-3`}>
-            {message}
-          </p>
+          <p className={`text-foreground-300 ${textSizeClasses[size]} mt-3`}>{message}</p>
         )}
       </div>
     </div>

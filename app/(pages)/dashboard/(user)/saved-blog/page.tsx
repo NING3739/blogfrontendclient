@@ -1,16 +1,16 @@
 "use client";
 
-import useSWR from "swr";
-import React, { useState } from "react";
 import { Bookmark, Calendar } from "lucide-react";
 import { motion } from "motion/react";
-import { useAuth } from "@/app/contexts/hooks/useAuth";
 import { useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
+import useSWR from "swr";
 import SavedBlogLists from "@/app/components/(feature)/dashboard/user/saved-blog/SavedBlogLists";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import StatsCard from "@/app/components/ui/stats/StatsCard";
+import { useAuth } from "@/app/contexts/hooks/useAuth";
 
 export default function SavedBlogPage() {
   const { user } = useAuth();
@@ -28,22 +28,14 @@ export default function SavedBlogPage() {
   } = useSWR(
     // 只有当 userId 存在时才发起请求
     userId
-      ? [
-          `/blog/get-saved-blog-lists?user_id=${userId}&page=${currentPage}&size=10`,
-          locale,
-        ]
-      : null
+      ? [`/blog/get-saved-blog-lists?user_id=${userId}&page=${currentPage}&size=10`, locale]
+      : null,
   );
 
   // 如果用户数据还未加载或正在加载收藏列表，显示加载状态
   if (!userId || isLoading) {
     return (
-      <LoadingSpinner
-        message={commonT("loading")}
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
     );
   }
 
@@ -59,10 +51,7 @@ export default function SavedBlogPage() {
 
   // Handle case where savedBlogLists is undefined (404 or no data)
   // The API returns a tuple: [items, pagination_metadata]
-  const hasData =
-    savedBlogLists &&
-    Array.isArray(savedBlogLists) &&
-    savedBlogLists.length === 2;
+  const hasData = savedBlogLists && Array.isArray(savedBlogLists) && savedBlogLists.length === 2;
 
   // Default values for empty state
   const [savedBlogItems, pagination] = hasData
@@ -96,9 +85,7 @@ export default function SavedBlogPage() {
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground-50 mb-1 sm:mb-2">
           {dashboardT("title")}
         </h1>
-        <p className="text-sm sm:text-base text-foreground-300">
-          {dashboardT("description")}
-        </p>
+        <p className="text-sm sm:text-base text-foreground-300">{dashboardT("description")}</p>
       </div>
 
       {/* Stats Cards */}

@@ -1,35 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { JSONContent } from "@tiptap/react";
-import useSWR from "swr";
+import type { JSONContent } from "@tiptap/react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import useSWR from "swr";
 import blogService from "@/app/lib/services/blogService";
+import type { GetBlogEditorDetailsResponse } from "@/app/types/blogServiceType";
+import type { BlogMetaData, UsePostEditorProps, UsePostEditorReturn } from "@/app/types/editorType";
+import type { TiptapContent } from "@/app/types/tiptapType";
 
-export interface BlogMetaData {
-  selectedSeoId: number | null;
-  selectedCoverImageId: number | null;
-  selectedCoverImageUrl: string | null;
-  selectedSectionId: number | null;
-  selectedTags: number[];
-  title: string;
-  description: string;
-}
-
-export interface UsePostEditorProps {
-  type: string | null;
-  blogSlug: string | null;
-  content: JSONContent | null;
-  setContent: (content: JSONContent | null) => void;
-}
-
-export interface UsePostEditorReturn {
-  blogMetaData: BlogMetaData;
-  isBlogLoading: boolean;
-  handleBlogMetaDataSave: (data: BlogMetaData) => void;
-  handleBlogSave: () => Promise<void>;
-  validateBlogData: () => { isValid: boolean; missingFields: string[] };
-}
+// 重新导出类型供其他组件使用
+export type { BlogMetaData, UsePostEditorProps, UsePostEditorReturn };
 
 const initialBlogMetaData: BlogMetaData = {
   selectedSeoId: null,
@@ -47,14 +28,13 @@ export const usePostEditor = ({
   content,
   setContent,
 }: UsePostEditorProps): UsePostEditorReturn => {
-  const [blogMetaData, setBlogMetaData] =
-    useState<BlogMetaData>(initialBlogMetaData);
+  const [blogMetaData, setBlogMetaData] = useState<BlogMetaData>(initialBlogMetaData);
 
   // 在更新模式下获取博客详情
   const shouldFetchBlog = type === "update" && !!blogSlug;
 
-  const { data: blogDetails, isLoading: isBlogLoading } = useSWR(
-    shouldFetchBlog ? `/blog/get-blog-details/${blogSlug}?is_editor=true` : null
+  const { data: blogDetails, isLoading: isBlogLoading } = useSWR<GetBlogEditorDetailsResponse>(
+    shouldFetchBlog ? `/blog/get-blog-details/${blogSlug}?is_editor=true` : null,
   );
 
   // 验证博客数据
@@ -62,52 +42,35 @@ export const usePostEditor = ({
     isValid: boolean;
     missingFields: string[];
   } => {
-    const missingFields: string[] = [];
+    const fields = [
+      { value: blogMetaData.selectedSeoId, name: "SEO设置" },
+      { value: blogMetaData.selectedCoverImageId, name: "封面图片" },
+      { value: blogMetaData.selectedSectionId, name: "栏目选择" },
+      { value: blogMetaData.title, name: "标题" },
+      { value: blogMetaData.description, name: "描述" },
+    ];
 
-    if (!blogMetaData.selectedSeoId) missingFields.push("SEO设置");
-    if (!blogMetaData.selectedCoverImageId) missingFields.push("封面图片");
-    if (!blogMetaData.selectedSectionId) missingFields.push("栏目选择");
-    if (!blogMetaData.title) missingFields.push("标题");
-    if (!blogMetaData.description) missingFields.push("描述");
+    const missingFields = fields.filter((f) => !f.value).map((f) => f.name);
+    return { isValid: missingFields.length === 0, missingFields };
+  };
 
-    return {
-      isValid: missingFields.length === 0,
-      missingFields,
-    };
+  // 解析 JSON 内容的通用函数
+  const parseContent = (content: TiptapContent): JSONContent | null => {
+    if (!content) return null;
+
+    try {
+      return content as JSONContent;
+    } catch (error) {
+      console.error("Failed to parse content:", error);
+      return null;
+    }
   };
 
   // 当博客数据加载完成时，预填充表单
   useEffect(() => {
     if (blogDetails && type === "update") {
       const blogData = blogDetails;
-
-      // 解析 JSON 内容
-      let parsedContent: JSONContent | null;
-
-      // 检查 chinese_content 是否存在且不为 undefined
-      if (
-        blogData.chinese_content &&
-        blogData.chinese_content !== "undefined"
-      ) {
-        try {
-          // 如果后端返回的是字符串，需要解析
-          if (typeof blogData.chinese_content === "string") {
-            parsedContent = JSON.parse(blogData.chinese_content);
-          } else {
-            // 如果已经是对象，直接使用
-            parsedContent = blogData.chinese_content;
-          }
-        } catch (error) {
-          console.error("Failed to parse chinese_content:", error);
-          console.log("Raw chinese_content:", blogData.chinese_content);
-          parsedContent = null;
-        }
-      } else {
-        // 如果没有内容，设置为 null 以显示占位符
-        parsedContent = null;
-      }
-
-      setContent(parsedContent);
+      setContent(parseContent(blogData.chinese_content));
 
       // 设置博客元数据
       setBlogMetaData({
@@ -115,92 +78,62 @@ export const usePostEditor = ({
         selectedCoverImageId: blogData.cover_id || null,
         selectedCoverImageUrl: blogData.cover_url || null,
         selectedSectionId: blogData.section_id || null,
-        selectedTags: blogData.blog_tags?.map((tag: any) => tag.tag_id) || [],
+        selectedTags: blogData.blog_tags?.map((tag: { tag_id: number }) => tag.tag_id) || [],
         title: blogData.chinese_title || "",
         description: blogData.chinese_description || "",
       });
     }
-  }, [blogDetails, type, setContent]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blogDetails, type, parseContent, setContent]);
 
   const handleBlogMetaDataSave = (data: BlogMetaData) => {
     setBlogMetaData(data);
   };
 
   const handleBlogSave = async (): Promise<void> => {
+    const validation = validateBlogData();
+    if (!validation.isValid) {
+      toast.error(`请填写以下必填字段：${validation.missingFields.join("、")}`);
+      return;
+    }
+
     try {
       // 创建新博客
       if (type === "blog" && !blogSlug) {
-        const validation = validateBlogData();
-        if (!validation.isValid) {
-          toast.error(
-            `请填写以下必填字段：${validation.missingFields.join("、")}`
-          );
-          return;
-        }
-
-        // 将JSONContent转换为字符串
-        const contentString = JSON.stringify(content);
-
         const response = await blogService.createBlog({
           section_id: blogMetaData.selectedSectionId!,
           seo_id: blogMetaData.selectedSeoId!,
           chinese_title: blogMetaData.title,
           chinese_description: blogMetaData.description,
-          chinese_content: contentString,
+          chinese_content: content || { type: "doc", content: [] },
           cover_id: blogMetaData.selectedCoverImageId!,
           blog_tags: blogMetaData.selectedTags,
         });
 
-        if (response.status === 200) {
-          toast.success(
-            "message" in response
-              ? response.message
-              : "Blog created successfully"
-          );
-        } else {
-          toast.error(
-            "error" in response ? response.error : "Failed to create blog"
-          );
-        }
+        const message = "message" in response ? response.message : "Blog created successfully";
+        const error = "error" in response ? response.error : "Failed to create blog";
+        response.status === 200 ? toast.success(message) : toast.error(error);
       }
 
       // 更新已有博客
       else if (type === "update" && blogSlug) {
-        const validation = validateBlogData();
-        if (!validation.isValid) {
-          toast.error(
-            `请填写以下必填字段：${validation.missingFields.join("、")}`
-          );
-          return;
-        }
-
-        // 将JSONContent转换为字符串
-        const contentString = JSON.stringify(content);
-
         const response = await blogService.updateBlog({
           blog_slug: blogSlug,
           seo_id: blogMetaData.selectedSeoId!,
           cover_id: blogMetaData.selectedCoverImageId!,
           chinese_title: blogMetaData.title,
           chinese_description: blogMetaData.description,
-          chinese_content: contentString,
+          chinese_content: content || { type: "doc", content: [] },
           blog_tags: blogMetaData.selectedTags,
         });
 
-        if (response.status === 200) {
-          toast.success(
-            "message" in response
-              ? response.message
-              : "Blog updated successfully"
-          );
-        } else {
-          toast.error(
-            "error" in response ? response.error : "Failed to update blog"
-          );
-        }
+        const message = "message" in response ? response.message : "Blog updated successfully";
+        const error = "error" in response ? response.error : "Failed to update blog";
+        response.status === 200 ? toast.success(message) : toast.error(error);
       }
-    } catch (error: any) {
-      toast.error("Failed to save blog");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to save blog";
+      toast.error(errorMessage);
       console.error("Blog save failed:", error);
     }
   };

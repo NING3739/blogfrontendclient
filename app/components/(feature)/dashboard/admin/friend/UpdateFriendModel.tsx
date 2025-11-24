@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Button } from "@/app/components/ui/button/butten";
 import Modal from "@/app/components/ui/modal/Modal";
@@ -27,7 +27,7 @@ function UpdateFriendModel({
 
   // 重置选择当模态框关闭或打开时
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
       setSelectedType(currentType);
     } else {
       setSelectedType(currentType);
@@ -68,15 +68,11 @@ function UpdateFriendModel({
       });
 
       if (response.status === 200) {
-        toast.success(
-          "message" in response ? response.message : "Friend type updated"
-        );
+        toast.success("message" in response ? response.message : "Friend type updated");
         onSuccess();
         onClose();
       } else {
-        toast.error(
-          "error" in response ? response.error : "Failed to update friend type"
-        );
+        toast.error("error" in response ? response.error : "Failed to update friend type");
         onClose();
       }
     } catch (error) {
@@ -120,20 +116,14 @@ function UpdateFriendModel({
   );
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="更新友链类型"
-      size="sm"
-      footer={modalFooter}
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="更新友链类型" size="sm" footer={modalFooter}>
       <div>
         <label className="block text-sm font-medium text-foreground-50 mb-2">
           选择类型 <span className="text-error-500">*</span>
         </label>
         <select
           value={selectedType}
-          onChange={(e) => setSelectedType(parseInt(e.target.value))}
+          onChange={(e) => setSelectedType(parseInt(e.target.value, 10))}
           className="w-full rounded-sm border border-border-100 bg-background-50 px-4 py-3 text-foreground-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-foreground-300 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isSubmitting}
         >
@@ -143,9 +133,7 @@ function UpdateFriendModel({
         </select>
         <p className="mt-2 text-xs text-foreground-300">
           当前类型:{" "}
-          <span className="font-medium text-foreground-50">
-            {getFriendTypeLabel(currentType)}
-          </span>
+          <span className="font-medium text-foreground-50">{getFriendTypeLabel(currentType)}</span>
         </p>
       </div>
     </Modal>

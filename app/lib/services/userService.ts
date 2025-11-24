@@ -1,68 +1,51 @@
-import httpClient from "../http/client";
-import {
-  UpdateMyBioRequest,
+import type { OffsetPagination } from "@/app/types/commonType";
+import type {
   ChangeMyAvatarRequest,
-  GetOtherUserProfileRequest,
-  GetOtherSavedBlogListsRequest,
-  EnableOrDisableUserRequest,
   DeleteUserRequest,
+  EnableOrDisableUserRequest,
+  GetOtherSavedBlogListsRequest,
+  GetOtherUserProfileRequest,
+  UpdateMyBioRequest,
 } from "@/app/types/userServiceType";
-import { OffsetPagination } from "@/app/types/commonType";
+import httpClient from "../http/client";
 
 class UserService {
   async updateMyBio(payload: UpdateMyBioRequest) {
-    const response = await httpClient.patch("/user/me/update-my-bio", payload);
-    return response;
+    return httpClient.patch("/user/me/update-my-bio", payload);
   }
 
   async changeMyAvatar(payload: ChangeMyAvatarRequest) {
     const formData = new FormData();
     formData.append("file", payload.file);
-
-    const response = await httpClient.post(
-      "/user/me/change-my-avatar",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    return response;
+    return httpClient.post("/user/me/change-my-avatar", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   }
 
   async getMySavedBlogLists(payload: OffsetPagination) {
-    return await httpClient.get("/user/me/get-my-saved-blog-lists", {
-      params: { ...payload },
+    return httpClient.get("/user/me/get-my-saved-blog-lists", {
+      params: payload,
     });
   }
 
   async getOtherUserProfile(payload: GetOtherUserProfileRequest) {
-    return await httpClient.get(
-      `/user/other/get-other-user-profile/${payload.user_id}`
-    );
+    return httpClient.get(`/user/other/get-other-user-profile/${payload.user_id}`);
   }
 
   async getOtherSavedBlogLists(payload: GetOtherSavedBlogListsRequest) {
-    return await httpClient.get("/user/other/get-other-saved-blog-lists", {
-      params: { ...payload },
+    return httpClient.get("/user/other/get-other-saved-blog-lists", {
+      params: payload,
     });
   }
 
   async enableOrDisableUser(payload: EnableOrDisableUserRequest) {
-    const response = await httpClient.patch(
-      "/user/admin/enable-disable-user",
-      payload
-    );
-    return response;
+    return httpClient.patch("/user/admin/enable-disable-user", payload);
   }
 
   async deleteUser(payload: DeleteUserRequest) {
-    const response = await httpClient.delete(
-      `/user/admin/delete-user/${payload.user_id}`
-    );
-    return response;
+    return httpClient.delete(`/user/admin/delete-user/${payload.user_id}`);
   }
 }
 
-export default new UserService();
+export const userService = new UserService();
+export default userService;

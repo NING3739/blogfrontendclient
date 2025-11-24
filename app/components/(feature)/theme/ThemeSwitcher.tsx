@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Monitor, Moon, Sun } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useTheme } from "next-themes";
-import { motion, AnimatePresence } from "motion/react";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
@@ -35,10 +35,7 @@ const ThemeSwitcher = () => {
     return (
       <div className="flex items-center bg-background-100/60 backdrop-blur-sm border border-border-50 rounded-sm p-0.5">
         {themeOptions.map((option) => (
-          <div
-            key={option.value}
-            className="w-8 h-8 rounded-sm flex items-center justify-center"
-          >
+          <div key={option.value} className="w-8 h-8 rounded-sm flex items-center justify-center">
             <div className="text-foreground-300">{option.icon}</div>
           </div>
         ))}

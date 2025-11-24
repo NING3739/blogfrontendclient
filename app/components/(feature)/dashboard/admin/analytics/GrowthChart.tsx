@@ -1,19 +1,18 @@
-import React from "react";
+import { useFormatter } from "next-intl";
 import {
-  LineChart,
+  CartesianGrid,
+  Legend,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
 } from "recharts";
-import type { GrowthTrends } from "@/app/types/analyticServiceType";
-import { useFormatter } from "next-intl";
-import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
+import type { GrowthTrends } from "@/app/types/analyticServiceType";
 
 interface GrowthChartProps {
   data?: GrowthTrends;
@@ -57,7 +56,10 @@ export default function GrowthChart({
     if (!dateMap.has(date)) {
       dateMap.set(date, { users: 0, blogs: 0, revenue: 0 });
     }
-    dateMap.get(date)!.users = item.count || 0;
+    const entry = dateMap.get(date);
+    if (entry) {
+      entry.users = item.count || 0;
+    }
   });
 
   // 处理博客增长数据
@@ -66,7 +68,10 @@ export default function GrowthChart({
     if (!dateMap.has(date)) {
       dateMap.set(date, { users: 0, blogs: 0, revenue: 0 });
     }
-    dateMap.get(date)!.blogs = item.count || 0;
+    const entry = dateMap.get(date);
+    if (entry) {
+      entry.blogs = item.count || 0;
+    }
   });
 
   // 处理收入增长数据
@@ -75,7 +80,10 @@ export default function GrowthChart({
     if (!dateMap.has(date)) {
       dateMap.set(date, { users: 0, blogs: 0, revenue: 0 });
     }
-    dateMap.get(date)!.revenue = item.revenue || 0;
+    const entry = dateMap.get(date);
+    if (entry) {
+      entry.revenue = item.revenue || 0;
+    }
   });
 
   // 转换为数组并排序

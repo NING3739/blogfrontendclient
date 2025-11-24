@@ -1,18 +1,18 @@
 "use client";
 
-import React from "react";
+import { FileText, Sparkles } from "lucide-react";
+import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { motion } from "motion/react";
-import { Sparkles, FileText } from "lucide-react";
-import { SiWechat, SiSinaweibo, SiBilibili, SiGithub } from "react-icons/si";
+import React from "react";
+import { SiBilibili, SiGithub, SiSinaweibo, SiWechat } from "react-icons/si";
+import useSWR from "swr";
 import ContentCard from "@/app/components/ui/card/ContentCard";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import type { GetRecentPopulorBlogResponse } from "@/app/types/blogServiceType";
 
 const HomeDetails = () => {
@@ -57,12 +57,7 @@ const HomeDetails = () => {
 
   if (isLoading) {
     return (
-      <LoadingSpinner
-        variant="wave"
-        size="lg"
-        message={commonT("loading")}
-        fullScreen={true}
-      />
+      <LoadingSpinner variant="wave" size="lg" message={commonT("loading")} fullScreen={true} />
     );
   }
 
@@ -266,9 +261,7 @@ const HomeDetails = () => {
             </span>
             {homeT("second.believePrefix")}
             <span className="relative inline-block mx-1">
-              <span className="text-primary-400 font-semibold">
-                {homeT("second.details")}
-              </span>
+              <span className="text-primary-400 font-semibold">{homeT("second.details")}</span>
               <motion.span
                 className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary-400"
                 initial={{ scaleX: 0 }}

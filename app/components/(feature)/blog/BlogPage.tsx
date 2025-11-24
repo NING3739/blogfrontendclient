@@ -1,20 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
-import useSWR from "swr";
-import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
-import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
-import { useLocale } from "next-intl";
-import type { GetBlogListsItemResponse } from "@/app/types/blogServiceType";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import EmptyState from "@/app/components/ui/error/EmptyState";
-import ContentCard from "@/app/components/ui/card/ContentCard";
 import { FileText } from "lucide-react";
+import { motion } from "motion/react";
+import { usePathname, useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import type React from "react";
+import { useState } from "react";
+import useSWR from "swr";
+import ContentCard from "@/app/components/ui/card/ContentCard";
+import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
-import { SectionListItem } from "@/app/types/sectionServiceType";
+import type { GetBlogListsItemResponse } from "@/app/types/blogServiceType";
+import type { SectionListItem } from "@/app/types/sectionServiceType";
 
 interface BlogPageProps {
   sectionData: SectionListItem;
@@ -36,29 +35,19 @@ const BlogPage: React.FC<BlogPageProps> = ({ sectionData }) => {
           `/blog/get-blog-lists?page=${currentPage}&size=6&section_id=${sectionData.section_id}&published_only=true`,
           locale,
         ]
-      : null
+      : null,
   );
 
   // 如果 sectionData 不存在，显示加载状态
   if (!sectionData) {
     return (
-      <LoadingSpinner
-        variant="wave"
-        size="lg"
-        message={commonT("loading")}
-        fullScreen={true}
-      />
+      <LoadingSpinner variant="wave" size="lg" message={commonT("loading")} fullScreen={true} />
     );
   }
 
   if (isLoading) {
     return (
-      <LoadingSpinner
-        variant="wave"
-        size="lg"
-        message={commonT("loading")}
-        fullScreen={true}
-      />
+      <LoadingSpinner variant="wave" size="lg" message={commonT("loading")} fullScreen={true} />
     );
   }
 

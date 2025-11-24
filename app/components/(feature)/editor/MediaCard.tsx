@@ -1,12 +1,6 @@
+import { AudioWaveformIcon, FileIcon, Folder, Image as ImageIcon, Video } from "lucide-react";
 import Image from "next/image";
-import {
-  AudioWaveformIcon,
-  Video,
-  Image as ImageIcon,
-  FileIcon,
-  Folder,
-} from "lucide-react";
-import { MediaItem } from "@/app/types/mediaServiceType";
+import type { MediaItem } from "@/app/types/mediaServiceType";
 
 interface MediaCardProps {
   media: MediaItem;
@@ -39,14 +33,8 @@ const MEDIA_TYPE_CONFIG = {
 
 export default function MediaCard({ media, onSelect }: MediaCardProps) {
   const handleClick = () => {
-    if (
-      onSelect &&
-      (media.watermark_filepath_url || media.original_filepath_url)
-    ) {
-      onSelect(
-        media.media_id,
-        media.watermark_filepath_url || media.original_filepath_url
-      );
+    if (onSelect && (media.watermark_filepath_url || media.original_filepath_url)) {
+      onSelect(media.media_id, media.watermark_filepath_url || media.original_filepath_url);
     }
   };
 
@@ -63,13 +51,10 @@ export default function MediaCard({ media, onSelect }: MediaCardProps) {
 
   // 渲染媒体预览内容
   const renderMediaPreview = () => {
-    const config =
-      MEDIA_TYPE_CONFIG[media.media_type as keyof typeof MEDIA_TYPE_CONFIG];
+    const config = MEDIA_TYPE_CONFIG[media.media_type as keyof typeof MEDIA_TYPE_CONFIG];
 
     if (!config) {
-      return (
-        <div className="text-foreground-400 text-sm font-medium">无预览</div>
-      );
+      return <div className="text-foreground-400 text-sm font-medium">无预览</div>;
     }
 
     const IconComponent = config.icon;
@@ -129,12 +114,8 @@ export default function MediaCard({ media, onSelect }: MediaCardProps) {
         {renderMediaPreview()}
       </div>
       <div className="p-3 bg-card-50 border-t border-border-100">
-        <p className="text-xs text-foreground-200 font-medium truncate">
-          {media.file_name}
-        </p>
-        <p className="text-xs text-foreground-400 mt-1 capitalize">
-          {media.media_type}
-        </p>
+        <p className="text-xs text-foreground-200 font-medium truncate">{media.file_name}</p>
+        <p className="text-xs text-foreground-400 mt-1 capitalize">{media.media_type}</p>
       </div>
     </div>
   );

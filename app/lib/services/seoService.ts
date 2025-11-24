@@ -1,27 +1,23 @@
-import httpClient from "../http/client";
 import type {
   CreateSeoRequest,
-  UpdateSeoRequest,
   DeleteSeoRequest,
+  UpdateSeoRequest,
 } from "@/app/types/seoServiceType";
+import httpClient from "../http/client";
 
 class SeoService {
   async createSeo(payload: CreateSeoRequest) {
-    const response = await httpClient.post("/seo/admin/create-seo", payload);
-    return response;
+    return httpClient.post("/seo/admin/create-seo", payload);
   }
 
   async updateSeo(payload: UpdateSeoRequest) {
-    const response = await httpClient.patch("/seo/admin/update-seo", payload);
-    return response;
+    return httpClient.patch("/seo/admin/update-seo", payload);
   }
 
   async deleteSeo(payload: DeleteSeoRequest) {
-    const response = await httpClient.delete(
-      `/seo/admin/delete-seo/${payload.seo_id}`
-    );
-    return response;
+    return httpClient.delete(`/seo/admin/delete-seo/${payload.seo_id}`);
   }
 }
 
-export default new SeoService();
+export const seoService = new SeoService();
+export default seoService;

@@ -1,17 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import useSWR from "swr";
+import { ExternalLink, Globe, Star } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink, Globe, Star } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
 import { useTranslations } from "next-intl";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import EmptyState from "@/app/components/ui/error/EmptyState";
-
+import React, { useEffect, useState } from "react";
+import useSWR from "swr";
 import { Button } from "@/app/components/ui/button/butten";
+import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import httpClient from "@/app/lib/http/client";
 import { FriendType } from "@/app/types/friendServiceType";
 
@@ -35,11 +34,7 @@ const FriendLinkList = ({ friend_id }: { friend_id: number }) => {
     data: friendLists,
     isLoading,
     error,
-  } = useSWR(
-    friend_id
-      ? `/friend/get-friend-list/${friend_id}?limit=${limit}&cursor=null`
-      : null
-  );
+  } = useSWR(friend_id ? `/friend/get-friend-list/${friend_id}?limit=${limit}&cursor=null` : null);
 
   // 处理SWR数据，设置初始状态
   // 注意：全局 fetcher 已经提取了 response.data，所以 friendLists 就是数据本身
@@ -60,18 +55,17 @@ const FriendLinkList = ({ friend_id }: { friend_id: number }) => {
     // 按类型分类所有累积的友链
     // 后端返回 type_name 是枚举的 name 属性（字符串），与 FriendType 枚举的 name 对应
     const featuredFriends = allFriends.filter(
-      (friend: any) =>
-        friend.type_name === getFriendTypeName(FriendType.featured)
+      (friend: any) => friend.type_name === getFriendTypeName(FriendType.featured),
     );
     const normalFriends = allFriends.filter(
-      (friend: any) => friend.type_name === getFriendTypeName(FriendType.normal)
+      (friend: any) => friend.type_name === getFriendTypeName(FriendType.normal),
     );
 
     return {
       featuredFriends,
       normalFriends,
     };
-  }, [allFriends, cursor, hasNext]);
+  }, [allFriends]);
 
   // 处理加载更多
   const handleLoadMore = async () => {
@@ -126,8 +120,7 @@ const FriendLinkList = ({ friend_id }: { friend_id: number }) => {
   // 1. 不在加载中
   // 2. allFriends 为空数组
   // 3. 数据已经处理过（要么有 error，要么 friendLists 已经返回）
-  const dataLoaded =
-    !isLoading && (error !== undefined || friendLists !== undefined);
+  const dataLoaded = !isLoading && (error !== undefined || friendLists !== undefined);
   const isEmpty = allFriends.length === 0 && !hasAnyFriends;
 
   if (dataLoaded && isEmpty) {
@@ -223,9 +216,7 @@ const FriendLinkList = ({ friend_id }: { friend_id: number }) => {
             <div className="mt-auto">
               <div className="flex items-center text-xs text-foreground-400">
                 <Globe className="w-3 h-3 mr-1 shrink-0" />
-                <span className="truncate">
-                  {friend.site_url.replace(/^https?:\/\//, "")}
-                </span>
+                <span className="truncate">{friend.site_url.replace(/^https?:\/\//, "")}</span>
               </div>
             </div>
           </div>
@@ -258,12 +249,7 @@ const FriendLinkList = ({ friend_id }: { friend_id: number }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence>
               {featuredFriends.map((friend: any, index: number) => (
-                <FriendItem
-                  key={friend.id}
-                  friend={friend}
-                  variant="featured"
-                  index={index}
-                />
+                <FriendItem key={friend.id} friend={friend} variant="featured" index={index} />
               ))}
             </AnimatePresence>
           </div>
@@ -280,19 +266,12 @@ const FriendLinkList = ({ friend_id }: { friend_id: number }) => {
         >
           <div className="flex items-center space-x-2 mb-6">
             <Globe className="w-5 h-5 text-foreground-400" />
-            <h2 className="text-xl font-semibold text-foreground-50">
-              {friendT("normalFriends")}
-            </h2>
+            <h2 className="text-xl font-semibold text-foreground-50">{friendT("normalFriends")}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence>
               {normalFriends.map((friend: any, index: number) => (
-                <FriendItem
-                  key={friend.id}
-                  friend={friend}
-                  variant="default"
-                  index={index}
-                />
+                <FriendItem key={friend.id} friend={friend} variant="default" index={index} />
               ))}
             </AnimatePresence>
           </div>

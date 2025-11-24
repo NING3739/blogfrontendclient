@@ -1,5 +1,5 @@
-import React from "react";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import type React from "react";
 
 export const metadata: Metadata = {
   title: "小李生活志 | Payments",

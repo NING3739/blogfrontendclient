@@ -1,24 +1,24 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import React, { useMemo, useEffect, useState } from "react";
-import { EditorContent, useEditor, JSONContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import TextAlign from "@tiptap/extension-text-align";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import TextAlign from "@tiptap/extension-text-align";
 import UniqueID from "@tiptap/extension-unique-id";
+import { EditorContent, type JSONContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import { common, createLowlight } from "lowlight";
-import ImagePreview from "./ImagePreview";
+import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useState } from "react";
+import { Audio } from "@/app/lib/extensions/audio";
 import { Image } from "@/app/lib/extensions/image";
 import { Video } from "@/app/lib/extensions/video";
-import { Audio } from "@/app/lib/extensions/audio";
+import ImagePreview from "./ImagePreview";
 
 // 创建 lowlight 实例
 const lowlight = createLowlight(common);
 
+import dockerfile from "highlight.js/lib/languages/dockerfile";
 // 注册额外的语言（补充 common 包中没有的）
 import html from "highlight.js/lib/languages/xml";
-import dockerfile from "highlight.js/lib/languages/dockerfile";
 
 lowlight.register("html", html);
 lowlight.register("dockerfile", dockerfile);
@@ -37,10 +37,7 @@ const TextContent = ({ content }: { content: JSONContent | string }) => {
   }, [content]);
 
   // 复制代码块内容
-  const copyCodeBlock = async (
-    codeElement: HTMLElement,
-    button: HTMLButtonElement
-  ) => {
+  const copyCodeBlock = async (codeElement: HTMLElement, button: HTMLButtonElement) => {
     const code = codeElement.textContent || "";
     try {
       await navigator.clipboard.writeText(code);
@@ -60,10 +57,7 @@ const TextContent = ({ content }: { content: JSONContent | string }) => {
   };
 
   // 切换代码块折叠状态
-  const toggleCodeBlockCollapse = (
-    preElement: HTMLElement,
-    collapseButton: HTMLButtonElement
-  ) => {
+  const toggleCodeBlockCollapse = (preElement: HTMLElement, collapseButton: HTMLButtonElement) => {
     const isCollapsed = preElement.classList.contains("collapsed");
 
     if (isCollapsed) {
@@ -72,19 +66,13 @@ const TextContent = ({ content }: { content: JSONContent | string }) => {
       preElement.style.maxHeight = "none";
       collapseButton.innerHTML = contentT("collapse");
       collapseButton.classList.remove("bg-primary-500");
-      collapseButton.classList.add(
-        "bg-background-500",
-        "hover:bg-background-400"
-      );
+      collapseButton.classList.add("bg-background-500", "hover:bg-background-400");
     } else {
       // 折叠
       preElement.classList.add("collapsed");
       preElement.style.maxHeight = "300px";
       collapseButton.innerHTML = contentT("expand");
-      collapseButton.classList.remove(
-        "bg-background-500",
-        "hover:bg-background-400"
-      );
+      collapseButton.classList.remove("bg-background-500", "hover:bg-background-400");
       collapseButton.classList.add("bg-primary-500");
     }
   };
@@ -135,8 +123,7 @@ const TextContent = ({ content }: { content: JSONContent | string }) => {
         if (!codeElement) return;
 
         // 获取语言信息
-        const language =
-          codeElement.className.match(/language-(\w+)/)?.[1] || "plaintext";
+        const language = codeElement.className.match(/language-(\w+)/)?.[1] || "plaintext";
 
         // 语言标签映射
         const languageMap: { [key: string]: string } = {
@@ -189,8 +176,7 @@ const TextContent = ({ content }: { content: JSONContent | string }) => {
         copyButton.className =
           "copy-button absolute top-2 right-2 px-2 py-1 text-xs bg-background-500 text-foreground-50 rounded hover:bg-background-400 transition-colors duration-200 opacity-100 z-10";
         copyButton.textContent = contentT("copy");
-        copyButton.onclick = () =>
-          copyCodeBlock(codeElement as HTMLElement, copyButton);
+        copyButton.onclick = () => copyCodeBlock(codeElement as HTMLElement, copyButton);
 
         // 创建折叠按钮（初始隐藏）
         const collapseButton = document.createElement("button");
@@ -213,12 +199,7 @@ const TextContent = ({ content }: { content: JSONContent | string }) => {
 
         // 为 pre 元素添加样式和子元素
         const preHTMLElement = preElement as HTMLElement;
-        preHTMLElement.classList.add(
-          "relative",
-          "group",
-          "code-block-wrapper",
-          "rounded-sm"
-        );
+        preHTMLElement.classList.add("relative", "group", "code-block-wrapper", "rounded-sm");
         preHTMLElement.style.backgroundColor = "var(--color-background-200)"; // 使用设计系统背景色
         preHTMLElement.style.color = "var(--color-foreground-50)"; // 使用设计系统文字色
         preHTMLElement.style.border = "1px solid var(--color-border-200)";
@@ -242,10 +223,7 @@ const TextContent = ({ content }: { content: JSONContent | string }) => {
             preHTMLElement.classList.add("collapsed");
             preHTMLElement.style.maxHeight = "300px";
             collapseButton.textContent = contentT("expand");
-            collapseButton.classList.remove(
-              "bg-background-500",
-              "hover:bg-background-400"
-            );
+            collapseButton.classList.remove("bg-background-500", "hover:bg-background-400");
             collapseButton.classList.add("bg-primary-500");
           }
 

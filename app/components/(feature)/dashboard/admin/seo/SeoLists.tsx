@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import toast from "react-hot-toast";
+import { Edit, Trash2 } from "lucide-react";
 import { motion } from "motion/react";
-import { Trash2, Edit } from "lucide-react";
-import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import CreateSeoModal from "@/app/components/(feature)/editor/CreateSeoModal";
+import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
 import SeoService from "@/app/lib/services/seoService";
-import type { GetSeoItemResponse } from "@/app/types/seoServiceType";
 import type { OffsetPaginationResponse } from "@/app/types/commonType";
+import type { GetSeoItemResponse } from "@/app/types/seoServiceType";
 
 interface SeoListsProps {
   seoItems: GetSeoItemResponse[];
@@ -17,16 +17,10 @@ interface SeoListsProps {
   onDataChange?: () => void; // Optional callback for data refresh
 }
 
-const SeoLists = ({
-  seoItems,
-  pagination,
-  setCurrentPage,
-  onDataChange,
-}: SeoListsProps) => {
+const SeoLists = ({ seoItems, pagination, setCurrentPage, onDataChange }: SeoListsProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingSeo, setEditingSeo] = useState<GetSeoItemResponse | null>(null);
-  const [optimisticSeoItems, setOptimisticSeoItems] =
-    useState<GetSeoItemResponse[]>(seoItems);
+  const [optimisticSeoItems, setOptimisticSeoItems] = useState<GetSeoItemResponse[]>(seoItems);
 
   // Update optimistic seo items when seoItems prop changes
   useEffect(() => {
@@ -42,9 +36,7 @@ const SeoLists = ({
       }
     } else if (action === "delete") {
       // Optimistic update - immediately remove from UI
-      setOptimisticSeoItems(
-        optimisticSeoItems.filter((s) => s.seo_id !== seoId)
-      );
+      setOptimisticSeoItems(optimisticSeoItems.filter((s) => s.seo_id !== seoId));
 
       try {
         // Call API in background
@@ -53,17 +45,13 @@ const SeoLists = ({
         });
 
         if (response.status === 200) {
-          toast.success(
-            "message" in response ? response.message : "SEO deleted"
-          );
+          toast.success("message" in response ? response.message : "SEO deleted");
           // Refresh list after successful delete to update pagination/total count
           if (onDataChange) {
             onDataChange();
           }
         } else {
-          toast.error(
-            "error" in response ? response.error : "Failed to delete SEO"
-          );
+          toast.error("error" in response ? response.error : "Failed to delete SEO");
           setOptimisticSeoItems(seoItems);
         }
       } catch (error) {
@@ -107,61 +95,55 @@ const SeoLists = ({
               </tr>
             </thead>
             <tbody>
-              {optimisticSeoItems.map(
-                (seoItem: GetSeoItemResponse, index: number) => (
-                  <motion.tr
-                    key={seoItem.seo_id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="border-b border-border-50 hover:bg-background-100 transition-colors bg-background-50"
-                  >
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs lg:text-sm font-medium text-foreground-50 truncate">
-                          {seoItem.title}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <p className="text-xs lg:text-sm text-foreground-200 truncate max-w-[200px] lg:max-w-[300px]">
-                        {seoItem.description}
+              {optimisticSeoItems.map((seoItem: GetSeoItemResponse, index: number) => (
+                <motion.tr
+                  key={seoItem.seo_id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="border-b border-border-50 hover:bg-background-100 transition-colors bg-background-50"
+                >
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs lg:text-sm font-medium text-foreground-50 truncate">
+                        {seoItem.title}
                       </p>
-                    </td>
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <p className="text-xs lg:text-sm text-foreground-200 truncate max-w-[150px] lg:max-w-[200px]">
-                        {seoItem.keywords}
-                      </p>
-                    </td>
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <div className="flex justify-end space-x-1 lg:space-x-2">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() =>
-                            handleActionClick("edit", seoItem.seo_id)
-                          }
-                          className="p-1.5 lg:p-2 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
-                          title="编辑 SEO 项目"
-                        >
-                          <Edit className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() =>
-                            handleActionClick("delete", seoItem.seo_id)
-                          }
-                          className="p-1.5 lg:p-2 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors"
-                          title="删除 SEO 项目"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-                        </motion.button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                )
-              )}
+                    </div>
+                  </td>
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <p className="text-xs lg:text-sm text-foreground-200 truncate max-w-[200px] lg:max-w-[300px]">
+                      {seoItem.description}
+                    </p>
+                  </td>
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <p className="text-xs lg:text-sm text-foreground-200 truncate max-w-[150px] lg:max-w-[200px]">
+                      {seoItem.keywords}
+                    </p>
+                  </td>
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <div className="flex justify-end space-x-1 lg:space-x-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleActionClick("edit", seoItem.seo_id)}
+                        className="p-1.5 lg:p-2 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
+                        title="编辑 SEO 项目"
+                      >
+                        <Edit className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleActionClick("delete", seoItem.seo_id)}
+                        className="p-1.5 lg:p-2 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors"
+                        title="删除 SEO 项目"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                      </motion.button>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -170,118 +152,102 @@ const SeoLists = ({
       {/* 平板视图 */}
       <div className="hidden md:block lg:hidden">
         <div className="space-y-3">
-          {optimisticSeoItems.map(
-            (seoItem: GetSeoItemResponse, index: number) => (
-              <motion.div
-                key={seoItem.seo_id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="border border-border-50 rounded-sm p-4 hover:shadow-md transition-shadow bg-background-50"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-foreground-50 truncate flex-1">
-                      {seoItem.title}
-                    </h3>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p className="text-xs text-foreground-300 line-clamp-2">
-                      {seoItem.description}
-                    </p>
-                    <p className="text-xs text-foreground-400 truncate">
-                      关键词: {seoItem.keywords}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-end space-x-1">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleActionClick("edit", seoItem.seo_id)}
-                      className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
-                      title="编辑 SEO 项目"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() =>
-                        handleActionClick("delete", seoItem.seo_id)
-                      }
-                      className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors"
-                      title="删除 SEO 项目"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            )
-          )}
-        </div>
-      </div>
-
-      {/* 移动端卡片视图 */}
-      <div className="md:hidden space-y-3">
-        {optimisticSeoItems.map(
-          (seoItem: GetSeoItemResponse, index: number) => (
+          {optimisticSeoItems.map((seoItem: GetSeoItemResponse, index: number) => (
             <motion.div
               key={seoItem.seo_id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="border border-border-50 rounded-sm p-3 hover:shadow-md transition-shadow bg-background-50"
+              className="border border-border-50 rounded-sm p-4 hover:shadow-md transition-shadow bg-background-50"
             >
-              <div className="space-y-2.5">
-                {/* SEO 头部 */}
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-medium text-foreground-50 truncate flex-1">
                     {seoItem.title}
                   </h3>
                 </div>
 
-                {/* 描述 */}
-                <p className="text-xs text-foreground-300 line-clamp-2">
-                  {seoItem.description}
-                </p>
+                <div className="space-y-2">
+                  <p className="text-xs text-foreground-300 line-clamp-2">{seoItem.description}</p>
+                  <p className="text-xs text-foreground-400 truncate">关键词: {seoItem.keywords}</p>
+                </div>
 
-                {/* 关键词 */}
-                <p className="text-xs text-foreground-400 truncate">
-                  关键词: {seoItem.keywords}
-                </p>
-
-                {/* 操作 */}
-                <div className="flex justify-end -mr-1">
-                  <div className="flex space-x-1">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleActionClick("edit", seoItem.seo_id)}
-                      className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors active:bg-primary-100"
-                      title="编辑 SEO 项目"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() =>
-                        handleActionClick("delete", seoItem.seo_id)
-                      }
-                      className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors active:bg-error-100"
-                      title="删除 SEO 项目"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </motion.button>
-                  </div>
+                <div className="flex justify-end space-x-1">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleActionClick("edit", seoItem.seo_id)}
+                    className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
+                    title="编辑 SEO 项目"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleActionClick("delete", seoItem.seo_id)}
+                    className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors"
+                    title="删除 SEO 项目"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </motion.button>
                 </div>
               </div>
             </motion.div>
-          )
-        )}
+          ))}
+        </div>
+      </div>
+
+      {/* 移动端卡片视图 */}
+      <div className="md:hidden space-y-3">
+        {optimisticSeoItems.map((seoItem: GetSeoItemResponse, index: number) => (
+          <motion.div
+            key={seoItem.seo_id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className="border border-border-50 rounded-sm p-3 hover:shadow-md transition-shadow bg-background-50"
+          >
+            <div className="space-y-2.5">
+              {/* SEO 头部 */}
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-foreground-50 truncate flex-1">
+                  {seoItem.title}
+                </h3>
+              </div>
+
+              {/* 描述 */}
+              <p className="text-xs text-foreground-300 line-clamp-2">{seoItem.description}</p>
+
+              {/* 关键词 */}
+              <p className="text-xs text-foreground-400 truncate">关键词: {seoItem.keywords}</p>
+
+              {/* 操作 */}
+              <div className="flex justify-end -mr-1">
+                <div className="flex space-x-1">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleActionClick("edit", seoItem.seo_id)}
+                    className="p-1.5 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors active:bg-primary-100"
+                    title="编辑 SEO 项目"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleActionClick("delete", seoItem.seo_id)}
+                    className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors active:bg-error-100"
+                    title="删除 SEO 项目"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </motion.button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
 
       {/* 分页 */}

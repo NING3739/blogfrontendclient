@@ -1,33 +1,33 @@
-import dynamic from "next/dynamic";
-import React, { useState, useEffect, useRef } from "react";
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import {
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
   Bold,
-  Italic,
-  Underline,
-  Strikethrough,
+  ChevronDown,
   Code,
   Code2,
+  FileAudio,
+  FileText,
   Heading1,
   Heading2,
   Heading3,
+  Image,
+  Italic,
+  Link,
   List,
   ListOrdered,
   Quote,
-  Undo,
   Redo,
-  Video,
-  Image,
-  FileAudio,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  AlignJustify,
-  ChevronDown,
-  FileText,
-  Link,
+  Strikethrough,
+  Underline,
+  Undo,
   Unlink,
+  Video,
 } from "lucide-react";
+import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 
 // 懒加载模态框组件，只在需要时才加载
 const VideoPickerModal = dynamic(() => import("./VideoPickerModal"), {
@@ -113,7 +113,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
     return null;
   }
 
-  const handleVideoSelect = (mediaId: number, url: string) => {
+  const handleVideoSelect = (_mediaId: number, url: string) => {
     editor
       .chain()
       .focus()
@@ -144,7 +144,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
     }, 50);
   };
 
-  const handleImageSelect = (mediaId: number, url: string) => {
+  const handleImageSelect = (_mediaId: number, url: string) => {
     editor
       .chain()
       .focus()
@@ -173,7 +173,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
     }, 50);
   };
 
-  const handleAudioSelect = (mediaId: number, url: string) => {
+  const handleAudioSelect = (_mediaId: number, url: string) => {
     editor
       .chain()
       .focus()
@@ -357,6 +357,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
     title: string;
   }) => (
     <button
+      type="button"
       onMouseDown={(e) => {
         e.preventDefault(); // 防止编辑器失去焦点和选区
       }}
@@ -426,6 +427,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
         {(editor.isActive("codeBlock") || showLanguageSelector) && (
           <div className="relative" ref={dropdownRef}>
             <button
+              type="button"
               onMouseDown={(e) => {
                 e.preventDefault();
               }}
@@ -447,6 +449,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
               <div className="absolute top-full left-0 mt-1 bg-card-50 border border-border-100 rounded-sm shadow-lg z-50 max-h-60 overflow-y-auto min-w-[120px]">
                 {supportedLanguages.map((language) => (
                   <button
+                    type="button"
                     key={language.value}
                     onMouseDown={(e) => {
                       e.preventDefault();
@@ -530,7 +533,20 @@ export default function MenuBar({ editor }: MenuBarProps) {
 
       {/* 链接 */}
       <div className="flex gap-1 items-center border-r border-border-50 pr-3 mr-2">
-        {!showLinkInput ? (
+        {showLinkInput ? (
+          <div className="flex items-center gap-2">
+            <input
+              ref={linkInputRef}
+              type="text"
+              value={linkUrl}
+              onChange={(e) => setLinkUrl(e.target.value)}
+              onKeyDown={handleLinkKeyDown}
+              onBlur={handleLinkSubmit}
+              placeholder="输入链接 URL..."
+              className="px-2 py-1 text-sm border border-border-100 rounded-sm bg-card-50 text-foreground-200 focus:outline-none focus:border-primary-500 min-w-[200px]"
+            />
+          </div>
+        ) : (
           <>
             <Button
               onClick={handleLinkClick}
@@ -545,19 +561,6 @@ export default function MenuBar({ editor }: MenuBarProps) {
               </Button>
             )}
           </>
-        ) : (
-          <div className="flex items-center gap-2">
-            <input
-              ref={linkInputRef}
-              type="text"
-              value={linkUrl}
-              onChange={(e) => setLinkUrl(e.target.value)}
-              onKeyDown={handleLinkKeyDown}
-              onBlur={handleLinkSubmit}
-              placeholder="输入链接 URL..."
-              className="px-2 py-1 text-sm border border-border-100 rounded-sm bg-card-50 text-foreground-200 focus:outline-none focus:border-primary-500 min-w-[200px]"
-            />
-          </div>
         )}
       </div>
 

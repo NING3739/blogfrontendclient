@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import { CopyCheckIcon, CopyIcon, LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { LinkIcon, CopyIcon, CopyCheckIcon } from "lucide-react";
+import { useState } from "react";
 
 type CopyRightProps = {
   className?: string;
@@ -10,14 +10,9 @@ type CopyRightProps = {
   licenseText?: string; // e.g., CC BY-NC 4.0
 };
 
-const CopyRight = ({
-  className = "",
-  permalink,
-  licenseText = "CC BY-NC 4.0",
-}: CopyRightProps) => {
+const CopyRight = ({ className = "", permalink, licenseText = "CC BY-NC 4.0" }: CopyRightProps) => {
   const currentYear = new Date().getFullYear();
-  const canonical =
-    permalink || (typeof window !== "undefined" ? window.location.href : "");
+  const canonical = permalink || (typeof window !== "undefined" ? window.location.href : "");
   const [copied, setCopied] = useState(false);
   const copyrightT = useTranslations("dashboard.copyright");
   const contentT = useTranslations("content");
@@ -37,7 +32,7 @@ const CopyRight = ({
   return (
     <div
       className={
-        `w-full rounded-sm border border-border-100 bg-background-50 p-4 sm:p-5 shadow-sm space-y-4 ` +
+        "w-full rounded-sm border border-border-100 bg-background-50 p-4 sm:p-5 shadow-sm space-y-4 " +
         className
       }
     >
@@ -70,11 +65,7 @@ const CopyRight = ({
             aria-label="复制链接"
             title={copied ? contentT("copied") : contentT("copy")}
           >
-            {copied ? (
-              <CopyCheckIcon className="w-3 h-3" />
-            ) : (
-              <CopyIcon className="w-3 h-3" />
-            )}
+            {copied ? <CopyCheckIcon className="w-3 h-3" /> : <CopyIcon className="w-3 h-3" />}
           </button>
         </div>
       )}

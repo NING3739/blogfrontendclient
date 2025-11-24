@@ -1,25 +1,17 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
-import { useTranslations, useLocale, useFormatter } from "next-intl";
-import useSWR from "swr";
-import Image from "next/image";
+import { ArrowLeft, CheckCircle, Clock, CreditCard, Download, Package, User } from "lucide-react";
 import { motion } from "motion/react";
-import {
-  CheckCircle,
-  Download,
-  ArrowLeft,
-  Clock,
-  CreditCard,
-  User,
-  Package,
-} from "lucide-react";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import useSWR from "swr";
 import { Button } from "@/app/components/ui/button/butten";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import { formatCurrency } from "@/app/lib/utils/handleCurrencyFormat";
-import type { PaymentSuccessDetails } from "@/app/types/paymentServiceType";
 import type { SupportedLocale } from "@/app/types/clientType";
+import type { PaymentSuccessDetails } from "@/app/types/paymentServiceType";
 
 export default function PaymentSuccessPage() {
   const router = useRouter();
@@ -32,10 +24,7 @@ export default function PaymentSuccessPage() {
   const paymentIntent = searchParams.get("payment_intent");
   const redirectStatus = searchParams.get("redirect_status");
 
-  const unixDateConverter = (
-    unixTimestamp: number,
-    locale: SupportedLocale
-  ) => {
+  const unixDateConverter = (unixTimestamp: number, locale: SupportedLocale) => {
     const date = new Date(unixTimestamp * 1000); // 将秒转换为毫秒
     return date
       .toLocaleString(locale, {
@@ -57,7 +46,7 @@ export default function PaymentSuccessPage() {
   } = useSWR<PaymentSuccessDetails>(
     paymentIntent && redirectStatus === "succeeded"
       ? `/payment/success-details?payment_intent=${paymentIntent}`
-      : null
+      : null,
   );
 
   if (!paymentIntent) {
@@ -171,23 +160,16 @@ export default function PaymentSuccessPage() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0">
               <div className="flex items-center">
                 <Clock className="w-4 h-4 mr-2 text-foreground-200 shrink-0" />
-                <span className="text-foreground-200">
-                  {paymentT("paymentTime")}:
-                </span>
+                <span className="text-foreground-200">{paymentT("paymentTime")}:</span>
               </div>
               <span className="text-foreground-50 sm:ml-2 wrap-break-word">
-                {unixDateConverter(
-                  paymentDetails.payment_date,
-                  locale as SupportedLocale
-                )}
+                {unixDateConverter(paymentDetails.payment_date, locale as SupportedLocale)}
               </span>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-1 sm:gap-0">
               <div className="flex items-center">
                 <CreditCard className="w-4 h-4 mr-2 text-foreground-200 shrink-0" />
-                <span className="text-foreground-200">
-                  {paymentT("paymentMethod")}:
-                </span>
+                <span className="text-foreground-200">{paymentT("paymentMethod")}:</span>
               </div>
               <span className="text-foreground-50 sm:ml-2 capitalize">
                 {paymentDetails.payment_type}
@@ -239,40 +221,23 @@ export default function PaymentSuccessPage() {
               <div className="bg-card-50 rounded-sm p-3 sm:p-4">
                 <div className="space-y-2 text-xs sm:text-sm">
                   <div className="flex justify-between items-center">
-                    <span className="text-foreground-100 flex-1">
-                      {paymentT("productPrice")}:
-                    </span>
+                    <span className="text-foreground-100 flex-1">{paymentT("productPrice")}:</span>
                     <span className="text-foreground-100 font-medium ml-2">
-                      {formatCurrency(
-                        paymentDetails.project.project_price,
-                        format,
-                        "NZD"
-                      )}
+                      {formatCurrency(paymentDetails.project.project_price, format, "NZD")}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-foreground-100 flex-1">
-                      {paymentDetails.tax.tax_name} (
-                      {paymentDetails.tax.tax_rate * 100}%):
+                      {paymentDetails.tax.tax_name} ({paymentDetails.tax.tax_rate * 100}%):
                     </span>
                     <span className="text-foreground-100 font-medium ml-2">
-                      {formatCurrency(
-                        paymentDetails.tax.tax_amount,
-                        format,
-                        "NZD"
-                      )}
+                      {formatCurrency(paymentDetails.tax.tax_amount, format, "NZD")}
                     </span>
                   </div>
                   <div className="flex justify-between items-center font-semibold text-sm sm:text-base border-t border-border-50 pt-2">
-                    <span className="text-foreground-100">
-                      {paymentT("total")}:
-                    </span>
+                    <span className="text-foreground-100">{paymentT("total")}:</span>
                     <span className="text-foreground-100 ml-2">
-                      {formatCurrency(
-                        paymentDetails.final_amount,
-                        format,
-                        "NZD"
-                      )}
+                      {formatCurrency(paymentDetails.final_amount, format, "NZD")}
                     </span>
                   </div>
                 </div>
@@ -338,9 +303,7 @@ export default function PaymentSuccessPage() {
               onClick={() => {
                 // 检查 project_slug 是否存在
                 if (!paymentDetails.project.project_slug) {
-                  console.error(
-                    "Project slug is missing, redirecting to home page"
-                  );
+                  console.error("Project slug is missing, redirecting to home page");
                   router.replace("/");
                   return;
                 }

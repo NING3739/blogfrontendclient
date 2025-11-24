@@ -1,23 +1,15 @@
 "use client";
 
-import Image from "next/image";
-import useSWR from "swr";
-import { useParams } from "next/navigation";
-import {
-  User,
-  MapPin,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Map,
-  Network,
-} from "lucide-react";
+import { CheckCircle, Clock, Map as MapIcon, MapPin, Network, User, XCircle } from "lucide-react";
 import { motion } from "motion/react";
+import Image from "next/image";
+import { useParams } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import useSWR from "swr";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import userService from "@/app/lib/services/userService";
+import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
 import type { UserResponse } from "@/app/types/userServiceType";
 
 export default function UserPage() {
@@ -32,11 +24,9 @@ export default function UserPage() {
     isLoading,
     error,
   } = useSWR<UserResponse>(
-    userId && !isNaN(userId)
-      ? `user/other/get-other-user-profile/${userId}`
-      : null,
+    userId && !Number.isNaN(userId) ? `user/other/get-other-user-profile/${userId}` : null,
     async () => {
-      if (!userId || isNaN(userId)) {
+      if (!userId || Number.isNaN(userId)) {
         throw new Error("Invalid user ID");
       }
       const response = await userService.getOtherUserProfile({
@@ -46,10 +36,10 @@ export default function UserPage() {
         return response.data;
       }
       throw new Error("Failed to fetch user profile");
-    }
+    },
   );
 
-  if (!id || !userId || isNaN(userId)) {
+  if (!id || !userId || Number.isNaN(userId)) {
     return (
       <ErrorDisplay
         title={commonT("notFound")}
@@ -62,12 +52,7 @@ export default function UserPage() {
 
   if (isLoading) {
     return (
-      <LoadingSpinner
-        message={commonT("loading")}
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
     );
   }
 
@@ -117,9 +102,7 @@ export default function UserPage() {
     },
     {
       title: "注册时间",
-      value: userProfile.created_at
-        ? handleDateFormat(userProfile.created_at, format)
-        : "未知",
+      value: userProfile.created_at ? handleDateFormat(userProfile.created_at, format) : "未知",
       icon: Clock,
       iconBgColor: "bg-info-50",
       iconColor: "text-info-500",
@@ -127,9 +110,7 @@ export default function UserPage() {
     },
     {
       title: "最后更新",
-      value: userProfile.updated_at
-        ? handleDateFormat(userProfile.updated_at, format)
-        : "未知",
+      value: userProfile.updated_at ? handleDateFormat(userProfile.updated_at, format) : "未知",
       icon: Clock,
       iconBgColor: "bg-warning-50",
       iconColor: "text-warning-500",
@@ -141,12 +122,8 @@ export default function UserPage() {
     <div className="min-h-screen bg-background-50">
       {/* Header Section */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground-50 mb-1 sm:mb-2">
-          用户资料
-        </h1>
-        <p className="text-sm sm:text-base text-foreground-300">
-          查看用户个人信息
-        </p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground-50 mb-1 sm:mb-2">用户资料</h1>
+        <p className="text-sm sm:text-base text-foreground-300">查看用户个人信息</p>
       </div>
 
       {/* Profile Card with Avatar */}
@@ -181,14 +158,10 @@ export default function UserPage() {
 
             {/* User Info */}
             <div className="flex-1 min-w-0">
-              <h2 className="text-2xl font-bold text-foreground-50 mb-1">
-                {userProfile.username}
-              </h2>
+              <h2 className="text-2xl font-bold text-foreground-50 mb-1">{userProfile.username}</h2>
               <p className="text-sm text-foreground-400">{userProfile.email}</p>
               {userProfile.role && (
-                <p className="text-xs text-foreground-300 mt-1">
-                  角色: {userProfile.role}
-                </p>
+                <p className="text-xs text-foreground-300 mt-1">角色: {userProfile.role}</p>
               )}
             </div>
           </div>
@@ -211,15 +184,11 @@ export default function UserPage() {
                   key={stat.title}
                   className="flex items-center space-x-3 p-3 bg-background-100 rounded-sm"
                 >
-                  <div
-                    className={`p-2 ${stat.iconBgColor} rounded-sm shrink-0`}
-                  >
+                  <div className={`p-2 ${stat.iconBgColor} rounded-sm shrink-0`}>
                     <Icon className={`w-5 h-5 ${stat.iconColor}`} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs text-foreground-400 mb-1">
-                      {stat.title}
-                    </p>
+                    <p className="text-xs text-foreground-400 mb-1">{stat.title}</p>
                     <p className="text-sm font-semibold text-foreground-50 truncate">
                       {stat.value}
                     </p>
@@ -244,9 +213,7 @@ export default function UserPage() {
               <User className="w-4 h-4 mr-2 text-foreground-300" />
               个人简介
             </h3>
-            <p className="text-sm text-foreground-300 leading-relaxed">
-              {userProfile.bio}
-            </p>
+            <p className="text-sm text-foreground-300 leading-relaxed">{userProfile.bio}</p>
           </motion.div>
         </div>
       )}
@@ -283,7 +250,7 @@ export default function UserPage() {
               {userProfile.latitude && userProfile.longitude && (
                 <div className="flex items-center space-x-3 p-3 bg-background-100 rounded-sm hover:bg-background-200 transition-colors">
                   <div className="shrink-0 w-10 h-10 bg-info-50 rounded-sm flex items-center justify-center">
-                    <Map className="w-5 h-5 text-info-500" />
+                    <MapIcon className="w-5 h-5 text-info-500" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-foreground-400 mb-0.5">坐标</p>
@@ -299,9 +266,7 @@ export default function UserPage() {
                     <Network className="w-5 h-5 text-warning-500" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-foreground-400 mb-0.5">
-                      IP 地址
-                    </p>
+                    <p className="text-xs text-foreground-400 mb-0.5">IP 地址</p>
                     <p className="text-xs text-foreground-500 font-mono truncate">
                       {userProfile.ip_address}
                     </p>

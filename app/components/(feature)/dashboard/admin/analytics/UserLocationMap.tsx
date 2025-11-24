@@ -1,11 +1,11 @@
 "use client";
 
+import { MapPin, Users, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { MapPin, Users, X } from "lucide-react";
-import type { UserLocation } from "@/app/types/analyticServiceType";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import type { UserLocation } from "@/app/types/analyticServiceType";
 
 // Popup 内容组件
 function PopupContent({
@@ -39,9 +39,7 @@ function PopupContent({
           <Users className="w-4 h-4" />
           <span className="text-xs">用户数量</span>
         </div>
-        <span className="text-xl font-bold text-foreground-50">
-          {userCount}
-        </span>
+        <span className="text-xl font-bold text-foreground-50">{userCount}</span>
       </div>
     </div>
   );
@@ -121,8 +119,7 @@ export default function UserLocationMap({
 
   // 更新地图上的标记
   useEffect(() => {
-    if (!map.current || !mapLoaded || !locations || locations.length === 0)
-      return;
+    if (!map.current || !mapLoaded || !locations || locations.length === 0) return;
 
     import("mapbox-gl").then((mapboxgl) => {
       if (!map.current) return;
@@ -173,15 +170,7 @@ export default function UserLocationMap({
         source: "user-locations",
         filter: ["has", "point_count"],
         paint: {
-          "circle-color": [
-            "step",
-            ["get", "point_count"],
-            "#51bbd6",
-            10,
-            "#f1f075",
-            30,
-            "#f28cb1",
-          ],
+          "circle-color": ["step", ["get", "point_count"], "#51bbd6", 10, "#f1f075", 30, "#f28cb1"],
           "circle-radius": ["step", ["get", "point_count"], 20, 10, 30, 30, 40],
         },
       });
@@ -217,29 +206,22 @@ export default function UserLocationMap({
       });
 
       // 添加点击事件 - 聚合点
-      map.current.on(
-        "click",
-        "user-locations-cluster",
-        (e: { point: unknown }) => {
-          const features = map.current.queryRenderedFeatures(e.point, {
-            layers: ["user-locations-cluster"],
-          });
-          const clusterId = features[0].properties.cluster_id;
-          map.current
-            .getSource("user-locations")
-            .getClusterExpansionZoom(
-              clusterId,
-              (err: unknown, zoom: number) => {
-                if (err) return;
+      map.current.on("click", "user-locations-cluster", (e: { point: unknown }) => {
+        const features = map.current.queryRenderedFeatures(e.point, {
+          layers: ["user-locations-cluster"],
+        });
+        const clusterId = features[0].properties.cluster_id;
+        map.current
+          .getSource("user-locations")
+          .getClusterExpansionZoom(clusterId, (err: unknown, zoom: number) => {
+            if (err) return;
 
-                map.current.easeTo({
-                  center: features[0].geometry.coordinates,
-                  zoom: zoom,
-                });
-              }
-            );
-        }
-      );
+            map.current.easeTo({
+              center: features[0].geometry.coordinates,
+              zoom: zoom,
+            });
+          });
+      });
 
       // 添加点击事件 - 单个点
       map.current.on(
@@ -252,10 +234,7 @@ export default function UserLocationMap({
           }>;
           lngLat: { lng: number };
         }) => {
-          const coordinates = e.features[0].geometry.coordinates.slice() as [
-            number,
-            number
-          ];
+          const coordinates = e.features[0].geometry.coordinates.slice() as [number, number];
           const city = e.features[0].properties.city;
 
           // 确保在地图旋转时，popup 出现在正确的位置
@@ -281,18 +260,14 @@ export default function UserLocationMap({
           // 使用 React 渲染 popup 内容
           const root = createRoot(popupNode);
           root.render(
-            <PopupContent
-              city={city}
-              userCount={userCount}
-              onClose={() => popup.remove()}
-            />
+            <PopupContent city={city} userCount={userCount} onClose={() => popup.remove()} />,
           );
 
           // 清理：当 popup 关闭时卸载 React 组件
           popup.on("close", () => {
             root.unmount();
           });
-        }
+        },
       );
 
       // 鼠标悬停效果
@@ -324,24 +299,16 @@ export default function UserLocationMap({
   return (
     <div className="bg-card-50 border border-border-50 rounded-sm p-4 sm:p-6 shadow-sm w-full max-w-full overflow-hidden">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-base sm:text-lg font-semibold text-foreground-50">
-          用户地理分布
-        </h3>
+        <h3 className="text-base sm:text-lg font-semibold text-foreground-50">用户地理分布</h3>
         {locations && locations.length > 0 && (
-          <p className="text-sm text-foreground-300">
-            共 {locations.length} 个用户位置
-          </p>
+          <p className="text-sm text-foreground-300">共 {locations.length} 个用户位置</p>
         )}
       </div>
 
       <div className="relative min-h-[500px]">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-card-50/80 z-10 rounded-sm">
-            <LoadingSpinner
-              message="加载用户位置地图..."
-              size="sm"
-              variant="pulse"
-            />
+            <LoadingSpinner message="加载用户位置地图..." size="sm" variant="pulse" />
           </div>
         )}
         <div

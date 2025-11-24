@@ -1,8 +1,8 @@
-import httpClient from "../http/client";
 import type {
   CreatePaymentIntentRequest,
   GetPaymentRecordsRequest,
 } from "@/app/types/paymentServiceType";
+import httpClient from "../http/client";
 
 class PaymentService {
   async createPaymentIntent(payload: CreatePaymentIntentRequest) {
@@ -15,9 +15,10 @@ class PaymentService {
 
   async getPaymentRecords(payload: GetPaymentRecordsRequest) {
     return httpClient.get("/payment/get-payment-records", {
-      params: { ...payload },
+      params: payload,
     });
   }
 }
 
-export default new PaymentService();
+export const paymentService = new PaymentService();
+export default paymentService;

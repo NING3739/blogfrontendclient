@@ -1,27 +1,23 @@
-import httpClient from "../http/client";
 import type {
   CreateTagRequest,
-  UpdateTagRequest,
   DeleteTagRequest,
+  UpdateTagRequest,
 } from "@/app/types/tagServiceType";
+import httpClient from "../http/client";
 
 class TagService {
   async createTag(payload: CreateTagRequest) {
-    const response = await httpClient.post("/tag/admin/create-tag", payload);
-    return response;
+    return httpClient.post("/tag/admin/create-tag", payload);
   }
 
   async updateTag(payload: UpdateTagRequest) {
-    const response = await httpClient.patch("/tag/admin/update-tag", payload);
-    return response;
+    return httpClient.patch("/tag/admin/update-tag", payload);
   }
 
   async deleteTag(payload: DeleteTagRequest) {
-    const response = await httpClient.delete(
-      `/tag/admin/delete-tag/${payload.tag_id}`
-    );
-    return response;
+    return httpClient.delete(`/tag/admin/delete-tag/${payload.tag_id}`);
   }
 }
 
-export default new TagService();
+export const tagService = new TagService();
+export default tagService;

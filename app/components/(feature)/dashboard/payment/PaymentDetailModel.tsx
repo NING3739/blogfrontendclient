@@ -1,21 +1,21 @@
 "use client";
 
-import React from "react";
 import {
-  CreditCard,
-  User,
-  Package,
-  Calendar,
-  DollarSign,
-  CheckCircle,
-  XCircle,
   Ban,
+  Calendar,
+  CheckCircle,
+  CreditCard,
+  DollarSign,
+  Package,
+  User,
+  XCircle,
 } from "lucide-react";
-import { GetPaymentRecordsItems } from "@/app/types/paymentServiceType";
-import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
-import { formatCurrency } from "@/app/lib/utils/handleCurrencyFormat";
+import { useFormatter, useTranslations } from "next-intl";
+import type React from "react";
 import Modal from "@/app/components/ui/modal/Modal";
-import { useTranslations, useFormatter } from "next-intl";
+import { formatCurrency } from "@/app/lib/utils/handleCurrencyFormat";
+import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
+import type { GetPaymentRecordsItems } from "@/app/types/paymentServiceType";
 
 interface PaymentDetailModelProps {
   isOpen: boolean;
@@ -47,16 +47,14 @@ const PaymentDetailModel: React.FC<PaymentDetailModelProps> = ({
       case "failed":
         return {
           text: type === "admin" ? "支付失败" : dashboardT("paymentFailed"),
-          className:
-            "bg-error-500 text-white border-error-500 shadow-lg font-semibold",
+          className: "bg-error-500 text-white border-error-500 shadow-lg font-semibold",
           icon: XCircle,
           iconColor: "text-white",
         };
       case "cancel":
         return {
           text: type === "admin" ? "支付取消" : dashboardT("paymentCanceled"),
-          className:
-            "bg-warning-500 text-white border-warning-500 shadow-lg font-semibold",
+          className: "bg-warning-500 text-white border-warning-500 shadow-lg font-semibold",
           icon: Ban,
           iconColor: "text-white",
         };
@@ -127,7 +125,7 @@ const PaymentDetailModel: React.FC<PaymentDetailModelProps> = ({
             </div>
 
             <div className="flex items-center space-x-3">
-              <StatusIcon className={`w-5 h-5 text-primary-500`} />
+              <StatusIcon className={"w-5 h-5 text-primary-500"} />
               <div>
                 <p className="text-sm text-foreground-300">
                   {type === "admin" ? "支付状态" : dashboardT("paymentStatus")}
@@ -164,9 +162,7 @@ const PaymentDetailModel: React.FC<PaymentDetailModelProps> = ({
                 <User className="w-5 h-5 text-primary-500" />
                 <div>
                   <p className="text-sm text-foreground-300">邮箱</p>
-                  <p className="text-base text-foreground-50">
-                    {paymentRecord.user.email}
-                  </p>
+                  <p className="text-base text-foreground-50">{paymentRecord.user.email}</p>
                 </div>
               </div>
 
@@ -174,9 +170,7 @@ const PaymentDetailModel: React.FC<PaymentDetailModelProps> = ({
                 <User className="w-5 h-5 text-primary-500" />
                 <div>
                   <p className="text-sm text-foreground-300">用户ID</p>
-                  <p className="text-base text-foreground-50">
-                    {paymentRecord.user.user_id}
-                  </p>
+                  <p className="text-base text-foreground-50">{paymentRecord.user.user_id}</p>
                 </div>
               </div>
             </div>

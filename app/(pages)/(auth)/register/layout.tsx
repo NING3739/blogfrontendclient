@@ -4,8 +4,6 @@ export const metadata = {
   keywords: "注册， register",
 };
 
-export default function RegisterLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RegisterLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return children;
 }

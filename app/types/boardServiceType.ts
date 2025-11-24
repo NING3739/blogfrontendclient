@@ -1,10 +1,9 @@
-import {
-  SectionID,
-  ChineseTitle,
+import type {
   ChineseDescription,
-  ParentID,
+  ChineseTitle,
   Comment,
   CursorPagination,
+  ParentID,
 } from "./commonType";
 
 interface BoardID {
@@ -15,15 +14,9 @@ interface BoardCommentID {
   board_comment_id: number;
 }
 
-export interface UpdateBoardRequest
-  extends BoardID,
-    SectionID,
-    ChineseTitle,
-    ChineseDescription {}
+export interface UpdateBoardRequest extends BoardID, ChineseTitle, ChineseDescription {}
 
-export interface GetBoardCommentListsRequest
-  extends BoardID,
-    CursorPagination {}
+export interface GetBoardCommentListsRequest extends BoardID, CursorPagination {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CreateBoardCommentRequest extends BoardID, ParentID, Comment {}

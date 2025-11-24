@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
 import { FolderPlus, Globe } from "lucide-react";
 import { motion } from "motion/react";
-import useSWR from "swr";
 import { useLocale } from "next-intl";
+import { useState } from "react";
+import useSWR from "swr";
 import FriendLists from "@/app/components/(feature)/dashboard/admin/friend/FriendLists";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import StatsCard from "@/app/components/ui/stats/StatsCard";
 import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import StatsCard from "@/app/components/ui/stats/StatsCard";
 
 export default function FriendsPage() {
   const locale = useLocale();
@@ -19,10 +19,7 @@ export default function FriendsPage() {
     isLoading,
     error,
     mutate,
-  } = useSWR([
-    `/friend/admin/get-friend-lists?page=${currentPage}&size=10`,
-    locale,
-  ]);
+  } = useSWR([`/friend/admin/get-friend-lists?page=${currentPage}&size=10`, locale]);
 
   if (isLoading) {
     return (
@@ -37,20 +34,14 @@ export default function FriendsPage() {
 
   if (error && error.status !== 404) {
     return (
-      <ErrorDisplay
-        title="加载友链列表失败"
-        message="加载友链列表失败,请稍后重试"
-        type="error"
-      />
+      <ErrorDisplay title="加载友链列表失败" message="加载友链列表失败,请稍后重试" type="error" />
     );
   }
 
   // Handle case where friendLists is undefined (e.g., 404 error or no data)
   // Use default values to maintain page layout
-  const {
-    items: friendItems = [],
-    pagination = { total_count: 0, new_items_this_month: 0 },
-  } = friendLists || {};
+  const { items: friendItems = [], pagination = { total_count: 0, new_items_this_month: 0 } } =
+    friendLists || {};
 
   // Stats data configuration
   const statsData = [
@@ -76,12 +67,8 @@ export default function FriendsPage() {
     <div className="min-h-screen bg-background-50">
       {/* Header Section */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground-50 mb-1 sm:mb-2">
-          友链管理
-        </h1>
-        <p className="text-sm sm:text-base text-foreground-300">
-          管理和查看所有友链
-        </p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground-50 mb-1 sm:mb-2">友链管理</h1>
+        <p className="text-sm sm:text-base text-foreground-300">管理和查看所有友链</p>
       </div>
 
       {/* Stats Cards */}

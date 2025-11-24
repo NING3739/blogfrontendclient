@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "motion/react";
 import { Check } from "lucide-react";
-import toast from "react-hot-toast";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { SubscriberService } from "@/app/lib/services/subscriber";
-import InputField from "../../ui/input/InputField";
+import type React from "react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { Button } from "@/app/components/ui/button/butten";
+import subscriberService from "@/app/lib/services/subscriber";
 import { Validator } from "@/app/lib/utils/validator";
+import InputField from "../../ui/input/InputField";
 
 const Subscribe = () => {
   const [email, setEmail] = useState("");
@@ -26,17 +27,13 @@ const Subscribe = () => {
     setIsSubscribing(true);
 
     try {
-      const response = await SubscriberService.createSubscriber({ email });
+      const response = await subscriberService.createSubscriber({ email });
       if (response.status === 200) {
-        toast.success(
-          "message" in response ? response.message : "Subscribed successfully"
-        );
+        toast.success("message" in response ? response.message : "Subscribed successfully");
         setIsSubscribed(true);
         setEmail("");
       } else {
-        toast.error(
-          "error" in response ? response.error : "Failed to subscribe"
-        );
+        toast.error("error" in response ? response.error : "Failed to subscribe");
       }
     } catch (error) {
       console.error(homeT("subscribeError"), error);
@@ -57,13 +54,8 @@ const Subscribe = () => {
       >
         {/* 邮箱订阅 */}
         <div className="flex-1 flex flex-col">
-          <p className="text-sm text-foreground-300 mb-3">
-            {homeT("subscribeDescription")}
-          </p>
-          <form
-            onSubmit={handleEmailSubscribe}
-            className="space-y-3 flex-1 flex flex-col"
-          >
+          <p className="text-sm text-foreground-300 mb-3">{homeT("subscribeDescription")}</p>
+          <form onSubmit={handleEmailSubscribe} className="space-y-3 flex-1 flex flex-col">
             <InputField
               type="email"
               id="email-subscribe"

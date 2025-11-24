@@ -1,7 +1,7 @@
 "use client";
 
-import { MediaTypeEnum } from "@/app/types/mediaServiceType";
 import TiptapEditorModel from "@/app/components/(feature)/editor/TiptapEditorModel";
+import { MediaTypeEnum } from "@/app/types/mediaServiceType";
 
 interface AudioPickerModalProps {
   isOpen: boolean;
@@ -9,11 +9,7 @@ interface AudioPickerModalProps {
   onSelect: (mediaId: number, url: string) => void;
 }
 
-export default function AudioPickerModal({
-  isOpen,
-  onClose,
-  onSelect,
-}: AudioPickerModalProps) {
+export default function AudioPickerModal({ isOpen, onClose, onSelect }: AudioPickerModalProps) {
   return (
     <TiptapEditorModel
       type={MediaTypeEnum.audio}

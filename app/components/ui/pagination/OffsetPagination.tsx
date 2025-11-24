@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import React from "react";
 import type { OffsetPaginationResponse } from "@/app/types/commonType";
 
 interface OffsetPaginationProps {
@@ -18,15 +18,8 @@ const OffsetPagination: React.FC<OffsetPaginationProps> = ({
   className = "",
 }) => {
   const projectT = useTranslations("project");
-  const {
-    current_page,
-    total_pages,
-    total_count,
-    has_next,
-    has_prev,
-    start_index,
-    end_index,
-  } = pagination;
+  const { current_page, total_pages, total_count, has_next, has_prev, start_index, end_index } =
+    pagination;
 
   // 如果只有一页或没有数据，不显示分页
   if (total_pages <= 1) {
@@ -126,12 +119,8 @@ const OffsetPagination: React.FC<OffsetPaginationProps> = ({
               whileTap={has_prev ? { scale: 0.95 } : {}}
             >
               <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1 transition-transform duration-200 group-hover:-translate-x-0.5" />
-              <span className="hidden sm:inline">
-                {projectT("pagination.previous")}
-              </span>
-              <span className="sm:hidden">
-                {projectT("pagination.previous")}
-              </span>
+              <span className="hidden sm:inline">{projectT("pagination.previous")}</span>
+              <span className="sm:hidden">{projectT("pagination.previous")}</span>
             </motion.button>
 
             {/* 分隔线 */}
@@ -153,9 +142,7 @@ const OffsetPagination: React.FC<OffsetPaginationProps> = ({
                           : "text-foreground-300 hover:text-foreground-50 hover:bg-card-200 hover:border-border-200"
                       }`}
                       onClick={() => onPageChange(page as number)}
-                      whileHover={
-                        page !== current_page ? { scale: 1.05, y: -2 } : {}
-                      }
+                      whileHover={page !== current_page ? { scale: 1.05, y: -2 } : {}}
                       whileTap={{ scale: 0.95 }}
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -183,9 +170,7 @@ const OffsetPagination: React.FC<OffsetPaginationProps> = ({
               whileHover={has_next ? { scale: 1.05, y: -2 } : {}}
               whileTap={has_next ? { scale: 0.95 } : {}}
             >
-              <span className="hidden sm:inline">
-                {projectT("pagination.next")}
-              </span>
+              <span className="hidden sm:inline">{projectT("pagination.next")}</span>
               <span className="sm:hidden">{projectT("pagination.next")}</span>
               <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1 transition-transform duration-200 group-hover:translate-x-0.5" />
             </motion.button>

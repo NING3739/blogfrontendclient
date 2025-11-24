@@ -1,92 +1,86 @@
 "use client";
 
-import React from "react";
+import clsx from "clsx";
+import { LogOut, PanelLeft, PanelRight, X } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
-import { useRouter, usePathname } from "next/navigation";
-import {
-  X,
-  Home,
-  BarChart3,
-  Users,
-  FileText,
-  CreditCard,
-  PanelLeft,
-  PanelRight,
-  FolderDot,
-  LogOut,
-  Bookmark,
-} from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import React from "react";
 import SiteLogo from "@/app/components/ui/logo/SiteLogo";
 import { useAuth } from "@/app/contexts/hooks/useAuth";
+import {
+  type MenuItem,
+  useSidebarRoutes,
+} from "@/app/contexts/hooks/useSidebarRoutes";
 
 interface SideBarProps {
   isOpen?: boolean;
   onClose?: () => void;
 }
 
+// --- Components ---
+interface SidebarItemProps {
+  item: MenuItem;
+  index: number;
+  isCollapsed: boolean;
+  onClick: (path: string) => void;
+}
+
+const SidebarItem: React.FC<SidebarItemProps> = ({
+  item,
+  index,
+  isCollapsed,
+  onClick,
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{
+        delay: index * 0.03,
+        duration: 0.6,
+        ease: [0.23, 1, 0.32, 1],
+        type: "spring",
+        stiffness: 100,
+        damping: 15,
+      }}
+      onClick={() => onClick(item.path)}
+      className={clsx(
+        "group flex items-center cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]",
+        isCollapsed ? "justify-center py-4 mx-1" : "px-4 py-3 mx-2 space-x-3",
+        item.active
+          ? "bg-primary-50 text-primary-600 border-l-4 border-primary-500 rounded-sm font-semibold"
+          : "hover:bg-background-100 text-foreground-200 hover:text-foreground-50 rounded-lg"
+      )}
+    >
+      <item.icon
+        className={clsx(
+          "transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]",
+          isCollapsed ? "w-5 h-5" : "w-5 h-5",
+          item.active
+            ? "text-primary-600 scale-105"
+            : "text-foreground-300 group-hover:text-foreground-50 group-hover:scale-102"
+        )}
+      />
+      {!isCollapsed && (
+        <span
+          className={clsx(
+            "text-sm transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]",
+            item.active ? "font-semibold scale-102" : "font-medium"
+          )}
+        >
+          {item.label}
+        </span>
+      )}
+    </motion.div>
+  );
+};
+
 const SideBar: React.FC<SideBarProps> = ({ isOpen = true, onClose }) => {
   const { user, accountLogout } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
-  const dashboardT = useTranslations("dashboard.menu");
-
-  const menuItems =
-    user && user.role === "admin"
-      ? [
-          {
-            icon: Home,
-            label: "快捷链接",
-            path: "/dashboard",
-            active: pathname === "/dashboard",
-          },
-          {
-            icon: BarChart3,
-            label: "数据分析",
-            path: "/dashboard/analytics",
-            active: pathname === "/dashboard/analytics",
-          },
-          {
-            icon: FileText,
-            label: "文章管理",
-            path: "/dashboard/posts",
-            active: pathname === "/dashboard/posts",
-          },
-          {
-            icon: FolderDot,
-            label: "项目管理",
-            path: "/dashboard/projects",
-            active: pathname === "/dashboard/projects",
-          },
-        ]
-      : [
-          {
-            icon: Home,
-            label: dashboardT("quickLinks"),
-            path: "/dashboard",
-            active: pathname === "/dashboard",
-          },
-          {
-            icon: Users,
-            label: dashboardT("myProfile"),
-            path: "/dashboard/profile",
-            active: pathname === "/dashboard/profile",
-          },
-          {
-            icon: Bookmark,
-            label: dashboardT("mySaved"),
-            path: "/dashboard/saved-blog",
-            active: pathname === "/dashboard/saved-blog",
-          },
-          {
-            icon: CreditCard,
-            label: dashboardT("myPayments"),
-            path: "/dashboard/payments",
-            active: pathname === "/dashboard/payments",
-          },
-        ];
+  const menuItems = useSidebarRoutes();
 
   const handleMenuClick = (path: string) => {
     router.push(path);
@@ -99,48 +93,13 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen = true, onClose }) => {
   const renderMenuItems = () => (
     <nav className="space-y-1">
       {menuItems.map((item, index) => (
-        <motion.div
+        <SidebarItem
           key={item.label}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{
-            delay: index * 0.03,
-            duration: 0.6,
-            ease: [0.23, 1, 0.32, 1],
-            type: "spring",
-            stiffness: 100,
-            damping: 15,
-          }}
-          onClick={() => handleMenuClick(item.path)}
-          className={`group flex items-center cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
-            isCollapsed
-              ? "justify-center py-4 mx-1"
-              : "px-4 py-3 mx-2 space-x-3"
-          } ${
-            item.active
-              ? "bg-primary-50 text-primary-600 border-l-4 border-primary-500 rounded-sm font-semibold"
-              : "hover:bg-background-100 text-foreground-200 hover:text-foreground-50 rounded-lg"
-          }`}
-        >
-          <item.icon
-            className={`transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
-              isCollapsed ? "w-5 h-5" : "w-5 h-5"
-            } ${
-              item.active
-                ? "text-primary-600 scale-105"
-                : "text-foreground-300 group-hover:text-foreground-50 group-hover:scale-102"
-            }`}
-          />
-          {!isCollapsed && (
-            <span
-              className={`text-sm transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
-                item.active ? "font-semibold scale-102" : "font-medium"
-              }`}
-            >
-              {item.label}
-            </span>
-          )}
-        </motion.div>
+          item={item}
+          index={index}
+          isCollapsed={isCollapsed}
+          onClick={handleMenuClick}
+        />
       ))}
     </nav>
   );
@@ -149,9 +108,10 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen = true, onClose }) => {
     <>
       {/* Desktop Sidebar - Always visible on larger screens */}
       <aside
-        className={`hidden lg:block h-screen sticky top-0 bg-card-50 border-r border-border-50 transition-all duration-300 ${
+        className={clsx(
+          "hidden lg:block h-screen sticky top-0 bg-card-50 border-r border-border-50 transition-all duration-300",
           isCollapsed ? "w-16" : "w-64"
-        }`}
+        )}
       >
         <div className="h-full flex flex-col">
           {/* Logo/Title & Collapse Button */}
@@ -176,16 +136,18 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen = true, onClose }) => {
 
           {/* User Info & Logout */}
           <div
-            className={`border-t border-border-50 bg-background-100 ${
+            className={clsx(
+              "border-t border-border-50 bg-background-100",
               isCollapsed ? "p-2" : "p-4"
-            }`}
+            )}
           >
             <div
-              className={`flex hover:bg-background-200 rounded-lg cursor-pointer transition-all duration-200 group ${
+              className={clsx(
+                "flex hover:bg-background-200 rounded-lg cursor-pointer transition-all duration-200 group",
                 isCollapsed
                   ? "justify-center p-3"
                   : "items-center space-x-3 p-3"
-              }`}
+              )}
             >
               {!isCollapsed && (
                 <div className="w-10 h-10 bg-background-200 rounded-full flex items-center justify-center">
@@ -215,9 +177,10 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen = true, onClose }) => {
                 </div>
               )}
               <LogOut
-                className={`text-foreground-400 hover:text-error-500 transition-colors duration-200 cursor-pointer ${
+                className={clsx(
+                  "text-foreground-400 hover:text-error-500 transition-colors duration-200 cursor-pointer",
                   isCollapsed ? "w-7 h-7" : "w-5 h-5"
-                }`}
+                )}
                 onClick={accountLogout}
               />
             </div>

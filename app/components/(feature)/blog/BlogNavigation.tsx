@@ -1,11 +1,10 @@
-import React from "react";
-import useSWR from "swr";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Button } from "../../ui/button/butten";
-import type { GetBlogNavigationResponse } from "@/app/types/blogServiceType";
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import useSWR from "swr";
 import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import type { GetBlogNavigationResponse } from "@/app/types/blogServiceType";
+import { Button } from "../../ui/button/butten";
 
 interface BlogNavigationProps {
   blogId: number;
@@ -105,7 +104,7 @@ const BlogNavigation = ({ blogId }: BlogNavigationProps) => {
           </Button>
         ) : (
           <div className="w-full h-16 flex items-center justify-center text-foreground-400 text-sm bg-background-50 rounded-md border border-border-100 border-dashed">
-            <span>没有更多内容</span>
+            <span>{commonT("noMoreContent")}</span>
           </div>
         )}
       </div>

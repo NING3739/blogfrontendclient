@@ -1,28 +1,28 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import {
-  Search,
-  Image as ImageIcon,
   Check,
   ChevronDown,
-  Plus,
   ChevronUp,
+  Image as ImageIcon,
+  Plus,
+  Search,
   Tag,
   X,
 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
-import useSection from "@/app/contexts/hooks/useSection";
-import type { GetSeoItemResponse } from "@/app/types/seoServiceType";
-import { BlogMetaData as BlogMetaDataType } from "@/app/contexts/hooks/usePostEditor";
-import ImagePickerModal from "@/app/components/(feature)/editor/ImagePickerModal";
 import CreateSeoModal from "@/app/components/(feature)/editor/CreateSeoModal";
 import CreateTagModal from "@/app/components/(feature)/editor/CreateTagModal";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import Card from "@/app/components/ui/card/Card";
+import ImagePickerModal from "@/app/components/(feature)/editor/ImagePickerModal";
 import { Button } from "@/app/components/ui/button/butten";
-import { SectionListResponse } from "@/app/types/sectionServiceType";
+import Card from "@/app/components/ui/card/Card";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import type { BlogMetaData as BlogMetaDataType } from "@/app/contexts/hooks/usePostEditor";
+import useSection from "@/app/contexts/hooks/useSection";
+import type { SectionListResponse } from "@/app/types/sectionServiceType";
+import type { GetSeoItemResponse } from "@/app/types/seoServiceType";
 
 interface BlogMetaDataProps {
   seoItems: GetSeoItemResponse[];
@@ -48,38 +48,28 @@ export const BlogMetaData = ({
   type = "blog",
 }: BlogMetaDataProps) => {
   const [selectedSeoId, setSelectedSeoId] = useState<number | null>(null);
-  const [selectedCoverImageId, setSelectedCoverImageId] = useState<
-    number | null
-  >(null);
-  const [selectedCoverImageUrl, setSelectedCoverImageUrl] = useState<
-    string | null
-  >(null);
-  const [selectedSectionId, setSelectedSectionId] = useState<number | null>(
-    null
-  );
+  const [selectedCoverImageId, setSelectedCoverImageId] = useState<number | null>(null);
+  const [selectedCoverImageUrl, setSelectedCoverImageUrl] = useState<string | null>(null);
+  const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [currentTagPage, setCurrentTagPage] = useState<number>(1);
-  const [allTagItems, setAllTagItems] = useState<
-    Array<{ tag_id: number; title: string }>
-  >([]);
+  const [allTagItems, setAllTagItems] = useState<Array<{ tag_id: number; title: string }>>([]);
   const [hasMoreTag, setHasMoreTag] = useState<boolean>(false);
 
   const { sections } = useSection();
 
   const sectionLists = sections?.find(
     (section: SectionListResponse) =>
-      section.type === "blog" && (section?.children?.length ?? 0) > 0
+      section.type === "blog" && (section?.children?.length ?? 0) > 0,
   )?.children;
 
   const {
     data: tagLists,
     isLoading: isTagLoading,
     mutate: refreshTagLists,
-  } = useSWR(
-    `/tag/get-tag-lists?page=${currentTagPage}&size=10&published_only=false`
-  );
+  } = useSWR(`/tag/get-tag-lists?page=${currentTagPage}&size=10&published_only=false`);
 
   // Modal states
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
@@ -111,7 +101,17 @@ export const BlogMetaData = ({
       // 设置 selectedTags
       setSelectedTags(initialData.selectedTags ?? []);
     }
-  }, [initialData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    initialData?.selectedSeoId,
+    initialData?.selectedCoverImageId,
+    initialData?.selectedCoverImageUrl,
+    initialData?.selectedSectionId,
+    initialData?.title,
+    initialData?.description,
+    initialData?.selectedTags?.length,
+    initialData,
+  ]);
   const handleLoadMoreTag = () => {
     setCurrentTagPage((prev) => prev + 1);
   };
@@ -143,29 +143,23 @@ export const BlogMetaData = ({
       !isTagLoading
     ) {
       const missingTags = selectedTags.filter(
-        (tagId) => !allTagItems.some((item) => item?.tag_id === tagId)
+        (tagId) => !allTagItems.some((item) => item?.tag_id === tagId),
       );
 
       if (missingTags.length > 0) {
         handleLoadMoreTag();
       }
     }
-  }, [type, selectedTags, allTagItems, hasMoreTag, isTagLoading]);
+  }, [type, selectedTags, allTagItems, hasMoreTag, isTagLoading, handleLoadMoreTag]);
 
   // 点击外部关闭下拉菜单
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        seoDropdownRef.current &&
-        !seoDropdownRef.current.contains(event.target as Node)
-      ) {
+      if (seoDropdownRef.current && !seoDropdownRef.current.contains(event.target as Node)) {
         setIsSeoDropdownOpen(false);
         setSeoSearchTerm("");
       }
-      if (
-        tagDropdownRef.current &&
-        !tagDropdownRef.current.contains(event.target as Node)
-      ) {
+      if (tagDropdownRef.current && !tagDropdownRef.current.contains(event.target as Node)) {
         setIsTagDropdownOpen(false);
         setTagSearchTerm("");
       }
@@ -188,12 +182,7 @@ export const BlogMetaData = ({
 
   if (loading) {
     return (
-      <LoadingSpinner
-        message="正在加载博客元数据..."
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message="正在加载博客元数据..." size="md" variant="wave" fullScreen={true} />
     );
   }
 
@@ -207,14 +196,7 @@ export const BlogMetaData = ({
 
   // 如果标签数据还在加载中，显示加载状态
   if (isTagLoading && allTagItems.length === 0) {
-    return (
-      <LoadingSpinner
-        message="正在加载标签..."
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
-    );
+    return <LoadingSpinner message="正在加载标签..." size="md" variant="wave" fullScreen={true} />;
   }
 
   // 过滤数据
@@ -222,30 +204,26 @@ export const BlogMetaData = ({
     (item) =>
       item?.title?.toLowerCase().includes(seoSearchTerm.toLowerCase()) ||
       item?.description?.toLowerCase().includes(seoSearchTerm.toLowerCase()) ||
-      item?.keywords?.toLowerCase().includes(seoSearchTerm.toLowerCase())
+      item?.keywords?.toLowerCase().includes(seoSearchTerm.toLowerCase()),
   );
 
   const filteredTagItems = allTagItems.filter((item) =>
-    item?.title?.toLowerCase().includes(tagSearchTerm.toLowerCase())
+    item?.title?.toLowerCase().includes(tagSearchTerm.toLowerCase()),
   );
 
   // 栏目不需要过滤，直接使用原始数据
   const filteredSectionItems = sectionLists || [];
 
   // 获取选中的项目
-  const selectedSeoItem = seoItems.find(
-    (item) => item?.seo_id === selectedSeoId
-  );
+  const selectedSeoItem = seoItems.find((item) => item?.seo_id === selectedSeoId);
   const selectedSectionItem = sectionLists?.find(
-    (item: SectionListResponse) => item?.section_id === selectedSectionId
+    (item: SectionListResponse) => item?.section_id === selectedSectionId,
   );
 
   // 在 update 模式下，通过自动加载更多标签来确保 selectedTags 中的标签都能显示
   const uniqueTagItems = allTagItems;
 
-  const selectedTagItems = uniqueTagItems.filter((item) =>
-    selectedTags.includes(item?.tag_id)
-  );
+  const selectedTagItems = uniqueTagItems.filter((item) => selectedTags.includes(item?.tag_id));
 
   // 处理函数
   const handleSeoSelect = (seoId: number) => {
@@ -340,9 +318,7 @@ export const BlogMetaData = ({
         {/* 折叠/展开头部 */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <h3 className="text-lg font-semibold text-foreground-50">
-              博客设置
-            </h3>
+            <h3 className="text-lg font-semibold text-foreground-50">博客设置</h3>
             {selectedSeoId &&
               selectedCoverImageId &&
               selectedSectionId &&
@@ -360,14 +336,8 @@ export const BlogMetaData = ({
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="flex items-center space-x-1 px-3 py-1.5 rounded-sm text-foreground-300 hover:text-foreground-50 hover:bg-background-300"
           >
-            <span className="text-sm font-medium">
-              {isCollapsed ? "展开设置" : "折叠设置"}
-            </span>
-            {isCollapsed ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <ChevronUp className="h-4 w-4" />
-            )}
+            <span className="text-sm font-medium">{isCollapsed ? "展开设置" : "折叠设置"}</span>
+            {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
           </button>
         </div>
 
@@ -377,15 +347,11 @@ export const BlogMetaData = ({
             {/* 栏目选择 - 仅在创建模式下显示 */}
             {type === "blog" && (
               <div className="space-y-3">
-                <label className="block text-sm font-medium text-foreground-50">
-                  栏目
-                </label>
+                <label className="block text-sm font-medium text-foreground-50">栏目</label>
                 <div className="relative" ref={sectionDropdownRef}>
                   <div
                     className="w-full rounded-sm border border-border-100 bg-card-50 px-4 py-3 text-foreground-50 cursor-pointer hover:border-border-200 hover:bg-background-300"
-                    onClick={() =>
-                      setIsSectionDropdownOpen(!isSectionDropdownOpen)
-                    }
+                    onClick={() => setIsSectionDropdownOpen(!isSectionDropdownOpen)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
@@ -407,26 +373,22 @@ export const BlogMetaData = ({
                   {isSectionDropdownOpen && (
                     <div className="absolute z-50 w-full mt-2 bg-card-50 border border-border-100 rounded-sm shadow-lg max-h-60 overflow-auto">
                       <div className="max-h-60 overflow-auto">
-                        {filteredSectionItems.map(
-                          (item: SectionListResponse) => (
-                            <div
-                              key={item?.section_id}
-                              className="px-4 py-3 cursor-pointer hover:bg-background-300"
-                              onClick={() =>
-                                handleSectionSelect(item?.section_id)
-                              }
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-foreground-50">
-                                  {item?.title || "未知栏目"}
-                                </span>
-                                {selectedSectionId === item?.section_id && (
-                                  <Check className="h-4 w-4 text-primary-500" />
-                                )}
-                              </div>
+                        {filteredSectionItems.map((item: SectionListResponse) => (
+                          <div
+                            key={item?.section_id}
+                            className="px-4 py-3 cursor-pointer hover:bg-background-300"
+                            onClick={() => handleSectionSelect(item?.section_id)}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-foreground-50">
+                                {item?.title || "未知栏目"}
+                              </span>
+                              {selectedSectionId === item?.section_id && (
+                                <Check className="h-4 w-4 text-primary-500" />
+                              )}
                             </div>
-                          )
-                        )}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -436,9 +398,7 @@ export const BlogMetaData = ({
 
             {/* SEO 选择器 */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-foreground-50">
-                SEO 设置
-              </label>
+              <label className="block text-sm font-medium text-foreground-50">SEO 设置</label>
               <div className="relative" ref={seoDropdownRef}>
                 <div
                   className="w-full rounded-sm border border-border-100 bg-card-50 px-4 py-3 text-foreground-50 cursor-pointer hover:border-border-200 hover:bg-background-300"
@@ -448,9 +408,7 @@ export const BlogMetaData = ({
                     <div className="flex items-center space-x-3">
                       <Search className="h-4 w-4 text-foreground-300" />
                       <span className="text-sm">
-                        {selectedSeoItem
-                          ? selectedSeoItem.title
-                          : "选择 SEO 设置"}
+                        {selectedSeoItem ? selectedSeoItem.title : "选择 SEO 设置"}
                       </span>
                     </div>
                     <ChevronDown
@@ -526,9 +484,7 @@ export const BlogMetaData = ({
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
                                   <div className="text-sm font-medium text-primary-600">
-                                    {loading
-                                      ? "加载中..."
-                                      : "获取更多 SEO 设置"}
+                                    {loading ? "加载中..." : "获取更多 SEO 设置"}
                                   </div>
                                   <div className="text-xs text-foreground-400 mt-1">
                                     点击加载更多选项
@@ -559,13 +515,9 @@ export const BlogMetaData = ({
             {/* 标签选择器 */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-foreground-50">
-                  标签
-                </label>
+                <label className="block text-sm font-medium text-foreground-50">标签</label>
                 <div className="flex items-center space-x-2">
-                  <span className="text-xs text-foreground-400">
-                    {selectedTags.length}/3
-                  </span>
+                  <span className="text-xs text-foreground-400">{selectedTags.length}/3</span>
                   {selectedTags.length >= 3 && (
                     <div className="flex items-center space-x-1 px-2 py-1 rounded-sm bg-warning-50 text-warning-600 text-xs font-medium">
                       <div className="w-1.5 h-1.5 bg-warning-500 rounded-full"></div>
@@ -614,9 +566,7 @@ export const BlogMetaData = ({
                       >
                         <div className="flex items-center space-x-2">
                           <Plus className="h-4 w-4 text-primary-500" />
-                          <span className="text-sm text-primary-600 font-medium">
-                            创建新标签
-                          </span>
+                          <span className="text-sm text-primary-600 font-medium">创建新标签</span>
                         </div>
                       </div>
 
@@ -649,9 +599,7 @@ export const BlogMetaData = ({
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
                                   <div className="text-sm font-medium text-primary-600">
-                                    {isTagLoading
-                                      ? "加载中..."
-                                      : "获取更多标签"}
+                                    {isTagLoading ? "加载中..." : "获取更多标签"}
                                   </div>
                                   <div className="text-xs text-foreground-400 mt-1">
                                     点击加载更多选项
@@ -702,9 +650,7 @@ export const BlogMetaData = ({
             {/* 博客标题 */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-foreground-50">
-                  博客标题
-                </label>
+                <label className="block text-sm font-medium text-foreground-50">博客标题</label>
                 <span
                   className={`text-xs font-medium ${
                     title.length > 50 ? "text-error-500" : "text-foreground-400"
@@ -726,23 +672,17 @@ export const BlogMetaData = ({
                 }`}
               />
               {title.length > 50 && (
-                <p className="text-xs text-error-500 font-medium">
-                  标题不能超过50个字符
-                </p>
+                <p className="text-xs text-error-500 font-medium">标题不能超过50个字符</p>
               )}
             </div>
 
             {/* 博客描述 */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-foreground-50">
-                  博客描述
-                </label>
+                <label className="block text-sm font-medium text-foreground-50">博客描述</label>
                 <span
                   className={`text-xs font-medium ${
-                    description.length > 500
-                      ? "text-error-500"
-                      : "text-foreground-400"
+                    description.length > 500 ? "text-error-500" : "text-foreground-400"
                   }`}
                 >
                   {description.length}/500
@@ -761,17 +701,13 @@ export const BlogMetaData = ({
                 }`}
               />
               {description.length > 500 && (
-                <p className="text-xs text-error-500 font-medium">
-                  描述不能超过500个字符
-                </p>
+                <p className="text-xs text-error-500 font-medium">描述不能超过500个字符</p>
               )}
             </div>
 
             {/* 封面图片选择器 */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-foreground-50">
-                封面图片
-              </label>
+              <label className="block text-sm font-medium text-foreground-50">封面图片</label>
               <div className="space-y-3">
                 {selectedCoverImageUrl ? (
                   <div className="relative group">
@@ -807,9 +743,7 @@ export const BlogMetaData = ({
                   >
                     <div className="text-center">
                       <ImageIcon className="h-8 w-8 text-foreground-400 mx-auto mb-2" />
-                      <p className="text-sm text-foreground-300 font-medium">
-                        点击选择封面图片
-                      </p>
+                      <p className="text-sm text-foreground-300 font-medium">点击选择封面图片</p>
                     </div>
                   </div>
                 )}

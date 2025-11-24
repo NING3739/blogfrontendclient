@@ -1,4 +1,4 @@
-import { ChineseTitle } from "./commonType";
+import type { ChineseTitle } from "./commonType";
 
 interface TagID {
   tag_id: number;
@@ -22,4 +22,12 @@ export interface GetTagItemResponse {
   slug: string;
   created_at: string;
   updated_at?: string;
+}
+
+// Sitemap 专用类型
+export interface TagSitemapItem {
+  tag_id: number;
+  slug: string;
+  updated_at?: string;
+  created_at: string;
 }

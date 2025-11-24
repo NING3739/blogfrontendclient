@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 
 interface SiteLogoProps {
   size?: "sm" | "md" | "lg" | "xl";
@@ -59,14 +59,10 @@ const SiteLogo = ({ size = "md", asChild = false }: SiteLogoProps) => {
     return (
       <div onClick={handleHomepageClick} className="block group cursor-pointer">
         <motion.div className={sizeClasses.padding} whileTap={{ scale: 0.95 }}>
-          <span
-            className={`text-primary-600 ${sizeClasses.text} font-semibold`}
-          >
+          <span className={`text-primary-600 ${sizeClasses.text} font-semibold`}>
             {isClicked ? "HELLO" : "HEY"}
           </span>
-          <span
-            className={`${sizeClasses.text} font-semibold text-foreground-200`}
-          >
+          <span className={`${sizeClasses.text} font-semibold text-foreground-200`}>
             {isClicked ? "FRIEND" : "XIAOLI"}
           </span>
         </motion.div>
@@ -95,12 +91,8 @@ const SiteLogo = ({ size = "md", asChild = false }: SiteLogoProps) => {
   }
   const logoContent = (
     <div className={sizeClasses.padding}>
-      <span className={`text-primary-600 ${sizeClasses.text} font-semibold`}>
-        HEY
-      </span>
-      <span className={`${sizeClasses.text} font-semibold text-foreground-200`}>
-        XIAOLI
-      </span>
+      <span className={`text-primary-600 ${sizeClasses.text} font-semibold`}>HEY</span>
+      <span className={`${sizeClasses.text} font-semibold text-foreground-200`}>XIAOLI</span>
     </div>
   );
 

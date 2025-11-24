@@ -4,8 +4,6 @@ export const metadata = {
   keywords: "登陆, login",
 };
 
-export default function LogInLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function LogInLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return children;
 }

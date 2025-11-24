@@ -74,10 +74,8 @@
   --gradient-subtle: linear-gradient(180deg, #f8fafc, #f1f5f9);
 
   --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1),
-    0 2px 4px -1px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1),
-    0 4px 6px -2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -1px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
 }
 
 /* Dark theme variables - 深色灰蓝系 */
@@ -140,10 +138,8 @@
   --gradient-subtle: linear-gradient(180deg, #1e293b, #334155);
 
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4),
-    0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4),
-    0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
 
 /* 系统跟随深色模式 - 灰蓝系 */
@@ -208,10 +204,8 @@
     --gradient-subtle: linear-gradient(180deg, #1e293b, #334155);
 
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4),
-      0 2px 4px -1px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4),
-      0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
   }
 }
 
@@ -223,16 +217,17 @@
   --font-chinese-serif: var(--font-noto-serif-sc);
 
   /* 标题字体 - 衬线字体优先，更有层次感 */
-  --font-heading: var(--font-chinese-serif), var(--font-sans), -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, serif;
+  --font-heading:
+    var(--font-chinese-serif), var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, serif;
 
   /* 正文字体 - 无衬线字体优先，阅读体验更好 */
-  --font-body: var(--font-chinese-sans), var(--font-sans), -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body:
+    var(--font-chinese-sans), var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
 
   /* 代码字体 */
-  --font-code: var(--font-mono), "SF Mono", "Monaco", "Inconsolata",
-    "Roboto Mono", monospace;
+  --font-code: var(--font-mono), "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
 }
 
 /* Base styles */
@@ -240,7 +235,9 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   line-height: 1.6;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
   font-family: var(--font-body);
 }
 
@@ -268,17 +265,21 @@ pre {
 /* 英文环境下，英文字体优先 */
 body[data-locale="en"],
 [lang="en"] {
-  --font-heading: var(--font-sans), var(--font-chinese-serif), -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, serif;
-  --font-body: var(--font-sans), var(--font-chinese-sans), -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading:
+    var(--font-sans), var(--font-chinese-serif), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, serif;
+  --font-body:
+    var(--font-sans), var(--font-chinese-sans), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
 }
 
 /* 中文环境下，中文字体优先 */
 body[data-locale="zh"],
 [lang="zh"] {
-  --font-heading: var(--font-chinese-serif), var(--font-sans), -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, serif;
-  --font-body: var(--font-chinese-sans), var(--font-sans), -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading:
+    var(--font-chinese-serif), var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, serif;
+  --font-body:
+    var(--font-chinese-sans), var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
 }

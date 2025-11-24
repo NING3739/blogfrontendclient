@@ -1,9 +1,8 @@
-import React from "react";
 import { useRouter } from "next/navigation";
-import type { TagStatistic } from "@/app/types/analyticServiceType";
+import { Button } from "@/app/components/ui/button/butten";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import { Button } from "@/app/components/ui/button/butten";
+import type { TagStatistic } from "@/app/types/analyticServiceType";
 
 interface TagCloudProps {
   tags?: TagStatistic[];
@@ -15,9 +14,7 @@ export default function TagCloud({ tags, isLoading, error }: TagCloudProps) {
   const router = useRouter();
 
   if (isLoading) {
-    return (
-      <LoadingSpinner message="加载热门标签..." size="sm" variant="pulse" />
-    );
+    return <LoadingSpinner message="加载热门标签..." size="sm" variant="pulse" />;
   }
 
   if (error) {
@@ -63,9 +60,7 @@ export default function TagCloud({ tags, isLoading, error }: TagCloudProps) {
 
   return (
     <div className="bg-card-50 border border-border-50 rounded-sm p-4 sm:p-6 shadow-sm w-full max-w-full overflow-hidden">
-      <h3 className="text-base sm:text-lg font-semibold text-foreground-50 mb-4">
-        热门标签
-      </h3>
+      <h3 className="text-base sm:text-lg font-semibold text-foreground-50 mb-4">热门标签</h3>
       <div className="w-full max-w-full">
         <div className="flex flex-wrap gap-2.5 items-center justify-center py-2 px-1">
           {tags.map((tag) => (
@@ -74,15 +69,13 @@ export default function TagCloud({ tags, isLoading, error }: TagCloudProps) {
               variant="outline"
               size="sm"
               className={`${getColor(tag.blog_count)} ${getSize(
-                tag.blog_count
+                tag.blog_count,
               )} hover:scale-105 backdrop-blur-sm bg-card-100/50`}
               onClick={() => router.push(`/tag/${tag.tag_slug}`)}
               title={`${tag.chinese_title} - ${tag.blog_count} 篇博客`}
             >
               {tag.chinese_title}
-              <span className="ml-1.5 text-xs opacity-60">
-                {tag.blog_count}
-              </span>
+              <span className="ml-1.5 text-xs opacity-60">{tag.blog_count}</span>
             </Button>
           ))}
         </div>

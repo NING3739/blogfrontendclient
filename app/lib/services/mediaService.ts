@@ -1,29 +1,18 @@
-import httpClient from "../http/client";
 import type {
-  UploadMediaRequest,
-  DownloadMediaRequest,
   DeleteMediaRequest,
+  DownloadMediaRequest,
+  UploadMediaRequest,
 } from "@/app/types/mediaServiceType";
+import httpClient from "../http/client";
 
 class MediaService {
-  async uploadMedia(
-    payload: UploadMediaRequest,
-    onProgress?: (progressEvent: any) => void
-  ) {
-    // 将文件数组转换为 FormData
+  async uploadMedia(payload: UploadMediaRequest, onProgress?: (progressEvent: any) => void) {
     const formData = new FormData();
-    payload.files.forEach((file, index) => {
-      formData.append(`files`, file);
-    });
+    payload.files.forEach((file) => formData.append("files", file));
 
-    const response = await httpClient.upload(
-      "/media/admin/upload-media",
-      formData,
-      {
-        uploadProgress: onProgress,
-      }
-    );
-    return response;
+    return httpClient.upload("/media/admin/upload-media", formData, {
+      uploadProgress: onProgress,
+    });
   }
 
   async downloadMedia(payload: DownloadMediaRequest) {
@@ -31,11 +20,9 @@ class MediaService {
   }
 
   async deleteMedia(payload: DeleteMediaRequest) {
-    const response = await httpClient.delete("/media/admin/delete-media", {
-      data: payload,
-    });
-    return response;
+    return httpClient.delete("/media/admin/delete-media", { data: payload });
   }
 }
 
-export default new MediaService();
+export const mediaService = new MediaService();
+export default mediaService;

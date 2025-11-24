@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
 import Link from "next/link";
-import toast from "react-hot-toast";
-import InputField from "@/app/components/ui/input/InputField";
-import { Button } from "@/app/components/ui/button/butten";
-import GoogleIcon from "@/app/components/ui/icon/GoogleIcon";
-import GithubIcon from "@/app/components/ui/icon/GithubIcon";
 import { useTranslations } from "next-intl";
+import type React from "react";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { Button } from "@/app/components/ui/button/butten";
+import GithubIcon from "@/app/components/ui/icon/GithubIcon";
+import GoogleIcon from "@/app/components/ui/icon/GoogleIcon";
+import InputField from "@/app/components/ui/input/InputField";
 import { useAuth } from "@/app/contexts/hooks/useAuth";
 import { Validator } from "@/app/lib/utils/validator";
 
@@ -80,10 +81,7 @@ export default function LoginPage() {
       {/* 登录表单 */}
       <form onSubmit={handleSubmit} className="space-y-6" noValidate>
         <div className="space-y-2">
-          <label
-            htmlFor="email"
-            className="block text-base font-semibold text-foreground-50"
-          >
+          <label htmlFor="email" className="block text-base font-semibold text-foreground-50">
             {authT("email")}
           </label>
           <InputField
@@ -99,10 +97,7 @@ export default function LoginPage() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label
-              htmlFor="password"
-              className="block text-base font-semibold text-foreground-50"
-            >
+            <label htmlFor="password" className="block text-base font-semibold text-foreground-50">
               {authT("password")}
             </label>
             <Link

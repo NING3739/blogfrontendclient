@@ -1,10 +1,10 @@
 "use client";
 
+import { RotateCw, X, ZoomIn, ZoomOut } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "motion/react";
-import { X, ZoomIn, ZoomOut, RotateCw } from "lucide-react";
-import Image from "next/image";
 
 interface ImagePreviewProps {
   isOpen: boolean;
@@ -75,7 +75,7 @@ const ImagePreview = ({
     <AnimatePresence mode="wait">
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-9999 flex items-center justify-center p-0 sm:p-4"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-0 sm:p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -110,6 +110,7 @@ const ImagePreview = ({
               {/* 中间：操作工具 */}
               <div className="flex items-center gap-0.5 sm:gap-1 flex-1 justify-center md:justify-start md:flex-initial">
                 <button
+                  type="button"
                   onClick={handleZoomOut}
                   disabled={scale <= 0.5}
                   className="p-1.5 sm:p-2 rounded-sm bg-card-50 text-foreground-300 hover:bg-background-100 border border-border-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -122,6 +123,7 @@ const ImagePreview = ({
                   {Math.round(scale * 100)}%
                 </span>
                 <button
+                  type="button"
                   onClick={handleZoomIn}
                   disabled={scale >= 3}
                   className="p-1.5 sm:p-2 rounded-sm bg-card-50 text-foreground-300 hover:bg-background-100 border border-border-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -132,6 +134,7 @@ const ImagePreview = ({
                 </button>
                 <div className="w-px h-4 sm:h-6 bg-border-100 mx-1 sm:mx-2" />
                 <button
+                  type="button"
                   onClick={handleRotate}
                   className="p-1.5 sm:p-2 rounded-sm bg-card-50 text-foreground-300 hover:bg-background-100 border border-border-100 transition-colors"
                   title="旋转90°"
@@ -141,6 +144,7 @@ const ImagePreview = ({
                 </button>
                 <div className="w-px h-4 sm:h-6 bg-border-100 mx-1 sm:mx-2" />
                 <button
+                  type="button"
                   onClick={handleReset}
                   disabled={scale === 1 && rotation === 0}
                   className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm rounded-sm bg-card-50 text-foreground-300 hover:bg-background-100 border border-border-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

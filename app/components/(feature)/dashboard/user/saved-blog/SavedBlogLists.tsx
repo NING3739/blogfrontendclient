@@ -1,17 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import toast from "react-hot-toast";
-import Link from "next/link";
-import Image from "next/image";
+import { Eye, FileText, Trash2 } from "lucide-react";
 import { motion } from "motion/react";
-import { Eye, Trash2, FileText } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
-import { GetMySavedBlogItemResponse } from "@/app/types/userServiceType";
-import { OffsetPaginationResponse } from "@/app/types/commonType";
+import type React from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
-import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
 import BlogService from "@/app/lib/services/blogService";
+import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
+import type { OffsetPaginationResponse } from "@/app/types/commonType";
+import type { GetMySavedBlogItemResponse } from "@/app/types/userServiceType";
 
 interface SavedBlogListsProps {
   savedBlogItems: GetMySavedBlogItemResponse[];
@@ -47,17 +48,13 @@ const SavedBlogLists: React.FC<SavedBlogListsProps> = ({
       const response = await BlogService.saveBlogButton({ blog_id: blogId });
 
       if (response.status === 200) {
-        toast.success(
-          "message" in response ? response.message : "Blog unsaved"
-        );
+        toast.success("message" in response ? response.message : "Blog unsaved");
         // 使用 mutate 重新获取数据
         if (onDataChange) {
           onDataChange();
         }
       } else {
-        toast.error(
-          "error" in response ? response.error : "Failed to unsave blog"
-        );
+        toast.error("error" in response ? response.error : "Failed to unsave blog");
       }
     } catch (error) {
       console.error("Failed to unsave blog:", error);
@@ -87,78 +84,74 @@ const SavedBlogLists: React.FC<SavedBlogListsProps> = ({
               </tr>
             </thead>
             <tbody>
-              {blogItems.map(
-                (blog: GetMySavedBlogItemResponse, index: number) => (
-                  <motion.tr
-                    key={blog.blog_id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="border-b border-border-50 hover:bg-background-100 transition-colors bg-background-50"
-                  >
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <div className="flex items-center space-x-2 lg:space-x-3">
-                        <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center shrink-0">
-                          {blog.cover_url ? (
-                            <Image
-                              src={blog.cover_url}
-                              alt={`${blog.blog_title} cover`}
-                              width={56}
-                              height={56}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <FileText className="w-6 h-6 text-foreground-200" />
-                          )}
-                        </div>
-                        <Link
-                          href={`/${blog.section_slug}/${blog.blog_slug}`}
-                          className="flex-1 min-w-0"
-                        >
-                          <p className="text-xs lg:text-sm font-medium text-foreground-50 truncate hover:text-primary-500 transition-colors">
-                            {blog.blog_title}
-                          </p>
-                        </Link>
+              {blogItems.map((blog: GetMySavedBlogItemResponse, index: number) => (
+                <motion.tr
+                  key={blog.blog_id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="border-b border-border-50 hover:bg-background-100 transition-colors bg-background-50"
+                >
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <div className="flex items-center space-x-2 lg:space-x-3">
+                      <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-sm overflow-hidden bg-background-50 flex items-center justify-center shrink-0">
+                        {blog.cover_url ? (
+                          <Image
+                            src={blog.cover_url}
+                            alt={`${blog.blog_title} cover`}
+                            width={56}
+                            height={56}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <FileText className="w-6 h-6 text-foreground-200" />
+                        )}
                       </div>
-                    </td>
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <p className="text-xs lg:text-sm text-foreground-200">
-                        {handleDateFormat(blog.saved_at, format)}
-                      </p>
-                    </td>
-                    <td className="py-3 lg:py-4 px-3 lg:px-4">
-                      <div className="flex justify-end space-x-1 lg:space-x-2">
-                        <Link href={`/${blog.section_slug}/${blog.blog_slug}`}>
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="p-1.5 lg:p-2 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
-                            title="查看博客"
-                          >
-                            <Eye className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-                          </motion.button>
-                        </Link>
+                      <Link
+                        href={`/${blog.section_slug}/${blog.blog_slug}`}
+                        className="flex-1 min-w-0"
+                      >
+                        <p className="text-xs lg:text-sm font-medium text-foreground-50 truncate hover:text-primary-500 transition-colors">
+                          {blog.blog_title}
+                        </p>
+                      </Link>
+                    </div>
+                  </td>
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <p className="text-xs lg:text-sm text-foreground-200">
+                      {handleDateFormat(blog.saved_at, format)}
+                    </p>
+                  </td>
+                  <td className="py-3 lg:py-4 px-3 lg:px-4">
+                    <div className="flex justify-end space-x-1 lg:space-x-2">
+                      <Link href={`/${blog.section_slug}/${blog.blog_slug}`}>
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => handleRemoveSave(blog.blog_id)}
-                          disabled={removingIds.includes(blog.blog_id)}
-                          className="p-1.5 lg:p-2 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors disabled:opacity-50"
-                          title="取消收藏"
+                          className="p-1.5 lg:p-2 bg-primary-50 text-primary-400 rounded-sm hover:bg-primary-100 transition-colors"
+                          title="查看博客"
                         >
-                          <Trash2
-                            className={`w-3.5 h-3.5 lg:w-4 lg:h-4 ${
-                              removingIds.includes(blog.blog_id)
-                                ? "animate-spin"
-                                : ""
-                            }`}
-                          />
+                          <Eye className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                         </motion.button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                )
-              )}
+                      </Link>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleRemoveSave(blog.blog_id)}
+                        disabled={removingIds.includes(blog.blog_id)}
+                        className="p-1.5 lg:p-2 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors disabled:opacity-50"
+                        title="取消收藏"
+                      >
+                        <Trash2
+                          className={`w-3.5 h-3.5 lg:w-4 lg:h-4 ${
+                            removingIds.includes(blog.blog_id) ? "animate-spin" : ""
+                          }`}
+                        />
+                      </motion.button>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -267,10 +260,7 @@ const SavedBlogLists: React.FC<SavedBlogListsProps> = ({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <Link
-                    href={`/${blog.section_slug}/${blog.blog_slug}`}
-                    className="flex-1 min-w-0"
-                  >
+                  <Link href={`/${blog.section_slug}/${blog.blog_slug}`} className="flex-1 min-w-0">
                     <h3 className="text-sm font-medium text-foreground-50 truncate hover:text-primary-500 transition-colors">
                       {blog.blog_title}
                     </h3>

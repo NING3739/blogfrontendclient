@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import useSWR from "swr";
+import { Bookmark, Eye, Heart, MessageCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import useSWR from "swr";
 import { useAuth } from "@/app/contexts/hooks/useAuth";
-import { Eye, Heart, MessageCircle, Bookmark } from "lucide-react";
-import type { GetBlogStatsResponse } from "@/app/types/blogServiceType";
 import blogService from "@/app/lib/services/blogService";
 import { isBlogLiked, setBlogLikeStatus } from "@/app/lib/utils/cookieUtils";
+import type { GetBlogStatsResponse } from "@/app/types/blogServiceType";
 
 const BlogStats = ({
   blogId,
@@ -113,8 +113,11 @@ const BlogStats = ({
     return (
       <div className="flex justify-center items-center py-4">
         <div className="animate-pulse flex space-x-8">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="flex items-center space-x-2">
+          {[0, 1, 2, 3].map((skeletonId) => (
+            <div
+              key={`skeleton-${skeletonId}`}
+              className="flex items-center space-x-2"
+            >
               <div className="w-4 h-4 bg-background-300 rounded"></div>
               <div className="w-8 h-4 bg-background-300 rounded"></div>
             </div>
@@ -133,42 +136,45 @@ const BlogStats = ({
   }
 
   const stats = [
-    { icon: Eye, value: data.views, clickable: false },
+    { icon: Eye, value: data.views, clickable: false, label: "views" },
     {
       icon: Heart,
       value: data.likes,
       clickable: true, // 未登录用户也可以点赞
       isActive: isLiked,
+      label: "likes",
     },
     {
       icon: MessageCircle,
       value: data.comments,
       clickable: false,
+      label: "comments",
     },
     {
       icon: Bookmark,
       value: data.saves,
       clickable: isAuthenticated,
       isActive: isSaved,
+      label: "saves",
     },
   ];
 
   return (
     <div className="flex justify-center items-center space-x-8 py-4">
-      {stats.map(({ icon: Icon, value, clickable, isActive }, index) => {
+      {stats.map(({ icon: Icon, value, clickable, isActive, label }) => {
         const handleClick = () => {
-          if (index === 1) {
-            // 点赞按钮 (Heart icon)
+          if (label === "likes") {
             handleLikeBlog();
-          } else if (index === 3) {
-            // 收藏按钮 (Bookmark icon)
+          } else if (label === "saves") {
             handleSaveBlog();
           }
         };
 
         return (
-          <div
-            key={index}
+          <button
+            type="button"
+            key={`stat-${label}`}
+            disabled={!clickable || (clickable && (isSaving || isLiking))}
             className={`flex items-center space-x-2 text-foreground-200 transition-colors duration-200 ${
               clickable
                 ? "hover:text-foreground-100 cursor-pointer hover:scale-105"
@@ -190,7 +196,7 @@ const BlogStats = ({
               {value}
             </span>
             {/* label removed by design */}
-          </div>
+          </button>
         );
       })}
     </div>

@@ -1,5 +1,12 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 import httpClient from "@/app/lib/http/client";
+import type { BlogSitemapItem } from "@/app/types/blogServiceType";
+import type { ProjectSitemapItem } from "@/app/types/projectServiceType";
+import type {
+  SectionChild,
+  SectionListResponse,
+} from "@/app/types/sectionServiceType";
+import type { TagSitemapItem } from "@/app/types/tagServiceType";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://heyxiaoli.com";
@@ -49,18 +56,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return staticRoutes;
     }
 
-    const sections = sectionsResponse.data || [];
+    const sections = (sectionsResponse.data as SectionListResponse[]) || [];
 
     // 扁平化 sections - 将所有 children 提取出来
-    const allSections: any[] = [];
-    sections.forEach((section: any) => {
+    const allSections: Array<
+      SectionListResponse | (SectionChild & { id: number })
+    > = [];
+    sections.forEach((section) => {
       // 添加父 section（如果不是 blog 且 is_active）
       if (section.is_active && section.slug !== "blog") {
         allSections.push(section);
       }
       // 添加所有子 sections（如果有 children）
       if (section.children && Array.isArray(section.children)) {
-        section.children.forEach((child: any) => {
+        section.children.forEach((child) => {
           if (child.is_active !== false) {
             // 添加 section_id 用于博客查询
             allSections.push({ ...child, id: child.section_id });
@@ -71,8 +80,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // 为每个 section 创建路由
     const sectionRoutes: MetadataRoute.Sitemap = allSections
-      .filter((section: any) => section.slug !== "blog")
-      .map((section: any) => ({
+      .filter((section) => section.slug !== "blog")
+      .map((section) => ({
         url: `${baseUrl}/${section.slug}`,
         lastModified: new Date(section.updated_at || new Date()),
         changeFrequency: "weekly" as const,
@@ -81,7 +90,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // 获取所有博客文章
     const blogRoutes: MetadataRoute.Sitemap = [];
-    const blogSections = allSections.filter((section: any) =>
+    const blogSections = allSections.filter((section) =>
       ["journal", "musings", "dev-notes"].includes(section.slug)
     );
 
@@ -93,7 +102,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         while (hasMore) {
           const blogsResponse = await httpClient.get("/blog/get-blog-lists", {
             params: {
-              section_id: section.id,
+              section_id: "id" in section ? section.id : section.section_id,
               page,
               size: 100,
               published_only: true,
@@ -107,14 +116,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             break;
           }
 
-          const blogs = blogsResponse.data?.items || [];
+          const blogs = (blogsResponse.data?.items as BlogSitemapItem[]) || [];
 
           if (blogs.length === 0) {
             hasMore = false;
             break;
           }
 
-          const sectionBlogRoutes = blogs.map((blog: any) => ({
+          const sectionBlogRoutes = blogs.map((blog) => ({
             url: `${baseUrl}/${section.slug}/${blog.blog_slug}`,
             lastModified: new Date(blog.updated_at || new Date()),
             changeFrequency: "monthly" as const,
@@ -159,14 +168,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           break;
         }
 
-        const projects = projectsResponse.data?.items || [];
+        const projects =
+          (projectsResponse.data?.items as ProjectSitemapItem[]) || [];
 
         if (projects.length === 0) {
           hasMore = false;
           break;
         }
 
-        const pageProjectRoutes = projects.map((project: any) => ({
+        const pageProjectRoutes = projects.map((project) => ({
           url: `${baseUrl}/projects/${project.project_slug}`,
           lastModified: new Date(project.updated_at || new Date()),
           changeFrequency: "monthly" as const,
@@ -211,7 +221,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           break;
         }
 
-        const pageTagRoutes = tags.map((tag: any) => ({
+        const pageTagRoutes = tags.map((tag: TagSitemapItem) => ({
           url: `${baseUrl}/tag/${tag.slug}`,
           lastModified: new Date(
             tag.updated_at || tag.created_at || new Date()

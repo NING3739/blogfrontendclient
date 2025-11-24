@@ -1,14 +1,11 @@
-import React from "react";
+import type React from "react";
 
 interface GoogleIconProps {
   className?: string;
   size?: number;
 }
 
-const GoogleIcon: React.FC<GoogleIconProps> = ({
-  className = "w-5 h-5",
-  size,
-}) => {
+const GoogleIcon: React.FC<GoogleIconProps> = ({ className = "w-5 h-5", size }) => {
   const sizeStyle = size ? { width: size, height: size } : {};
 
   return (

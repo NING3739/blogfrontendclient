@@ -1,6 +1,6 @@
-import React from "react";
-import { motion } from "motion/react";
 import clsx from "clsx";
+import { motion } from "motion/react";
+import type React from "react";
 
 interface CardProps {
   children: React.ReactNode;
@@ -24,8 +24,7 @@ const Card: React.FC<CardProps> = ({
   const variantClasses = {
     default: "bg-card-100 rounded-sm border border-border-100 shadow-sm",
     featured: "bg-card-100 rounded-sm border border-border-100 shadow-lg",
-    minimal:
-      "bg-transparent border-b border-border-100 rounded-none shadow-none",
+    minimal: "bg-transparent border-b border-border-100 rounded-none shadow-none",
   };
 
   const paddingClasses = {
@@ -34,16 +33,14 @@ const Card: React.FC<CardProps> = ({
     lg: "p-7",
   };
 
-  const hoverClasses = hover
-    ? "hover:shadow-xl hover:scale-[1.01] hover:-translate-y-1"
-    : "";
+  const hoverClasses = hover ? "hover:shadow-xl hover:scale-[1.01] hover:-translate-y-1" : "";
 
   const cardClasses = clsx(
     baseClasses,
     variantClasses[variant],
     paddingClasses[padding],
     hoverClasses,
-    className
+    className,
   );
 
   if (onClick) {

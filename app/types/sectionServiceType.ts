@@ -1,16 +1,16 @@
-import {
+import type {
+  ChineseDescription,
+  ChineseTitle,
+  CreatedAt,
+  Description,
+  IsActive,
+  NumberType,
+  ParentID,
   SectionID,
   SeoID,
-  ChineseTitle,
-  ChineseDescription,
-  ParentID,
-  StringType,
-  NumberType,
-  IsActive,
   Slug,
+  StringType,
   Title,
-  Description,
-  CreatedAt,
   UpdatedAt,
 } from "./commonType";
 
@@ -43,8 +43,27 @@ export interface UpdateSectionRequest
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface DeleteSectionRequest extends SectionID {}
 
-export interface SectionListResponse extends SectionListItem {
-  children?: SectionListItem[];
+export interface SectionChild {
+  section_id: number;
+  slug: string;
+  type: string;
+  title: string;
+  description?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface SectionListResponse {
+  section_id: number;
+  slug: string;
+  type: string;
+  title: string;
+  description?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at?: string;
+  children?: SectionChild[];
 }
 
 export interface GetSectionDetailsResponse

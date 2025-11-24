@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
-import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import CheckoutForm from "./CheckoutForm";
-import type { CreatePaymentIntentRequest } from "@/app/types/paymentServiceType";
+import { loadStripe } from "@stripe/stripe-js";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import paymentService from "@/app/lib/services/paymentService";
+import type { CreatePaymentIntentRequest } from "@/app/types/paymentServiceType";
+import CheckoutForm from "./CheckoutForm";
 
 const PaymentElement = ({
   project_id,
@@ -20,7 +20,6 @@ const PaymentElement = ({
   final_amount,
 }: CreatePaymentIntentRequest) => {
   const { theme } = useTheme();
-  console.log(theme);
   const [stripePromise, setStripePromise] = useState<any>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -110,9 +109,7 @@ const PaymentElement = ({
     return (
       <div className="p-4 bg-error-50 border border-error-100 rounded-sm">
         <p className="text-error-500 text-sm">{error}</p>
-        <p className="text-error-400 text-xs mt-1">
-          请检查网络连接或刷新页面重试
-        </p>
+        <p className="text-error-400 text-xs mt-1">请检查网络连接或刷新页面重试</p>
       </div>
     );
   }

@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
-import { useTranslations } from "next-intl";
-import toast from "react-hot-toast";
-import { mutate } from "swr";
 import { AlertTriangle } from "lucide-react";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { mutate } from "swr";
 import { Button } from "@/app/components/ui/button/butten";
 import InputField from "@/app/components/ui/input/InputField";
-import boardService from "@/app/lib/services/boardService";
-import blogService from "@/app/lib/services/blogService";
 import { useAuth } from "@/app/contexts/hooks/useAuth";
+import blogService from "@/app/lib/services/blogService";
+import boardService from "@/app/lib/services/boardService";
 
 // 评论类型枚举
 export enum CommentType {
@@ -141,7 +141,7 @@ const CommentTextInput = (props: CommentTextInputProps) => {
               };
               return current?.success ? { ...current, data: next } : next;
             },
-            false
+            false,
           );
         }
         // 编辑评论
@@ -158,13 +158,9 @@ const CommentTextInput = (props: CommentTextInputProps) => {
           });
         }
         if (response.status === 200) {
-          toast.success(
-            "message" in response ? response.message : "Comment updated"
-          );
+          toast.success("message" in response ? response.message : "Comment updated");
         } else {
-          toast.error(
-            "error" in response ? response.error : "Failed to update comment"
-          );
+          toast.error("error" in response ? response.error : "Failed to update comment");
         }
       } else {
         // 创建新评论
@@ -199,9 +195,7 @@ const CommentTextInput = (props: CommentTextInputProps) => {
                   let inserted = false;
                   const mapped = items.map((c: any) => {
                     if (c.comment_id === parent_id) {
-                      const children = Array.isArray(c.children)
-                        ? c.children
-                        : [];
+                      const children = Array.isArray(c.children) ? c.children : [];
                       inserted = true;
                       return { ...c, children: [optimisticItem, ...children] };
                     }
@@ -220,14 +214,14 @@ const CommentTextInput = (props: CommentTextInputProps) => {
                   nextComments = [optimisticItem, ...nextComments];
                 }
               } else {
-                if (key && key.includes("cursor=null")) {
+                if (key?.includes("cursor=null")) {
                   nextComments = [optimisticItem, ...nextComments];
                 }
               }
               const next = { ...base, comments: nextComments };
               return current?.success ? { ...current, data: next } : next;
             },
-            false
+            false,
           );
         }
 
@@ -246,13 +240,9 @@ const CommentTextInput = (props: CommentTextInputProps) => {
           });
         }
         if (response.status === 200) {
-          toast.success(
-            "message" in response ? response.message : "Comment created"
-          );
+          toast.success("message" in response ? response.message : "Comment created");
         } else {
-          toast.error(
-            "error" in response ? response.error : "Failed to create comment"
-          );
+          toast.error("error" in response ? response.error : "Failed to create comment");
         }
       }
 

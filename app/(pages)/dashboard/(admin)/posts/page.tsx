@@ -1,28 +1,27 @@
 "use client";
 
-import React from "react";
 import { FolderOpen, FolderPlus } from "lucide-react";
 import { motion } from "motion/react";
-import useSWR from "swr";
-import useSection from "@/app/contexts/hooks/useSection";
-import { Button } from "@/app/components/ui/button/butten";
 import { useLocale } from "next-intl";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import EmptyState from "@/app/components/ui/error/EmptyState";
+import React from "react";
+import useSWR from "swr";
 import PostLists from "@/app/components/(feature)/dashboard/admin/posts/PostLists";
+import { Button } from "@/app/components/ui/button/butten";
+import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import StatsCard from "@/app/components/ui/stats/StatsCard";
+import useSection from "@/app/contexts/hooks/useSection";
 import type { SectionListItem } from "@/app/types/sectionServiceType";
 
 export default function PostsPage() {
   const locale = useLocale();
   const { sections, isLoading: isSectionsLoading } = useSection();
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [selectedSectionId, setSelectedSectionId] =
-    React.useState<SectionListItem | null>(null);
+  const [selectedSectionId, setSelectedSectionId] = React.useState<SectionListItem | null>(null);
 
   const blogSectionLists = sections?.find(
-    (section: SectionListItem) => section.type === "blog"
+    (section: SectionListItem) => section.type === "blog",
   )?.children;
 
   // 设置默认选中的 section
@@ -43,38 +42,22 @@ export default function PostsPage() {
           `/blog/get-blog-lists?page=${currentPage}&size=5&section_id=${selectedSectionId.section_id}&published_only=false`,
           locale,
         ]
-      : null
+      : null,
   );
 
   if (isSectionsLoading) {
-    return (
-      <LoadingSpinner
-        message="加载板块中..."
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
-    );
+    return <LoadingSpinner message="加载板块中..." size="md" variant="wave" fullScreen={true} />;
   }
 
   if (isLoading) {
     return (
-      <LoadingSpinner
-        message="加载文章列表中..."
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message="加载文章列表中..." size="md" variant="wave" fullScreen={true} />
     );
   }
 
   if (error && error.status !== 404) {
     return (
-      <ErrorDisplay
-        title="加载文章列表失败"
-        message="加载文章列表失败,请稍后重试"
-        type="error"
-      />
+      <ErrorDisplay title="加载文章列表失败" message="加载文章列表失败,请稍后重试" type="error" />
     );
   }
 
@@ -121,12 +104,8 @@ export default function PostsPage() {
     <div className="min-h-screen bg-background-50">
       {/* Header Section */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground-50 mb-1 sm:mb-2">
-          文章管理
-        </h1>
-        <p className="text-sm sm:text-base text-foreground-300">
-          管理和查看所有文章内容
-        </p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground-50 mb-1 sm:mb-2">文章管理</h1>
+        <p className="text-sm sm:text-base text-foreground-300">管理和查看所有文章内容</p>
       </div>
 
       {/* Posts Stats */}
@@ -161,9 +140,7 @@ export default function PostsPage() {
                 <Button
                   onClick={() => setSelectedSectionId(section)}
                   variant={
-                    selectedSectionId?.section_id === section.section_id
-                      ? "primary"
-                      : "outline"
+                    selectedSectionId?.section_id === section.section_id ? "primary" : "outline"
                   }
                   size="sm"
                   className="w-full transition-colors justify-center"

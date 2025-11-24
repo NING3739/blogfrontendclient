@@ -2,18 +2,17 @@ import type { OffsetPagination } from "@/app/types/commonType";
 import type { ProjectIDSchema } from "@/app/types/projectServiceType";
 
 export interface CreatePaymentIntentRequest extends ProjectIDSchema {
-  cover_url?: string;
-  project_name?: string;
-  project_description?: string;
-  project_price?: number;
-  tax_name?: string | null;
-  tax_rate?: number;
-  tax_amount?: number;
-  final_amount?: number;
+  cover_url: string;
+  project_name: string;
+  project_description: string;
+  project_price: number;
+  tax_name: string;
+  tax_rate: number;
+  tax_amount: number;
+  final_amount: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface GetPaymentRecordsRequest extends OffsetPagination {}
+export type GetPaymentRecordsRequest = OffsetPagination;
 
 export interface PaymentSuccessDetails {
   payment_intent_id: string;

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 interface VideoPreviewProps {
   isOpen: boolean;
@@ -52,7 +52,7 @@ const VideoPreview = ({
     <AnimatePresence mode="wait">
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-9999 flex items-center justify-center p-0 sm:p-4"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-0 sm:p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -126,9 +126,7 @@ const VideoPreview = ({
   );
 
   // 使用 Portal 将模态框渲染到 body 下
-  return typeof window !== "undefined"
-    ? createPortal(modalContent, document.body)
-    : null;
+  return typeof window !== "undefined" ? createPortal(modalContent, document.body) : null;
 };
 
 export default VideoPreview;

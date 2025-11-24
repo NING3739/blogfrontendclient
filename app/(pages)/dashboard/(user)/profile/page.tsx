@@ -1,28 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import useSWR from "swr";
 import {
   Camera,
-  User,
-  MapPin,
   CheckCircle,
-  XCircle,
   Clock,
   Edit3,
-  Map,
+  Map as MapIcon,
+  MapPin,
   Network,
+  User,
+  XCircle,
 } from "lucide-react";
 import { motion } from "motion/react";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import EmptyState from "@/app/components/ui/error/EmptyState";
+import Image from "next/image";
 import { useFormatter, useTranslations } from "next-intl";
-import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
-import type { UserResponse } from "@/app/types/userServiceType";
+import { useState } from "react";
+import useSWR from "swr";
 import ChangeAvatarModal from "@/app/components/(feature)/dashboard/user/profile/ChangeAvatarModal";
 import ChangeBioModal from "@/app/components/(feature)/dashboard/user/profile/ChangeBioModal";
+import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
+import type { UserResponse } from "@/app/types/userServiceType";
 
 export default function ProfilePage() {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
@@ -109,18 +109,7 @@ export default function ProfilePage() {
         </p>
       </div>
 
-      {!userProfile ? (
-        /* Empty State */
-        <div className="px-4 sm:px-6 pb-4 sm:pb-6">
-          <EmptyState
-            icon={User}
-            title={commonT("notFound")}
-            description={commonT("notFoundMessage")}
-            iconBgColor="bg-primary-50"
-            iconColor="text-primary-500"
-          />
-        </div>
-      ) : (
+      {userProfile ? (
         <>
           {/* Profile Card with Avatar */}
           <div className="px-4 sm:px-6 pb-4 sm:pb-6">
@@ -152,6 +141,7 @@ export default function ProfilePage() {
                     )}
                   </div>
                   <button
+                    type="button"
                     onClick={() => setIsAvatarModalOpen(true)}
                     className="absolute -bottom-1 -right-1 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors border-2 border-background-50 shadow-sm"
                   >
@@ -224,6 +214,7 @@ export default function ProfilePage() {
                   {dashboardT("bio")}
                 </h3>
                 <button
+                  type="button"
                   onClick={() => setIsBioModalOpen(true)}
                   className="p-1.5 rounded-sm hover:bg-background-100 text-foreground-400 hover:text-primary-500 transition-colors"
                   title={dashboardT("editBio")}
@@ -271,7 +262,7 @@ export default function ProfilePage() {
                   {userProfile.latitude && userProfile.longitude && (
                     <div className="flex items-center space-x-3 p-3 bg-background-100 rounded-sm hover:bg-background-200 transition-colors">
                       <div className="shrink-0 w-10 h-10 bg-info-50 rounded-sm flex items-center justify-center">
-                        <Map className="w-5 h-5 text-info-500" />
+                        <MapIcon className="w-5 h-5 text-info-500" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs text-foreground-400 mb-0.5">
@@ -324,6 +315,17 @@ export default function ProfilePage() {
             currentBio={userProfile.bio || ""}
           />
         </>
+      ) : (
+        /* Empty State */
+        <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+          <EmptyState
+            icon={User}
+            title={commonT("notFound")}
+            description={commonT("notFoundMessage")}
+            iconBgColor="bg-primary-50"
+            iconColor="text-primary-500"
+          />
+        </div>
       )}
     </div>
   );

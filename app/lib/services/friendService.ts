@@ -1,11 +1,11 @@
-import httpClient from "../http/client";
 import type {
-  UpdateFriendRequest,
-  GetFriendListRequest,
   CreateSingleFriendRequest,
   DeleteSingleFriendRequest,
+  GetFriendListRequest,
   UpdateFriendListTypeRequest,
+  UpdateFriendRequest,
 } from "@/app/types/friendServiceType";
+import httpClient from "../http/client";
 
 class FriendService {
   async getFriendDetails() {
@@ -13,43 +13,27 @@ class FriendService {
   }
 
   async getFriendList(payload: GetFriendListRequest) {
-    const response = await httpClient.get(
-      `/friend/get-friend-list/${payload.friend_id}`,
-      { params: { limit: payload.limit, cursor: payload.cursor } }
-    );
-    return response;
+    return httpClient.get(`/friend/get-friend-list/${payload.friend_id}`, {
+      params: { limit: payload.limit, cursor: payload.cursor },
+    });
   }
 
   async updateFriend(payload: UpdateFriendRequest) {
-    const response = await httpClient.patch(
-      "/friend/admin/update-friend",
-      payload
-    );
-    return response;
+    return httpClient.patch("/friend/admin/update-friend", payload);
   }
 
   async createSingleFriend(payload: CreateSingleFriendRequest) {
-    const response = await httpClient.post(
-      "/friend/create-single-friend",
-      payload
-    );
-    return response;
+    return httpClient.post("/friend/create-single-friend", payload);
   }
 
   async deleteSingleFriend(payload: DeleteSingleFriendRequest) {
-    const response = await httpClient.delete(
-      `/friend/delete-single-friend/${payload.friend_list_id}`
-    );
-    return response;
+    return httpClient.delete(`/friend/delete-single-friend/${payload.friend_list_id}`);
   }
 
   async updateFriendListType(payload: UpdateFriendListTypeRequest) {
-    const response = await httpClient.patch(
-      "/friend/admin/update-friend-list-type",
-      payload
-    );
-    return response;
+    return httpClient.patch("/friend/admin/update-friend-list-type", payload);
   }
 }
 
-export default new FriendService();
+export const friendService = new FriendService();
+export default friendService;

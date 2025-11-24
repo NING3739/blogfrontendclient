@@ -1,9 +1,9 @@
-import { Metadata } from "next";
-import sectionService from "@/app/lib/services/sectionService";
+import type { Metadata } from "next";
 import blogService from "@/app/lib/services/blogService";
 import projectService from "@/app/lib/services/projectService";
-import ClientPage from "./clientpage";
+import sectionService from "@/app/lib/services/sectionService";
 import { formatTagTitle } from "@/app/lib/utils/formatTagTitle";
+import ClientPage from "./clientpage";
 
 export async function generateMetadata({
   params,
@@ -18,9 +18,7 @@ export async function generateMetadata({
 
   if (isAuthRoute) {
     console.warn(
-      `Auth route detected in generateMetadata: ${slug.join(
-        "/"
-      )}, skipping SEO generation`
+      `Auth route detected in generateMetadata: ${slug.join("/")}, skipping SEO generation`,
     );
     return {};
   }
@@ -89,11 +87,7 @@ export async function generateMetadata({
         };
       }
 
-      if (
-        sectionSlug === "journal" ||
-        sectionSlug === "musings" ||
-        sectionSlug === "dev-notes"
-      ) {
+      if (sectionSlug === "journal" || sectionSlug === "musings" || sectionSlug === "dev-notes") {
         const blogResponse = await blogService.getBlogDetailsSeo({
           blog_slug: slugValue,
         });
@@ -124,10 +118,7 @@ export async function generateMetadata({
       }
     } catch (error) {
       console.warn(`Failed to fetch blog details for slug ${slugValue}`, error);
-      console.warn(
-        `Failed to fetch project details for slug ${slugValue}`,
-        error
-      );
+      console.warn(`Failed to fetch project details for slug ${slugValue}`, error);
     }
 
     return {};

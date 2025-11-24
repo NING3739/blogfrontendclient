@@ -1,20 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
-import useSWR from "swr";
-import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
-import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
-import { useLocale } from "next-intl";
-import type { ProjectItemResponse } from "@/app/types/projectServiceType";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import EmptyState from "@/app/components/ui/error/EmptyState";
-import ContentCard from "@/app/components/ui/card/ContentCard";
-import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
 import { FolderOpen } from "lucide-react";
-import { SectionListItem } from "@/app/types/sectionServiceType";
+import { motion } from "motion/react";
+import { usePathname, useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import type React from "react";
+import { useState } from "react";
+import useSWR from "swr";
+import ContentCard from "@/app/components/ui/card/ContentCard";
+import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
+import type { ProjectItemResponse } from "@/app/types/projectServiceType";
+import type { SectionListItem } from "@/app/types/sectionServiceType";
 
 interface ProjectPageProps {
   sectionData: SectionListItem;
@@ -31,31 +30,18 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ sectionData }) => {
     data: projectLists,
     isLoading,
     error,
-  } = useSWR([
-    `/project/get-project-lists?page=${currentPage}&size=6&published_only=true`,
-    locale,
-  ]);
+  } = useSWR([`/project/get-project-lists?page=${currentPage}&size=6&published_only=true`, locale]);
 
   // 如果 sectionData 不存在，显示加载状态
   if (!sectionData) {
     return (
-      <LoadingSpinner
-        message={commonT("loading")}
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
     );
   }
 
   if (isLoading) {
     return (
-      <LoadingSpinner
-        message={commonT("loading")}
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
     );
   }
 

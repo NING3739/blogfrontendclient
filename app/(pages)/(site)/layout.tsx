@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
-
-import Header from "@/app/components/layout/Header";
+import type React from "react";
 import Footer from "@/app/components/layout/Footer";
+import Header from "@/app/components/layout/Header";
 import DefaultBackground from "@/app/components/ui/background/DefaultBackground";
 
 export default function SiteLayout({

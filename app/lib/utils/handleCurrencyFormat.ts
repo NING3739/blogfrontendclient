@@ -14,14 +14,13 @@ export const handleCurrencyFormat = (
     maximumFractionDigits?: number;
     notation?: "standard" | "compact" | "engineering" | "scientific";
     currencyDisplay?: "symbol" | "code" | "name";
-  }
+  },
 ): string => {
   // 将字符串转换为数字
-  const numericAmount =
-    typeof amount === "string" ? parseFloat(amount) : amount;
+  const numericAmount = typeof amount === "string" ? parseFloat(amount) : amount;
 
   // 如果无法解析为有效数字，返回原始值
-  if (isNaN(numericAmount) || !isFinite(numericAmount)) {
+  if (Number.isNaN(numericAmount) || !Number.isFinite(numericAmount)) {
     return String(amount);
   }
 
@@ -56,7 +55,7 @@ export const handleCurrencyFormat = (
 export const formatCurrency = (
   amount: number | string,
   formatter: Formatter,
-  currency: CurrencyCode = "USD"
+  currency: CurrencyCode = "USD",
 ): string => {
   return handleCurrencyFormat(amount, formatter, currency);
 };
@@ -72,7 +71,7 @@ export const formatCurrency = (
 export const formatCurrencyInteger = (
   amount: number | string,
   formatter: Formatter,
-  currency: CurrencyCode = "USD"
+  currency: CurrencyCode = "USD",
 ): string => {
   return handleCurrencyFormat(amount, formatter, currency, {
     minimumFractionDigits: 0,
@@ -91,7 +90,7 @@ export const formatCurrencyInteger = (
 export const formatCurrencyCompact = (
   amount: number | string,
   formatter: Formatter,
-  currency: CurrencyCode = "USD"
+  currency: CurrencyCode = "USD",
 ): string => {
   return handleCurrencyFormat(amount, formatter, currency, {
     notation: "compact",

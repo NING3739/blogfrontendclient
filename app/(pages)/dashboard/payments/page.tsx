@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
-import { Search, CreditCard, TrendingUp } from "lucide-react";
+import { CreditCard, Search, TrendingUp } from "lucide-react";
 import { motion } from "motion/react";
-import useSWR from "swr";
 import { useSearchParams } from "next/navigation";
-import { useLocale, useTranslations, useFormatter } from "next-intl";
-import { formatCurrency } from "@/app/lib/utils/handleCurrencyFormat";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
+import useSWR from "swr";
 import PaymentLists from "@/app/components/(feature)/dashboard/payment/PaymentLists";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
 import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import StatsCard from "@/app/components/ui/stats/StatsCard";
+import { formatCurrency } from "@/app/lib/utils/handleCurrencyFormat";
 
 export default function PaymentsPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,19 +30,11 @@ export default function PaymentsPage() {
     isLoading,
     error,
     mutate,
-  } = useSWR([
-    `/payment/get-payment-records?page=${currentPage}&size=10`,
-    locale,
-  ]);
+  } = useSWR([`/payment/get-payment-records?page=${currentPage}&size=10`, locale]);
 
   if (isLoading) {
     return (
-      <LoadingSpinner
-        message={commonT("loading")}
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
     );
   }
 
@@ -58,8 +50,7 @@ export default function PaymentsPage() {
 
   // Handle case where paymentRecords is undefined (404 or no data)
   // The API returns an object: { items: [], pagination: {} }
-  const hasData =
-    paymentRecords && paymentRecords.items && paymentRecords.pagination;
+  const hasData = paymentRecords?.items && paymentRecords.pagination;
 
   // Default values for empty state
   const { items: paymentItems, pagination } = hasData
@@ -84,8 +75,7 @@ export default function PaymentsPage() {
       delay: 0.1,
     },
     {
-      title:
-        userType === "admin" ? "本月新增" : dashboardT("newItemsThisMonth"),
+      title: userType === "admin" ? "本月新增" : dashboardT("newItemsThisMonth"),
       value: pagination?.new_items_this_month || 0,
       icon: CreditCard,
       iconBgColor: "bg-success-50",
@@ -93,15 +83,8 @@ export default function PaymentsPage() {
       delay: 0.2,
     },
     {
-      title:
-        userType === "admin"
-          ? "本月总金额"
-          : dashboardT("totalAmountThisMonth"),
-      value: formatCurrency(
-        pagination?.total_amount_this_month || 0,
-        format,
-        "NZD"
-      ),
+      title: userType === "admin" ? "本月总金额" : dashboardT("totalAmountThisMonth"),
+      value: formatCurrency(pagination?.total_amount_this_month || 0, format, "NZD"),
       icon: TrendingUp,
       iconBgColor: "bg-info-50",
       iconColor: "text-info-500",
@@ -117,9 +100,7 @@ export default function PaymentsPage() {
           {userType === "admin" ? "支付记录管理" : dashboardT("title")}
         </h1>
         <p className="text-sm sm:text-base text-foreground-300">
-          {userType === "admin"
-            ? "管理所有用户的支付记录和状态。"
-            : dashboardT("description")}
+          {userType === "admin" ? "管理所有用户的支付记录和状态。" : dashboardT("description")}
         </p>
       </div>
 
@@ -162,13 +143,9 @@ export default function PaymentsPage() {
         <div className="px-4 sm:px-6 pb-4 sm:pb-6">
           <EmptyState
             icon={CreditCard}
-            title={
-              userType === "admin" ? "暂无支付记录" : dashboardT("noPayments")
-            }
+            title={userType === "admin" ? "暂无支付记录" : dashboardT("noPayments")}
             description={
-              userType === "admin"
-                ? "目前还没有支付记录"
-                : dashboardT("noPaymentsDescription")
+              userType === "admin" ? "目前还没有支付记录" : dashboardT("noPaymentsDescription")
             }
           />
         </div>

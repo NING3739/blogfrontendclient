@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { useTranslations } from "next-intl";
-import { toast } from "react-hot-toast";
-import { mutate } from "swr";
 import { AlertTriangle } from "lucide-react";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+import { mutate } from "swr";
+import friendService from "@/app/lib/services/friendService";
 import { Button } from "../../ui/button/butten";
 import InputField from "../../ui/input/InputField";
-import friendService from "@/app/lib/services/friendService";
 
 const FriendTextInput = ({
   isAuthenticated,
@@ -57,9 +57,7 @@ const FriendTextInput = ({
     });
 
     if (response.status === 200) {
-      toast.success(
-        "message" in response ? response.message : "Friend added successfully"
-      );
+      toast.success("message" in response ? response.message : "Friend added successfully");
       setFriendName("");
       setFriendUrl("");
       setFriendLogoUrl("");
@@ -70,9 +68,7 @@ const FriendTextInput = ({
       // 使用 mutate 重新验证数据
       mutate(friendListKey);
     } else {
-      toast.error(
-        "error" in response ? response.error : "Failed to add friend"
-      );
+      toast.error("error" in response ? response.error : "Failed to add friend");
     }
 
     setIsSubmitting(false);

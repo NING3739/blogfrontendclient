@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import type { LucideIcon } from "lucide-react";
 import { motion } from "motion/react";
-import { LucideIcon } from "lucide-react";
+import type React from "react";
 
 interface EmptyStateProps {
   icon: LucideIcon;

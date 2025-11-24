@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
 import { PanelLeft } from "lucide-react";
 import { motion } from "motion/react";
+import type React from "react";
+import { useState } from "react";
 import SideBar from "@/app/components/layout/SideBar";
 
 export default function Dashboard({

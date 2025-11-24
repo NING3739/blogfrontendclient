@@ -1,7 +1,7 @@
 "use client";
 
-import { MediaTypeEnum } from "@/app/types/mediaServiceType";
 import TiptapEditorModel from "@/app/components/(feature)/editor/TiptapEditorModel";
+import { MediaTypeEnum } from "@/app/types/mediaServiceType";
 
 interface DocumentPickerModalProps {
   isOpen: boolean;

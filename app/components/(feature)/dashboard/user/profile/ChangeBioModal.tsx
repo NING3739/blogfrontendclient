@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
 import { Save } from "lucide-react";
-import toast from "react-hot-toast";
-import Modal from "@/app/components/ui/modal/Modal";
-import { Button } from "@/app/components/ui/button/butten";
-import userService from "@/app/lib/services/userService";
 import { useTranslations } from "next-intl";
+import type React from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Button } from "@/app/components/ui/button/butten";
+import Modal from "@/app/components/ui/modal/Modal";
+import userService from "@/app/lib/services/userService";
 
 interface ChangeBioModalProps {
   isOpen: boolean;
@@ -47,15 +48,11 @@ const ChangeBioModal: React.FC<ChangeBioModalProps> = ({
     try {
       const response = await userService.updateMyBio({ bio: bio.trim() });
       if (response.status === 200) {
-        toast.success(
-          "message" in response ? response.message : "Bio updated successfully"
-        );
+        toast.success("message" in response ? response.message : "Bio updated successfully");
         onSuccess?.();
         onClose();
       } else {
-        toast.error(
-          "error" in response ? response.error : "Failed to update bio"
-        );
+        toast.error("error" in response ? response.error : "Failed to update bio");
       }
     } catch (error) {
       console.error("更新个人简介失败:", error);
@@ -82,9 +79,7 @@ const ChangeBioModal: React.FC<ChangeBioModalProps> = ({
       <Button
         variant="primary"
         onClick={handleSubmit}
-        disabled={
-          isSubmitting || isOverLimit || bio.trim().length === 0 || isUnchanged
-        }
+        disabled={isSubmitting || isOverLimit || bio.trim().length === 0 || isUnchanged}
       >
         {isSubmitting ? (
           <>
@@ -132,17 +127,15 @@ const ChangeBioModal: React.FC<ChangeBioModalProps> = ({
           {/* Character Count */}
           <div className="flex justify-between items-center mt-2">
             <p className="text-xs text-foreground-300">
-              {bio.trim().length === 0
-                ? dashboardT("bioRequired")
-                : dashboardT("bioDescription")}
+              {bio.trim().length === 0 ? dashboardT("bioRequired") : dashboardT("bioDescription")}
             </p>
             <span
               className={`text-xs font-medium ${
                 isOverLimit
                   ? "text-error-500"
                   : remainingChars < 50
-                  ? "text-warning-500"
-                  : "text-foreground-400"
+                    ? "text-warning-500"
+                    : "text-foreground-400"
               }`}
             >
               {remainingChars} {dashboardT("bioRemaining")}

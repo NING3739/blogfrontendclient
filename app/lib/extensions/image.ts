@@ -34,61 +34,36 @@ export const Image = TiptapImage.extend({
   },
 
   renderHTML({ HTMLAttributes, node }) {
-    const { caption, textAlign, ...restAttrs } = node.attrs;
+    const { caption, textAlign, ...imgAttrs } = node.attrs;
 
-    // 构建 img 元素的属性
-    const imgAttrs = {
-      ...restAttrs,
-      src: restAttrs.src,
-      alt: restAttrs.alt,
-      title: restAttrs.title,
+    const figureAttrs = {
+      style: textAlign ? `text-align: ${textAlign}` : undefined,
+      class: "image-figure",
     };
 
-    // 始终使用 figure 容器包裹，保证宽度和对齐行为一致
-    // 如果有 caption，添加 figcaption
-    if (caption) {
-      return [
-        "figure",
-        {
-          style: textAlign ? `text-align: ${textAlign}` : undefined,
-          class: "image-figure",
-        },
-        ["img", imgAttrs],
-        ["figcaption", { class: "image-caption" }, caption],
-      ];
-    }
+    const children = caption
+      ? [
+          ["img", imgAttrs],
+          ["figcaption", { class: "image-caption" }, caption],
+        ]
+      : [["img", imgAttrs]];
 
-    // 没有 caption 时，也使用 figure 容器
-    return [
-      "figure",
-      {
-        style: textAlign ? `text-align: ${textAlign}` : undefined,
-        class: "image-figure",
-      },
-      ["img", imgAttrs],
-    ];
+    return ["figure", figureAttrs, ...children];
   },
 
   parseHTML() {
     return [
-      {
-        tag: "img[src]",
-      },
+      { tag: "img[src]" },
       {
         tag: "figure.image-figure",
         contentElement: "img",
         getAttrs: (element) => {
-          const img = (element as HTMLElement).querySelector("img");
-          if (!img) return false;
-
-          const figcaption = (element as HTMLElement).querySelector(
-            "figcaption"
-          );
-          const textAlign = (element as HTMLElement).style.textAlign || "left";
+          const el = element as HTMLElement;
+          if (!el.querySelector("img")) return false;
 
           return {
-            textAlign,
-            caption: figcaption?.textContent || null,
+            textAlign: el.style.textAlign || "left",
+            caption: el.querySelector("figcaption")?.textContent || null,
           };
         },
       },

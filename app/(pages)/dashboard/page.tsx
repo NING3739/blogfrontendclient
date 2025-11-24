@@ -1,22 +1,22 @@
 "use client";
 
-import React from "react";
 import {
-  Plus,
+  Bookmark,
   BookOpen,
+  CreditCard,
   FolderOpen,
+  Handshake,
+  Image,
+  Plus,
   Search,
   Tag,
-  Image,
-  Users,
-  CreditCard,
   User,
-  Bookmark,
-  Handshake,
+  Users,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import React from "react";
 import { useAuth } from "@/app/contexts/hooks/useAuth";
 
 interface QuickActionButtonProps {
@@ -29,14 +29,7 @@ interface QuickActionButtonProps {
 }
 
 const QuickActionButton: React.FC<QuickActionButtonProps> = React.memo(
-  ({
-    icon,
-    title,
-    borderColorClass,
-    bgColorClass,
-    textColorClass,
-    onClick,
-  }) => {
+  ({ icon, title, borderColorClass, bgColorClass, textColorClass, onClick }) => {
     return (
       <motion.div
         className="group cursor-pointer"
@@ -61,7 +54,7 @@ const QuickActionButton: React.FC<QuickActionButtonProps> = React.memo(
         </div>
       </motion.div>
     );
-  }
+  },
 );
 
 QuickActionButton.displayName = "QuickActionButton";
@@ -188,7 +181,7 @@ export default function DashboardPage() {
               },
             },
           ],
-    [user, dashboardT, router]
+    [user, dashboardT, router],
   );
 
   return (
@@ -203,21 +196,15 @@ export default function DashboardPage() {
         >
           {user && user.role === "admin" ? (
             <>
-              <h1 className="text-3xl font-bold text-foreground-50 mb-2">
-                仪表板
-              </h1>
-              <p className="text-foreground-300">
-                选择下面的快捷操作来快速开始
-              </p>
+              <h1 className="text-3xl font-bold text-foreground-50 mb-2">仪表板</h1>
+              <p className="text-foreground-300">选择下面的快捷操作来快速开始</p>
             </>
           ) : (
             <>
               <h1 className="text-3xl font-bold text-foreground-50 mb-2">
                 {dashboardT("quickLinks.title")}
               </h1>
-              <p className="text-foreground-300">
-                {dashboardT("quickLinks.description")}
-              </p>
+              <p className="text-foreground-300">{dashboardT("quickLinks.description")}</p>
             </>
           )}
         </motion.div>

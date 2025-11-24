@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import { Plus, Search, Upload } from "lucide-react";
 import { motion } from "motion/react";
-import useSWR from "swr";
-import { Search, Plus, Upload } from "lucide-react";
 import { useLocale } from "next-intl";
+import { useState } from "react";
+import useSWR from "swr";
 import MediaLists from "@/app/components/(feature)/dashboard/admin/media/MediaLists";
-import StatsCard from "@/app/components/ui/stats/StatsCard";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import EmptyState from "@/app/components/ui/error/EmptyState";
 import MediaUploadModal from "@/app/components/(feature)/dashboard/admin/media/MediaUploadModal";
+import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import StatsCard from "@/app/components/ui/stats/StatsCard";
 
 export default function MediaPage() {
   const locale = useLocale();
@@ -22,10 +22,7 @@ export default function MediaPage() {
     isLoading,
     error,
     mutate,
-  } = useSWR([
-    `/media/admin/get-media-lists?page=${currentPage}&size=10`,
-    locale,
-  ]);
+  } = useSWR([`/media/admin/get-media-lists?page=${currentPage}&size=10`, locale]);
 
   if (isLoading) {
     return (
@@ -40,20 +37,14 @@ export default function MediaPage() {
 
   if (error && error.status !== 404) {
     return (
-      <ErrorDisplay
-        title="加载媒体列表失败"
-        message="加载媒体列表失败,请稍后重试"
-        type="error"
-      />
+      <ErrorDisplay title="加载媒体列表失败" message="加载媒体列表失败,请稍后重试" type="error" />
     );
   }
 
   // Handle case where mediaLists is undefined (e.g., 404 error or no data)
   // Use default values to maintain page layout
-  const {
-    items: mediaItems = [],
-    pagination = { total_count: 0, new_items_this_month: 0 },
-  } = mediaLists || {};
+  const { items: mediaItems = [], pagination = { total_count: 0, new_items_this_month: 0 } } =
+    mediaLists || {};
 
   // Stats data configuration
   const statsData = [
@@ -83,9 +74,7 @@ export default function MediaPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground-50 mb-1 sm:mb-2">
             媒体管理
           </h1>
-          <p className="text-sm sm:text-base text-foreground-300">
-            管理和查看所有媒体文件
-          </p>
+          <p className="text-sm sm:text-base text-foreground-300">管理和查看所有媒体文件</p>
         </div>
       </div>
 
@@ -113,12 +102,8 @@ export default function MediaPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm text-foreground-400 mb-1">
-                  上传文件
-                </p>
-                <p className="text-xl sm:text-2xl font-bold text-primary-500">
-                  点击上传
-                </p>
+                <p className="text-xs sm:text-sm text-foreground-400 mb-1">上传文件</p>
+                <p className="text-xl sm:text-2xl font-bold text-primary-500">点击上传</p>
               </div>
               <div className="p-2 sm:p-3 bg-primary-50 rounded-sm shrink-0">
                 <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-primary-500" />

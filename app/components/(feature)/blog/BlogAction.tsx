@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import { Sparkles, AudioLines } from "lucide-react";
+import { AudioLines, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
-import useSWR from "swr";
 import { useLocale, useTranslations } from "next-intl";
-import BlogSummaryModel from "./BlogSummaryModel";
+import type React from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import BlogAudio from "./BlogAudio";
+import BlogSummaryModel from "./BlogSummaryModel";
 
 interface BlogActionProps {
   blogId: number;
@@ -29,9 +30,9 @@ const AudioWaveIcon: React.FC<{ isPlaying: boolean }> = ({ isPlaying }) => {
 
   return (
     <div className="flex items-center space-x-0.5 w-4 h-4">
-      {Array.from({ length: 4 }).map((_, index) => (
+      {[0, 1, 2, 3].map((waveId) => (
         <motion.div
-          key={index}
+          key={`audio-wave-${waveId}`}
           className="w-0.5 bg-current rounded-full"
           animate={{
             height: [4, 12, 4, 8, 16, 4, 12, 4],
@@ -39,7 +40,7 @@ const AudioWaveIcon: React.FC<{ isPlaying: boolean }> = ({ isPlaying }) => {
           transition={{
             duration: 0.8,
             repeat: Infinity,
-            delay: index * 0.1,
+            delay: waveId * 0.1,
             ease: "easeInOut",
           }}
         />
@@ -105,6 +106,7 @@ const BlogAction: React.FC<BlogActionProps> = ({ blogId }) => {
       {hasSummary && (
         <div className="flex-1 group">
           <button
+            type="button"
             onClick={() => setIsModalOpen(true)}
             className="w-full p-4 bg-linear-to-br from-primary-500 to-primary-600 text-white rounded-sm shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 active:translate-y-0"
             aria-label={blogT("action.summarySubtitle")}
@@ -130,6 +132,7 @@ const BlogAction: React.FC<BlogActionProps> = ({ blogId }) => {
       {hasAudio && (
         <div className="flex-1 group">
           <button
+            type="button"
             onClick={handleAudioToggle}
             className={`w-full p-4 rounded-sm shadow-sm transition-all duration-300 hover:-translate-y-1 active:translate-y-0 ${
               playState === "playing"

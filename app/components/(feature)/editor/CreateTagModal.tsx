@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/app/components/ui/button/butten";
 import InputField from "@/app/components/ui/input/InputField";
 import Modal from "@/app/components/ui/modal/Modal";
@@ -115,20 +115,14 @@ const CreateTagModal = ({
       <Button onClick={onClose} variant="outline" disabled={isLoading}>
         取消
       </Button>
-      <Button
-        variant="primary"
-        onClick={handleSubmit}
-        disabled={!formData.chinese_title.trim()}
-      >
+      <Button variant="primary" onClick={handleSubmit} disabled={!formData.chinese_title.trim()}>
         {isLoading ? (
           <>
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
             <span>{tagId ? "更新中..." : "创建中..."}</span>
           </>
         ) : (
-          <>
-            <span>{tagId ? "更新标签" : "创建标签"}</span>
-          </>
+          <span>{tagId ? "更新标签" : "创建标签"}</span>
         )}
       </Button>
     </>

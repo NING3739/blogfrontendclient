@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import toast from "react-hot-toast";
-import InputField from "@/app/components/ui/input/InputField";
-import { Button } from "@/app/components/ui/button/butten";
 import { useTranslations } from "next-intl";
+import type React from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Button } from "@/app/components/ui/button/butten";
+import InputField from "@/app/components/ui/input/InputField";
 import { useAuth } from "@/app/contexts/hooks/useAuth";
-import { Validator } from "@/app/lib/utils/validator";
 import { authService } from "@/app/lib/services/authService";
+import { Validator } from "@/app/lib/utils/validator";
 
 export default function ResetPasswordPage() {
   const { silentAccountLogin } = useAuth();
@@ -60,15 +61,11 @@ export default function ResetPasswordPage() {
 
     const response = await authService.sendResetCode({ email });
     if (response.status === 200) {
-      toast.success(
-        "message" in response ? response.message : "Reset code sent"
-      );
+      toast.success("message" in response ? response.message : "Reset code sent");
       // 开始60秒倒计时
       setCountdown(60);
     } else {
-      toast.error(
-        "error" in response ? response.error : "Failed to send reset code"
-      );
+      toast.error("error" in response ? response.error : "Failed to send reset code");
     }
 
     setIsSendingCode(false);
@@ -91,15 +88,11 @@ export default function ResetPasswordPage() {
     });
 
     if (response.status === 200) {
-      toast.success(
-        "message" in response ? response.message : "Password reset successfully"
-      );
+      toast.success("message" in response ? response.message : "Password reset successfully");
       // 重置密码成功后静默自动登录（不显示登录成功的toast）
       await silentAccountLogin({ email, password });
     } else {
-      toast.error(
-        "error" in response ? response.error : "Failed to reset password"
-      );
+      toast.error("error" in response ? response.error : "Failed to reset password");
     }
 
     setIsSubmitting(false);
@@ -117,10 +110,7 @@ export default function ResetPasswordPage() {
       {/* 重置密码表单 */}
       <form onSubmit={handleSubmit} className="space-y-6" noValidate>
         <div className="space-y-2">
-          <label
-            htmlFor="email"
-            className="block text-base font-semibold text-foreground-50"
-          >
+          <label htmlFor="email" className="block text-base font-semibold text-foreground-50">
             {authT("email")}
           </label>
           <InputField
@@ -135,10 +125,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <div className="space-y-2">
-          <label
-            htmlFor="code"
-            className="block text-base font-semibold text-foreground-50"
-          >
+          <label htmlFor="code" className="block text-base font-semibold text-foreground-50">
             {authT("code")}
           </label>
           <div className="flex gap-3">
@@ -168,10 +155,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <div className="space-y-2">
-          <label
-            htmlFor="password"
-            className="block text-base font-semibold text-foreground-50"
-          >
+          <label htmlFor="password" className="block text-base font-semibold text-foreground-50">
             {authT("password")}
           </label>
           <InputField

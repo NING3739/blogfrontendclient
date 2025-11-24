@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
-import useSWR from "swr";
-import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
 import { FileText } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { useLocale } from "next-intl";
+import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import type React from "react";
+import { useState } from "react";
+import useSWR from "swr";
+import BlogCard from "@/app/components/ui/card/BlogCard";
+import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
 import { formatTagTitle } from "@/app/lib/utils/formatTagTitle";
 import type { GetBlogListsByTagSlugResponse } from "@/app/types/blogServiceType";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import EmptyState from "@/app/components/ui/error/EmptyState";
-import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
-import BlogCard from "@/app/components/ui/card/BlogCard";
 
 interface TagDetailsProps {
   tagSlug: string;
@@ -37,12 +37,7 @@ const TagDetails: React.FC<TagDetailsProps> = ({ tagSlug }) => {
 
   if (isLoading) {
     return (
-      <LoadingSpinner
-        variant="wave"
-        size="lg"
-        message={commonT("loading")}
-        fullScreen={true}
-      />
+      <LoadingSpinner variant="wave" size="lg" message={commonT("loading")} fullScreen={true} />
     );
   }
 
@@ -61,7 +56,7 @@ const TagDetails: React.FC<TagDetailsProps> = ({ tagSlug }) => {
 
   // Handle case where blogLists is undefined (404 or no data)
   // The API returns an object: { items: [], pagination: {} }
-  const hasData = blogLists && blogLists.items && blogLists.pagination;
+  const hasData = blogLists?.items && blogLists.pagination;
 
   // Default values for empty state
   const { items: blogItems, pagination } = hasData

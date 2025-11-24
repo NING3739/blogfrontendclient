@@ -1,16 +1,16 @@
 "use client";
 
-import useSWR from "swr";
-import Image from "next/image";
 import { ArrowLeft, FileX } from "lucide-react";
-import { useTranslations, useFormatter } from "next-intl";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Button } from "@/app/components/ui/button/butten";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import EmptyState from "@/app/components/ui/error/EmptyState";
-import { formatCurrency } from "@/app/lib/utils/handleCurrencyFormat";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useFormatter, useTranslations } from "next-intl";
+import useSWR from "swr";
 import PaymentElement from "@/app/components/(feature)/payment/PaymentElement";
+import { Button } from "@/app/components/ui/button/butten";
+import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import { formatCurrency } from "@/app/lib/utils/handleCurrencyFormat";
 
 export default function PaymentPage() {
   const router = useRouter();
@@ -25,8 +25,7 @@ export default function PaymentPage() {
     error,
   } = useSWR(`/project/get-project-details/${projectSlug}`);
 
-  if (isLoading)
-    return <LoadingSpinner message={commonT("loading")} size="md" />;
+  if (isLoading) return <LoadingSpinner message={commonT("loading")} size="md" />;
 
   if (error)
     return (
@@ -40,17 +39,7 @@ export default function PaymentPage() {
 
   return (
     <div className="min-h-screen bg-background-50">
-      {!projectDetails ? (
-        <div className="flex items-center justify-center min-h-screen p-6">
-          <EmptyState
-            icon={FileX}
-            title={commonT("notFound")}
-            description={commonT("notFoundMessage")}
-            iconBgColor="bg-primary-50"
-            iconColor="text-primary-500"
-          />
-        </div>
-      ) : (
+      {projectDetails ? (
         <div className="flex flex-col lg:flex-row min-h-screen">
           {/* 左侧：支付信息 */}
           <div className="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-border-50 rounded-sm overflow-hidden relative">
@@ -69,9 +58,7 @@ export default function PaymentPage() {
                   variant="outline"
                   size="sm"
                   onClick={() =>
-                    projectSlug
-                      ? router.push(`/projects/${projectSlug}`)
-                      : router.back()
+                    projectSlug ? router.push(`/projects/${projectSlug}`) : router.back()
                   }
                   className="flex items-center gap-2 transition-colors duration-200 border-border-100 text-foreground-200 bg-background-200 hover:bg-background-300 hover:border-border-200"
                 >
@@ -82,9 +69,7 @@ export default function PaymentPage() {
 
               {/* 内容区域 */}
               <div className="flex-1 max-w-md mx-auto lg:mr-8 w-full flex flex-col">
-                <h2 className="text-2xl font-semibold mb-4 text-foreground-50">
-                  支付信息
-                </h2>
+                <h2 className="text-2xl font-semibold mb-4 text-foreground-50">支付信息</h2>
 
                 {/* 项目信息摘要 */}
                 <div className="mb-6">
@@ -122,25 +107,16 @@ export default function PaymentPage() {
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground-300">价格</span>
                       <span className="text-foreground-50">
-                        {formatCurrency(
-                          projectDetails.project_price,
-                          format,
-                          "NZD"
-                        )}
+                        {formatCurrency(projectDetails.project_price, format, "NZD")}
                       </span>
                     </div>
                     {projectDetails.tax_rate > 0 && (
                       <div className="flex justify-between text-sm">
                         <span className="text-foreground-300">
-                          {projectDetails.tax_name || "税费"} (
-                          {projectDetails.tax_rate}%)
+                          {projectDetails.tax_name || "税费"} ({projectDetails.tax_rate}%)
                         </span>
                         <span className="text-foreground-50">
-                          {formatCurrency(
-                            projectDetails.tax_amount,
-                            format,
-                            "NZD"
-                          )}
+                          {formatCurrency(projectDetails.tax_amount, format, "NZD")}
                         </span>
                       </div>
                     )}
@@ -148,11 +124,7 @@ export default function PaymentPage() {
                       <div className="flex justify-between text-lg font-semibold">
                         <span className="text-foreground-50">总计</span>
                         <span className="text-primary-500">
-                          {formatCurrency(
-                            projectDetails.final_amount,
-                            format,
-                            "NZD"
-                          )}
+                          {formatCurrency(projectDetails.final_amount, format, "NZD")}
                         </span>
                       </div>
                     </div>
@@ -169,12 +141,8 @@ export default function PaymentPage() {
 
             {/* 标题部分 */}
             <div className="flex flex-col max-w-md mx-auto lg:ml-8 w-full">
-              <h2 className="text-2xl font-semibold mb-3 text-foreground-50">
-                完成支付
-              </h2>
-              <p className="text-base text-foreground-200 mb-6">
-                请填写您的支付信息以完成订单
-              </p>
+              <h2 className="text-2xl font-semibold mb-3 text-foreground-50">完成支付</h2>
+              <p className="text-base text-foreground-200 mb-6">请填写您的支付信息以完成订单</p>
 
               {/* 支付表单 */}
               <div className="flex-1 flex flex-col">
@@ -192,6 +160,16 @@ export default function PaymentPage() {
               </div>
             </div>
           </div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center min-h-screen p-6">
+          <EmptyState
+            icon={FileX}
+            title={commonT("notFound")}
+            description={commonT("notFoundMessage")}
+            iconBgColor="bg-primary-50"
+            iconColor="text-primary-500"
+          />
         </div>
       )}
     </div>

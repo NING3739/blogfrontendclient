@@ -1,24 +1,24 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
 import {
-  Search,
-  Image as ImageIcon,
   Check,
   ChevronDown,
-  Plus,
   ChevronUp,
   FileText,
+  Image as ImageIcon,
+  Plus,
+  Search,
   X,
 } from "lucide-react";
-import type { GetSeoItemResponse } from "@/app/types/seoServiceType";
-import ImagePickerModal from "@/app/components/(feature)/editor/ImagePickerModal";
+import { useEffect, useRef, useState } from "react";
 import CreateSeoModal from "@/app/components/(feature)/editor/CreateSeoModal";
 import DocumentPickerModal from "@/app/components/(feature)/editor/DocumentPickerModal";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import Card from "@/app/components/ui/card/Card";
+import ImagePickerModal from "@/app/components/(feature)/editor/ImagePickerModal";
 import { Button } from "@/app/components/ui/button/butten";
+import Card from "@/app/components/ui/card/Card";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import type { GetSeoItemResponse } from "@/app/types/seoServiceType";
 
 interface ProjectMetaDataProps {
   seoItems: GetSeoItemResponse[];
@@ -62,18 +62,10 @@ export const ProjectMetaData = ({
   initialData,
 }: ProjectMetaDataProps) => {
   const [selectedSeoId, setSelectedSeoId] = useState<number | null>(null);
-  const [selectedCoverImageId, setSelectedCoverImageId] = useState<
-    number | null
-  >(null);
-  const [selectedCoverImageUrl, setSelectedCoverImageUrl] = useState<
-    string | null
-  >(null);
-  const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(
-    null
-  );
-  const [selectedDocumentUrl, setSelectedDocumentUrl] = useState<string | null>(
-    null
-  );
+  const [selectedCoverImageId, setSelectedCoverImageId] = useState<number | null>(null);
+  const [selectedCoverImageUrl, setSelectedCoverImageUrl] = useState<string | null>(null);
+  const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(null);
+  const [selectedDocumentUrl, setSelectedDocumentUrl] = useState<string | null>(null);
   const [projectType, setProjectType] = useState<number>(1);
   const [price, setPrice] = useState<number | null>(null);
   const [title, setTitle] = useState<string>("");
@@ -99,9 +91,9 @@ export const ProjectMetaData = ({
       setProjectType(
         initialData.projectType
           ? typeof initialData.projectType === "string"
-            ? parseInt(initialData.projectType)
+            ? parseInt(initialData.projectType, 10)
             : initialData.projectType
-          : 1
+          : 1,
       );
 
       setPrice(initialData.price ?? null);
@@ -118,15 +110,13 @@ export const ProjectMetaData = ({
     initialData?.price,
     initialData?.title,
     initialData?.description,
+    initialData,
   ]);
 
   // 点击外部关闭下拉菜单
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsSeoDropdownOpen(false);
         setSeoSearchTerm("");
       }
@@ -143,12 +133,7 @@ export const ProjectMetaData = ({
 
   if (loading) {
     return (
-      <LoadingSpinner
-        message="正在加载项目元数据..."
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message="正在加载项目元数据..." size="md" variant="wave" fullScreen={true} />
     );
   }
 
@@ -164,12 +149,10 @@ export const ProjectMetaData = ({
     (item) =>
       item.title.toLowerCase().includes(seoSearchTerm.toLowerCase()) ||
       item.description.toLowerCase().includes(seoSearchTerm.toLowerCase()) ||
-      item.keywords.toLowerCase().includes(seoSearchTerm.toLowerCase())
+      item.keywords.toLowerCase().includes(seoSearchTerm.toLowerCase()),
   );
 
-  const selectedSeoItem = seoItems.find(
-    (item) => item.seo_id === selectedSeoId
-  );
+  const selectedSeoItem = seoItems.find((item) => item.seo_id === selectedSeoId);
 
   const handleSeoSelect = (seoId: number) => {
     setSelectedSeoId(seoId);
@@ -223,9 +206,7 @@ export const ProjectMetaData = ({
         {/* 折叠/展开头部 */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <h3 className="text-lg font-semibold text-foreground-50">
-              项目设置
-            </h3>
+            <h3 className="text-lg font-semibold text-foreground-50">项目设置</h3>
             {selectedSeoId &&
               selectedCoverImageId &&
               projectType &&
@@ -244,14 +225,8 @@ export const ProjectMetaData = ({
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="flex items-center space-x-1 px-3 py-1.5 rounded-sm text-foreground-300 hover:text-foreground-50 hover:bg-background-300"
           >
-            <span className="text-sm font-medium">
-              {isCollapsed ? "展开设置" : "折叠设置"}
-            </span>
-            {isCollapsed ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <ChevronUp className="h-4 w-4" />
-            )}
+            <span className="text-sm font-medium">{isCollapsed ? "展开设置" : "折叠设置"}</span>
+            {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
           </button>
         </div>
 
@@ -260,9 +235,7 @@ export const ProjectMetaData = ({
           <div className="space-y-6">
             {/* SEO 选择器 */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-foreground-50">
-                SEO 设置
-              </label>
+              <label className="block text-sm font-medium text-foreground-50">SEO 设置</label>
               <div className="relative" ref={dropdownRef}>
                 <div
                   className="w-full rounded-sm border border-border-100 bg-card-50 px-4 py-3 text-foreground-50 cursor-pointer hover:border-border-200 hover:bg-background-300"
@@ -272,9 +245,7 @@ export const ProjectMetaData = ({
                     <div className="flex items-center space-x-3">
                       <Search className="h-4 w-4 text-foreground-300" />
                       <span className="text-sm">
-                        {selectedSeoItem
-                          ? selectedSeoItem.title
-                          : "选择 SEO 设置"}
+                        {selectedSeoItem ? selectedSeoItem.title : "选择 SEO 设置"}
                       </span>
                     </div>
                     <ChevronDown
@@ -350,9 +321,7 @@ export const ProjectMetaData = ({
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
                                   <div className="text-sm font-medium text-primary-600">
-                                    {loading
-                                      ? "加载中..."
-                                      : "获取更多 SEO 设置"}
+                                    {loading ? "加载中..." : "获取更多 SEO 设置"}
                                   </div>
                                   <div className="text-xs text-foreground-400 mt-1">
                                     点击加载更多选项
@@ -383,9 +352,7 @@ export const ProjectMetaData = ({
             {/* 项目标题 */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-foreground-50">
-                  项目标题
-                </label>
+                <label className="block text-sm font-medium text-foreground-50">项目标题</label>
                 <span
                   className={`text-xs font-medium ${
                     title.length > 50 ? "text-error-500" : "text-foreground-400"
@@ -407,23 +374,17 @@ export const ProjectMetaData = ({
                 }`}
               />
               {title.length > 50 && (
-                <p className="text-xs text-error-500 font-medium">
-                  标题不能超过50个字符
-                </p>
+                <p className="text-xs text-error-500 font-medium">标题不能超过50个字符</p>
               )}
             </div>
 
             {/* 项目描述 */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-foreground-50">
-                  项目描述
-                </label>
+                <label className="block text-sm font-medium text-foreground-50">项目描述</label>
                 <span
                   className={`text-xs font-medium ${
-                    description.length > 500
-                      ? "text-error-500"
-                      : "text-foreground-400"
+                    description.length > 500 ? "text-error-500" : "text-foreground-400"
                   }`}
                 >
                   {description.length}/500
@@ -442,17 +403,13 @@ export const ProjectMetaData = ({
                 }`}
               />
               {description.length > 500 && (
-                <p className="text-xs text-error-500 font-medium">
-                  描述不能超过500个字符
-                </p>
+                <p className="text-xs text-error-500 font-medium">描述不能超过500个字符</p>
               )}
             </div>
 
             {/* 项目类型选择器 */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-foreground-50">
-                项目类型
-              </label>
+              <label className="block text-sm font-medium text-foreground-50">项目类型</label>
               <div className="grid grid-cols-2 gap-3">
                 {[
                   { value: 1, label: "Web应用" },
@@ -477,9 +434,7 @@ export const ProjectMetaData = ({
 
             {/* 价格设置 */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-foreground-50">
-                项目价格
-              </label>
+              <label className="block text-sm font-medium text-foreground-50">项目价格</label>
               <div className="relative">
                 <input
                   type="number"
@@ -492,7 +447,7 @@ export const ProjectMetaData = ({
                       setPrice(null);
                     } else {
                       const numValue = parseFloat(value);
-                      setPrice(isNaN(numValue) ? null : numValue);
+                      setPrice(Number.isNaN(numValue) ? null : numValue);
                     }
                   }}
                   placeholder="请输入价格"
@@ -510,9 +465,7 @@ export const ProjectMetaData = ({
 
             {/* 封面图片选择器 */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-foreground-50">
-                封面图片
-              </label>
+              <label className="block text-sm font-medium text-foreground-50">封面图片</label>
               <div className="space-y-3">
                 {selectedCoverImageUrl ? (
                   <div className="relative group">
@@ -548,9 +501,7 @@ export const ProjectMetaData = ({
                   >
                     <div className="text-center">
                       <ImageIcon className="h-8 w-8 text-foreground-400 mx-auto mb-2" />
-                      <p className="text-sm text-foreground-300 font-medium">
-                        点击选择封面图片
-                      </p>
+                      <p className="text-sm text-foreground-300 font-medium">点击选择封面图片</p>
                     </div>
                   </div>
                 )}
@@ -560,9 +511,7 @@ export const ProjectMetaData = ({
             {/* 文档选择器 - 仅在价格大于0时显示 */}
             {price !== null && price > 0 && (
               <div className="space-y-3">
-                <label className="block text-sm font-medium text-foreground-50">
-                  项目文件
-                </label>
+                <label className="block text-sm font-medium text-foreground-50">项目文件</label>
                 <div className="space-y-3">
                   {selectedDocumentUrl ? (
                     <div className="flex items-center justify-between p-4 border border-border-100 rounded-sm bg-card-50 hover:bg-background-300">
@@ -574,9 +523,7 @@ export const ProjectMetaData = ({
                           <p className="text-sm font-medium text-foreground-50">
                             {selectedDocumentUrl.split("/").pop()}
                           </p>
-                          <p className="text-xs text-success-500 font-medium">
-                            ✓ 已选择文档
-                          </p>
+                          <p className="text-xs text-success-500 font-medium">✓ 已选择文档</p>
                         </div>
                       </div>
                       <Button
@@ -594,9 +541,7 @@ export const ProjectMetaData = ({
                     >
                       <div className="flex items-center space-x-3">
                         <FileText className="h-5 w-5 text-foreground-400" />
-                        <p className="text-sm text-foreground-300 font-medium">
-                          点击选择项目文档
-                        </p>
+                        <p className="text-sm text-foreground-300 font-medium">点击选择项目文档</p>
                       </div>
                       <Button variant="outline" size="sm">
                         选择

@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Toaster } from "react-hot-toast";
-import SWRProvider from "./providers/SWRProvider";
-import { ThemeProvider } from "next-themes";
+import { Crimson_Pro, JetBrains_Mono, Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { AuthProvider } from "./contexts/authContext";
 import { getLocale, getMessages } from "next-intl/server";
-import {
-  Crimson_Pro,
-  JetBrains_Mono,
-  Noto_Sans_SC,
-  Noto_Serif_SC,
-} from "next/font/google";
+import { ThemeProvider } from "next-themes";
+import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "./contexts/authContext";
+import SWRProvider from "./providers/SWRProvider";
 import "./globals.css";
 
 // 英文字体：Crimson Pro - 优雅的衬线字体，粗细适中，温暖人文

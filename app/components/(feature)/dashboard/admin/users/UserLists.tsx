@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import toast from "react-hot-toast";
-import Image from "next/image";
+import { Eye, Trash2, UserCheck, UserX } from "lucide-react";
 import { motion } from "motion/react";
-import { Trash2, Eye, UserCheck, UserX } from "lucide-react";
-import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import UserListModel from "@/app/components/(feature)/dashboard/admin/users/userListModel";
+import OffsetPagination from "@/app/components/ui/pagination/OffsetPagination";
 import UserService from "@/app/lib/services/userService";
-import type { UserResponse } from "@/app/types/userServiceType";
 import type { OffsetPaginationResponse } from "@/app/types/commonType";
+import type { UserResponse } from "@/app/types/userServiceType";
 
 interface UserListsProps {
   userItems: UserResponse[];
@@ -16,16 +16,10 @@ interface UserListsProps {
   onDataChange?: () => void; // Optional callback for data refresh
 }
 
-const UserLists = ({
-  userItems,
-  pagination,
-  setCurrentPage,
-  onDataChange,
-}: UserListsProps) => {
+const UserLists = ({ userItems, pagination, setCurrentPage, onDataChange }: UserListsProps) => {
   const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [optimisticUsers, setOptimisticUsers] =
-    useState<UserResponse[]>(userItems);
+  const [optimisticUsers, setOptimisticUsers] = useState<UserResponse[]>(userItems);
 
   // Update optimistic users when userItems prop changes
   useEffect(() => {
@@ -47,8 +41,8 @@ const UserLists = ({
       const newActiveState = !user.is_active;
       setOptimisticUsers(
         optimisticUsers.map((u) =>
-          u.user_id === userId ? { ...u, is_active: newActiveState } : u
-        )
+          u.user_id === userId ? { ...u, is_active: newActiveState } : u,
+        ),
       );
 
       try {
@@ -58,20 +52,14 @@ const UserLists = ({
           is_active: newActiveState,
         });
         if (response.status === 200) {
-          toast.success(
-            "message" in response ? response.message : "User status updated"
-          );
+          toast.success("message" in response ? response.message : "User status updated");
         } else {
-          toast.error(
-            "error" in response
-              ? response.error
-              : "Failed to update user status"
-          );
+          toast.error("error" in response ? response.error : "Failed to update user status");
           // Rollback on error
           setOptimisticUsers(
             optimisticUsers.map((u) =>
-              u.user_id === userId ? { ...u, is_active: !newActiveState } : u
-            )
+              u.user_id === userId ? { ...u, is_active: !newActiveState } : u,
+            ),
           );
         }
       } catch {
@@ -79,8 +67,8 @@ const UserLists = ({
         // Rollback on error
         setOptimisticUsers(
           optimisticUsers.map((u) =>
-            u.user_id === userId ? { ...u, is_active: !newActiveState } : u
-          )
+            u.user_id === userId ? { ...u, is_active: !newActiveState } : u,
+          ),
         );
       }
     } else if (action === "delete") {
@@ -94,17 +82,13 @@ const UserLists = ({
         });
 
         if (response.status === 200) {
-          toast.success(
-            "message" in response ? response.message : "User deleted"
-          );
+          toast.success("message" in response ? response.message : "User deleted");
           // Refresh list after successful delete to update pagination/total count
           if (onDataChange) {
             onDataChange();
           }
         } else {
-          toast.error(
-            "error" in response ? response.error : "Failed to delete user"
-          );
+          toast.error("error" in response ? response.error : "Failed to delete user");
           setOptimisticUsers(userItems);
         }
       } catch (error) {
@@ -209,9 +193,7 @@ const UserLists = ({
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() =>
-                              handleActionClick("toggle", user.user_id)
-                            }
+                            onClick={() => handleActionClick("toggle", user.user_id)}
                             className={`p-1.5 lg:p-2 rounded-sm transition-colors ${
                               user.is_active
                                 ? "bg-warning-50 text-warning-400 hover:bg-warning-100"
@@ -229,9 +211,7 @@ const UserLists = ({
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() =>
-                              handleActionClick("delete", user.user_id)
-                            }
+                            onClick={() => handleActionClick("delete", user.user_id)}
                             className="p-1.5 lg:p-2 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors"
                             title="删除用户"
                           >
@@ -280,9 +260,7 @@ const UserLists = ({
                     <h3 className="text-sm font-medium text-foreground-50 truncate">
                       {user.username}
                     </h3>
-                    <p className="text-xs text-foreground-300 truncate ">
-                      {user.email}
-                    </p>
+                    <p className="text-xs text-foreground-300 truncate ">{user.email}</p>
                   </div>
                 </div>
 
@@ -315,9 +293,7 @@ const UserLists = ({
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() =>
-                            handleActionClick("toggle", user.user_id)
-                          }
+                          onClick={() => handleActionClick("toggle", user.user_id)}
                           className={`p-1.5 rounded-sm transition-colors ${
                             user.is_active
                               ? "bg-warning-50 text-warning-400 hover:bg-warning-100"
@@ -335,9 +311,7 @@ const UserLists = ({
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() =>
-                            handleActionClick("delete", user.user_id)
-                          }
+                          onClick={() => handleActionClick("delete", user.user_id)}
                           className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors"
                           title="删除用户"
                         >
@@ -386,17 +360,13 @@ const UserLists = ({
                     <h3 className="text-sm font-medium text-foreground-50 truncate">
                       {user.username}
                     </h3>
-                    <p className="text-xs text-foreground-300 truncate">
-                      {user.email}
-                    </p>
+                    <p className="text-xs text-foreground-300 truncate">{user.email}</p>
                   </div>
                 </div>
 
                 <span
                   className={`px-2 py-0.5 text-[10px] rounded-sm font-medium shrink-0 ${
-                    user.is_active
-                      ? "bg-success-50 text-success-500"
-                      : "bg-error-50 text-error-500"
+                    user.is_active ? "bg-success-50 text-success-500" : "bg-error-50 text-error-500"
                   }`}
                 >
                   {user.is_active ? "活跃" : "非活跃"}
@@ -421,9 +391,7 @@ const UserLists = ({
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() =>
-                          handleActionClick("toggle", user.user_id)
-                        }
+                        onClick={() => handleActionClick("toggle", user.user_id)}
                         className={`p-1.5 rounded-sm transition-colors ${
                           user.is_active
                             ? "bg-warning-50 text-warning-400 hover:bg-warning-100 active:bg-warning-100"
@@ -441,9 +409,7 @@ const UserLists = ({
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() =>
-                          handleActionClick("delete", user.user_id)
-                        }
+                        onClick={() => handleActionClick("delete", user.user_id)}
                         className="p-1.5 bg-error-50 text-error-400 rounded-sm hover:bg-error-100 transition-colors active:bg-error-100"
                         title="删除用户"
                       >
@@ -472,11 +438,7 @@ const UserLists = ({
 
       {/* User Detail Modal */}
       {selectedUser && (
-        <UserListModel
-          user={selectedUser}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-        />
+        <UserListModel user={selectedUser} isOpen={isModalOpen} onClose={handleCloseModal} />
       )}
     </div>
   );

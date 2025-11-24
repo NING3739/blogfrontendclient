@@ -1,17 +1,17 @@
 "use client";
 
-import React from "react";
-import useSWR from "swr";
+import { Link2 } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/app/contexts/hooks/useAuth";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import type React from "react";
+import useSWR from "swr";
+import EmptyState from "@/app/components/ui/error/EmptyState";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
+import { useAuth } from "@/app/contexts/hooks/useAuth";
+import type { SectionListItem } from "@/app/types/sectionServiceType";
 import FriendLinkList from "./FriendLinkList";
 import FriendTextInput from "./FriendTextInput";
-import { SectionListItem } from "@/app/types/sectionServiceType";
-import EmptyState from "@/app/components/ui/error/EmptyState";
-import { Link2 } from "lucide-react";
 
 interface FriendPageProps {
   sectionData: SectionListItem;
@@ -19,34 +19,20 @@ interface FriendPageProps {
 
 const FriendPage: React.FC<FriendPageProps> = ({ sectionData }) => {
   const commonT = useTranslations("common");
-  const {
-    data: friendDetails,
-    isLoading,
-    error,
-  } = useSWR("/friend/get-friend-details");
+  const { data: friendDetails, isLoading, error } = useSWR("/friend/get-friend-details");
   const { isAuthenticated } = useAuth();
 
   // 如果 sectionData 不存在，显示加载状态
   if (!sectionData) {
     return (
-      <LoadingSpinner
-        message={commonT("loading")}
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
     );
   }
 
   // 简洁的加载状态
   if (isLoading) {
     return (
-      <LoadingSpinner
-        message={commonT("loading")}
-        size="md"
-        variant="wave"
-        fullScreen={true}
-      />
+      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
     );
   }
 
@@ -125,7 +111,7 @@ const FriendPage: React.FC<FriendPageProps> = ({ sectionData }) => {
         </motion.div>
 
         {/* 链接列表区域 */}
-        {friendDetails && friendDetails.friend_id ? (
+        {friendDetails?.friend_id ? (
           <motion.div
             className="mb-16"
             initial={{ opacity: 0, y: 30 }}

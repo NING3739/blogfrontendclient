@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { Search, Plus, Settings, Tag } from "lucide-react";
+import { Plus, Search, Settings, Tag } from "lucide-react";
 import { motion } from "motion/react";
-import useSWR from "swr";
 import { useLocale } from "next-intl";
-import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
-import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
-import EmptyState from "@/app/components/ui/error/EmptyState";
+import { useState } from "react";
+import useSWR from "swr";
 import TagLists from "@/app/components/(feature)/dashboard/admin/tags/TagLists";
+import EmptyState from "@/app/components/ui/error/EmptyState";
+import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import StatsCard from "@/app/components/ui/stats/StatsCard";
 
 export default function TagsPage() {
@@ -19,10 +19,7 @@ export default function TagsPage() {
     isLoading,
     error,
     mutate,
-  } = useSWR([
-    `/tag/get-tag-lists?page=${currentPage}&size=10&published_only=false`,
-    locale,
-  ]);
+  } = useSWR([`/tag/get-tag-lists?page=${currentPage}&size=10&published_only=false`, locale]);
 
   if (isLoading) {
     return (
@@ -37,11 +34,7 @@ export default function TagsPage() {
 
   if (error && error.status !== 404) {
     return (
-      <ErrorDisplay
-        title="加载标签列表失败"
-        message="加载标签列表失败,请稍后重试"
-        type="error"
-      />
+      <ErrorDisplay title="加载标签列表失败" message="加载标签列表失败,请稍后重试" type="error" />
     );
   }
 
@@ -88,12 +81,8 @@ export default function TagsPage() {
     <div className="min-h-screen bg-background-50">
       {/* Header Section */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground-50 mb-1 sm:mb-2">
-          标签管理
-        </h1>
-        <p className="text-sm sm:text-base text-foreground-300">
-          管理标签分类和设置。
-        </p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground-50 mb-1 sm:mb-2">标签管理</h1>
+        <p className="text-sm sm:text-base text-foreground-300">管理标签分类和设置。</p>
       </div>
 
       {/* Tag Stats */}

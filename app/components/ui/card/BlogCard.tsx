@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
-import { Clock, ArrowRight } from "lucide-react";
-import { useTranslations, useFormatter } from "next-intl";
-import type { GetBlogListsItem } from "@/app/types/blogServiceType";
+import { ArrowRight, Clock } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
+import type React from "react";
 import { handleDateFormat } from "@/app/lib/utils/handleDateFormat";
+import type { GetBlogListsItem } from "@/app/types/blogServiceType";
 
 interface BlogCardProps {
   blog: GetBlogListsItem;
@@ -12,11 +12,7 @@ interface BlogCardProps {
   className?: string;
 }
 
-const BlogCard: React.FC<BlogCardProps> = ({
-  blog,
-  onClick,
-  className = "",
-}) => {
+const BlogCard: React.FC<BlogCardProps> = ({ blog, onClick, className = "" }) => {
   const format = useFormatter();
   const commonT = useTranslations("common");
 

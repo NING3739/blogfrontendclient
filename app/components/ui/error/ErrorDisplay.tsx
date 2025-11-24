@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
-import { motion } from "motion/react";
 import { AlertCircle, AlertTriangle, RefreshCw } from "lucide-react";
+import { motion } from "motion/react";
+import type React from "react";
 
 interface ErrorDisplayProps {
   title?: string;
@@ -58,13 +58,7 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
     }
   };
 
-  const {
-    icon: Icon,
-    iconColor,
-    titleColor,
-    messageColor,
-    buttonColor,
-  } = getIconAndColors();
+  const { icon: Icon, iconColor, titleColor, messageColor, buttonColor } = getIconAndColors();
 
   const handleReload = () => {
     if (onReload) {

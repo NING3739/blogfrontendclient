@@ -1,10 +1,4 @@
-import {
-  SectionID,
-  ChineseTitle,
-  ChineseDescription,
-  CursorPagination,
-  NumberType,
-} from "./commonType";
+import type { ChineseDescription, ChineseTitle, CursorPagination, NumberType } from "./commonType";
 
 interface FriendID {
   friend_id: number;
@@ -22,11 +16,7 @@ interface SiteURL {
   site_url: string;
 }
 
-export interface UpdateFriendRequest
-  extends SectionID,
-    FriendID,
-    ChineseTitle,
-    ChineseDescription {
+export interface UpdateFriendRequest extends FriendID, ChineseTitle, ChineseDescription {
   // Intentionally empty - combines multiple interfaces
 }
 

@@ -1,10 +1,9 @@
-import React from "react";
 import {
-  PieChart,
-  Pie,
   Cell,
-  ResponsiveContainer,
   Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
   Tooltip,
 } from "recharts";
 import ErrorDisplay from "@/app/components/ui/error/ErrorDisplay";
@@ -65,24 +64,26 @@ export default function DistributionChart({
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={
-                ((entry: { name: string; percent: number }) => {
-                  const name =
-                    entry.name.length > 10
-                      ? entry.name.slice(0, 8) + ".."
-                      : entry.name;
-                  return `${name}: ${(entry.percent * 100).toFixed(0)}%`;
-                }) as any
-              }
+              label={(props) => {
+                const entry = props as unknown as {
+                  name: string;
+                  percent: number;
+                };
+                const name =
+                  entry.name.length > 10
+                    ? `${entry.name.slice(0, 8)}..`
+                    : entry.name;
+                return `${name}: ${(entry.percent * 100).toFixed(0)}%`;
+              }}
               outerRadius={window.innerWidth < 640 ? 70 : 90}
               fill="#8884d8"
               dataKey="value"
               style={{ fontSize: "13px", fontWeight: "500" }}
             >
-              {data.map((_entry, index) => (
+              {data.map((entry) => (
                 <Cell
-                  key={`cell-${index}`}
-                  fill={colors[index % colors.length]}
+                  key={`cell-${entry.name}`}
+                  fill={colors[data.indexOf(entry) % colors.length]}
                 />
               ))}
             </Pie>

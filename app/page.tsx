@@ -1,7 +1,7 @@
-import Header from "@/app/components/layout/Header";
-import HomeDetails from "./components/(feature)/home/HomeDetails";
 import Footer from "@/app/components/layout/Footer";
+import Header from "@/app/components/layout/Header";
 import DefaultBackground from "@/app/components/ui/background/DefaultBackground";
+import HomeDetails from "./components/(feature)/home/HomeDetails";
 
 export default function HomePage() {
   return (

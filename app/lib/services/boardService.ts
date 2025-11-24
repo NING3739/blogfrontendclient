@@ -1,51 +1,35 @@
-import httpClient from "../http/client";
 import type {
-  GetBoardCommentListsRequest,
-  UpdateBoardRequest,
   CreateBoardCommentRequest,
-  UpdateBoardCommentRequest,
   DeleteBoardCommentRequest,
+  GetBoardCommentListsRequest,
+  UpdateBoardCommentRequest,
+  UpdateBoardRequest,
 } from "@/app/types/boardServiceType";
+import httpClient from "../http/client";
 
 class BoardService {
   async updateBoard(payload: UpdateBoardRequest) {
-    const response = await httpClient.patch(
-      "/board/admin/update-board",
-      payload
-    );
-    return response;
+    return httpClient.patch("/board/admin/update-board", payload);
   }
 
   async createBoardComment(payload: CreateBoardCommentRequest) {
-    const response = await httpClient.post(
-      "/board/create-board-comment",
-      payload
-    );
-    return response;
+    return httpClient.post("/board/create-board-comment", payload);
   }
 
   async updateBoardComment(payload: UpdateBoardCommentRequest) {
-    const response = await httpClient.patch(
-      "/board/update-board-comment",
-      payload
-    );
-    return response;
+    return httpClient.patch("/board/update-board-comment", payload);
   }
 
   async deleteBoardComment(payload: DeleteBoardCommentRequest) {
-    const response = await httpClient.delete(
-      `/board/delete-board-comment/${payload.board_comment_id}`
-    );
-    return response;
+    return httpClient.delete(`/board/delete-board-comment/${payload.board_comment_id}`);
   }
 
   async getBoardCommentLists(payload: GetBoardCommentListsRequest) {
-    const response = await httpClient.get(
-      `/board/get-board-comment-lists/${payload.board_id}`,
-      { params: { limit: payload.limit, cursor: payload.cursor } }
-    );
-    return response;
+    return httpClient.get(`/board/get-board-comment-lists/${payload.board_id}`, {
+      params: { limit: payload.limit, cursor: payload.cursor },
+    });
   }
 }
 
-export default new BoardService();
+export const boardService = new BoardService();
+export default boardService;

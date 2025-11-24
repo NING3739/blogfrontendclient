@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import toast from "react-hot-toast";
-import InputField from "@/app/components/ui/input/InputField";
-import { Button } from "@/app/components/ui/button/butten";
 import { useTranslations } from "next-intl";
+import type React from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Button } from "@/app/components/ui/button/butten";
+import InputField from "@/app/components/ui/input/InputField";
 import { useAuth } from "@/app/contexts/hooks/useAuth";
-import { Validator } from "@/app/lib/utils/validator";
 import { authService } from "@/app/lib/services/authService";
+import { Validator } from "@/app/lib/utils/validator";
 
 export default function RegisterPage() {
   const { silentAccountLogin } = useAuth();
@@ -45,12 +46,7 @@ export default function RegisterPage() {
 
   // 前端表单验证（格式验证），API业务逻辑错误由UI层处理toast
   const validateForm = () => {
-    const result = Validator.validateRegisterForm(
-      username,
-      email,
-      code,
-      password
-    );
+    const result = Validator.validateRegisterForm(username, email, code, password);
 
     return Validator.validateAndShowError(result, validationT, toast);
   };
@@ -59,9 +55,7 @@ export default function RegisterPage() {
   const handleSendCode = async () => {
     // 验证用户名
     const usernameValidation = Validator.validateUsername(username);
-    if (
-      !Validator.validateAndShowError(usernameValidation, validationT, toast)
-    ) {
+    if (!Validator.validateAndShowError(usernameValidation, validationT, toast)) {
       return;
     }
 
@@ -75,17 +69,11 @@ export default function RegisterPage() {
     try {
       const response = await authService.sendVerificationCode({ email });
       if (response.status === 200) {
-        toast.success(
-          "message" in response ? response.message : "Verification code sent"
-        );
+        toast.success("message" in response ? response.message : "Verification code sent");
         // 开始60秒倒计时
         setCountdown(60);
       } else {
-        toast.error(
-          "error" in response
-            ? response.error
-            : "Failed to send verification code"
-        );
+        toast.error("error" in response ? response.error : "Failed to send verification code");
       }
     } catch {
       toast.error("Failed to send verification code");
@@ -112,15 +100,11 @@ export default function RegisterPage() {
     });
 
     if (response.status === 200) {
-      toast.success(
-        "message" in response ? response.message : authT("registerSuccess")
-      );
+      toast.success("message" in response ? response.message : authT("registerSuccess"));
       // 注册成功后静默自动登录（不显示登录成功的toast）
       await silentAccountLogin({ email, password });
     } else {
-      toast.error(
-        "error" in response ? response.error : "Failed to create account"
-      );
+      toast.error("error" in response ? response.error : "Failed to create account");
     }
 
     setIsSubmitting(false);
@@ -136,10 +120,7 @@ export default function RegisterPage() {
       {/* 注册表单 */}
       <form onSubmit={handleSubmit} className="space-y-6" noValidate>
         <div className="space-y-2">
-          <label
-            htmlFor="username"
-            className="block text-base font-semibold text-foreground-50"
-          >
+          <label htmlFor="username" className="block text-base font-semibold text-foreground-50">
             {authT("username")}
           </label>
           <InputField
@@ -153,10 +134,7 @@ export default function RegisterPage() {
           />
         </div>
         <div className="space-y-2">
-          <label
-            htmlFor="email"
-            className="block text-base font-semibold text-foreground-50"
-          >
+          <label htmlFor="email" className="block text-base font-semibold text-foreground-50">
             {authT("email")}
           </label>
           <InputField
@@ -170,10 +148,7 @@ export default function RegisterPage() {
           />
         </div>
         <div className="space-y-2">
-          <label
-            htmlFor="code"
-            className="block text-base font-semibold text-foreground-50"
-          >
+          <label htmlFor="code" className="block text-base font-semibold text-foreground-50">
             {authT("code")}
           </label>
           <div className="flex gap-3">
@@ -202,10 +177,7 @@ export default function RegisterPage() {
           </div>
         </div>
         <div className="space-y-2">
-          <label
-            htmlFor="password"
-            className="block text-base font-semibold text-foreground-50"
-          >
+          <label htmlFor="password" className="block text-base font-semibold text-foreground-50">
             {authT("password")}
           </label>
           <InputField

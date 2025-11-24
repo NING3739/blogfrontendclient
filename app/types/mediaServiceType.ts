@@ -1,11 +1,3 @@
-interface MediaID {
-  media_id: number;
-}
-
-interface MediaIDs {
-  media_ids: number[];
-}
-
 interface Files {
   files: File[];
 }
@@ -13,11 +5,15 @@ interface Files {
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface UploadMediaRequest extends Files {}
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface DownloadMediaRequest extends MediaID {}
+// 后端支持单个 ID 或 ID 数组
+export interface DownloadMediaRequest {
+  media_ids: number | number[];
+}
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface DeleteMediaRequest extends MediaIDs {}
+// 后端支持单个 ID 或 ID 数组
+export interface DeleteMediaRequest {
+  media_ids: number | number[];
+}
 
 export interface MediaItem {
   media_id: number;

@@ -1,4 +1,4 @@
-import { Node, mergeAttributes } from "@tiptap/core";
+import { mergeAttributes, Node } from "@tiptap/core";
 
 export interface AudioOptions {
   HTMLAttributes: Record<string, any>;
@@ -86,17 +86,12 @@ export const Audio = Node.create<AudioOptions>({
         tag: "figure.audio-figure",
         contentElement: "audio",
         getAttrs: (element) => {
-          const audio = (element as HTMLElement).querySelector("audio");
-          if (!audio) return false;
-
-          const figcaption = (element as HTMLElement).querySelector(
-            "figcaption"
-          );
-          const textAlign = (element as HTMLElement).style.textAlign || "left";
+          const el = element as HTMLElement;
+          if (!el.querySelector("audio")) return false;
 
           return {
-            textAlign,
-            caption: figcaption?.textContent || null,
+            textAlign: el.style.textAlign || "left",
+            caption: el.querySelector("figcaption")?.textContent || null,
           };
         },
       },
@@ -106,44 +101,28 @@ export const Audio = Node.create<AudioOptions>({
   renderHTML({ HTMLAttributes, node }) {
     const { caption, textAlign, autoplay, loop, ...restAttrs } = node.attrs;
 
-    // 构建 audio 元素的属性，只在值为 true 时添加布尔属性
     const audioAttrs = mergeAttributes(
       this.options.HTMLAttributes,
       restAttrs,
-      {
-        // 添加 pointer-events 确保音频控件可以交互
-        style: "pointer-events: auto;",
-      },
-      // 只在为 true 时添加布尔属性
+      { style: "pointer-events: auto;" },
       autoplay ? { autoplay: true } : {},
-      loop ? { loop: true } : {}
+      loop ? { loop: true } : {},
     );
 
-    // 始终使用 figure 容器包裹，保证宽度和对齐行为一致
-    // 如果有 caption，添加 figcaption
-    if (caption) {
-      return [
-        "figure",
-        {
-          style: textAlign ? `text-align: ${textAlign}` : undefined,
-          class: "audio-figure",
-          "data-audio-wrapper": "true",
-        },
-        ["audio", audioAttrs],
-        ["figcaption", { class: "audio-caption" }, caption],
-      ];
-    }
+    const figureAttrs = {
+      style: textAlign ? `text-align: ${textAlign}` : undefined,
+      class: "audio-figure",
+      "data-audio-wrapper": "true",
+    };
 
-    // 没有 caption 时，也使用 figure 容器
-    return [
-      "figure",
-      {
-        style: textAlign ? `text-align: ${textAlign}` : undefined,
-        class: "audio-figure",
-        "data-audio-wrapper": "true",
-      },
-      ["audio", audioAttrs],
-    ];
+    const children = caption
+      ? [
+          ["audio", audioAttrs],
+          ["figcaption", { class: "audio-caption" }, caption],
+        ]
+      : [["audio", audioAttrs]];
+
+    return ["figure", figureAttrs, ...children];
   },
 
   addCommands() {

@@ -1,9 +1,9 @@
 "use client";
 
+import { BookOpen, ChevronDown } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { ChevronDown, BookOpen } from "lucide-react";
 
 interface TOCItem {
   id: string;
@@ -23,9 +23,7 @@ const TOC = () => {
       const headings: TOCItem[] = [];
 
       // 查找所有 h1, h2, h3 标题
-      const headingElements = document.querySelectorAll(
-        "h1[data-id], h2[data-id], h3[data-id]"
-      );
+      const headingElements = document.querySelectorAll("h1[data-id], h2[data-id], h3[data-id]");
 
       headingElements.forEach((element) => {
         const dataId = element.getAttribute("data-id");
@@ -33,7 +31,7 @@ const TOC = () => {
         const tagName = element.tagName.toLowerCase();
 
         // 将标签名转换为级别 (h1 -> 1, h2 -> 2, h3 -> 3)
-        const level = parseInt(tagName.charAt(1));
+        const level = parseInt(tagName.charAt(1), 10);
 
         if (dataId && text && level >= 1 && level <= 3) {
           headings.push({
@@ -49,9 +47,7 @@ const TOC = () => {
 
     // 监听滚动事件，更新当前激活的标题
     const handleScroll = () => {
-      const headingElements = document.querySelectorAll(
-        "h1[data-id], h2[data-id], h3[data-id]"
-      );
+      const headingElements = document.querySelectorAll("h1[data-id], h2[data-id], h3[data-id]");
 
       let currentActive = "";
       const scrollPosition = window.scrollY + 100; // 提前100px触发
@@ -148,8 +144,8 @@ const TOC = () => {
                       item.level === 1
                         ? "py-3 px-4 font-semibold text-foreground-50 text-sm"
                         : item.level === 2
-                        ? "py-2.5 px-4 ml-6 font-medium text-foreground-100 text-sm border-l-2 border-border-100"
-                        : "py-2 px-4 ml-10 text-foreground-200 text-xs border-l-2 border-border-100"
+                          ? "py-2.5 px-4 ml-6 font-medium text-foreground-100 text-sm border-l-2 border-border-100"
+                          : "py-2 px-4 ml-10 text-foreground-200 text-xs border-l-2 border-border-100"
                     }
                     ${
                       isActive
@@ -159,9 +155,7 @@ const TOC = () => {
                   `}
                   onClick={() => {
                     // 通过 data-id 查找元素并滚动
-                    const element = document.querySelector(
-                      `[data-id="${item.id}"]`
-                    );
+                    const element = document.querySelector(`[data-id="${item.id}"]`);
                     if (element) {
                       element.scrollIntoView({
                         behavior: "smooth",
@@ -185,7 +179,7 @@ const TOC = () => {
                   {/* 激活状态指示器 */}
                   {isActive && (
                     <motion.div
-                      className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-primary-500 to-primary-600 rounded-r-full"
+                      className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-500 to-primary-600 rounded-r-full"
                       initial={{ scaleY: 0 }}
                       animate={{ scaleY: 1 }}
                       transition={{ duration: 0.3 }}
@@ -202,8 +196,8 @@ const TOC = () => {
                         item.level === 1
                           ? "bg-primary-100 text-primary-700 group-hover:bg-primary-200"
                           : item.level === 2
-                          ? "bg-card-200 text-foreground-300 group-hover:bg-card-300"
-                          : "bg-card-300 text-foreground-400 group-hover:bg-card-400"
+                            ? "bg-card-200 text-foreground-300 group-hover:bg-card-300"
+                            : "bg-card-300 text-foreground-400 group-hover:bg-card-400"
                       }
                       ${isActive ? "bg-primary-200 text-primary-800" : ""}
                     `}
@@ -216,9 +210,7 @@ const TOC = () => {
                       className={`
                       flex-1 transition-colors duration-200 line-clamp-2 leading-relaxed
                       ${
-                        isActive
-                          ? "text-primary-700 font-semibold"
-                          : "group-hover:text-primary-600"
+                        isActive ? "text-primary-700 font-semibold" : "group-hover:text-primary-600"
                       }
                     `}
                     >

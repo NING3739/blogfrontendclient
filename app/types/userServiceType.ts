@@ -1,4 +1,4 @@
-import { UserID, OffsetPagination, IsActive } from "./commonType";
+import type { IsActive, OffsetPagination, UserID } from "./commonType";
 
 interface Bio {
   bio: string;
@@ -28,9 +28,7 @@ export interface GetOtherUserProfileRequest extends UserID {
   // Intentionally empty - extends UserID interface
 }
 
-export interface GetOtherSavedBlogListsRequest
-  extends UserID,
-    OffsetPagination {
+export interface GetOtherSavedBlogListsRequest extends UserID, OffsetPagination {
   // Intentionally empty - combines UserID and OffsetPagination
 }
 

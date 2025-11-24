@@ -1,37 +1,38 @@
 import type {
-  CreateBlogRequest,
-  UpdateBlogRequest,
-  GetBlogDetailsSeoRequest,
-  GetBlogTTSRequest,
-  GetBlogSummaryRequest,
-  GetBlogCommentListsRequest,
   CreateBlogCommentRequest,
-  UpdateBlogCommentRequest,
+  CreateBlogRequest,
   DeleteBlogCommentRequest,
-  SaveBlogButtonRequest,
-  LikeBlogButtonRequest,
-  UpdateBlogStatusRequest,
   DeleteBlogRequest,
+  GetBlogCommentListsRequest,
+  GetBlogDetailsSeoRequest,
+  GetBlogSummaryRequest,
+  GetBlogTTSRequest,
+  LikeBlogButtonRequest,
+  SaveBlogButtonRequest,
+  UpdateBlogCommentRequest,
+  UpdateBlogRequest,
+  UpdateBlogStatusRequest,
 } from "@/app/types/blogServiceType";
 
 import httpClient from "../http/client";
 
 class BlogService {
+  private redirectToPreview(blogSlug: string, type: string = "blog") {
+    window.location.replace(`/dashboard/preview/?blogSlug=${blogSlug}&type=${type}`);
+  }
+
   async createBlog(payload: CreateBlogRequest) {
     const response = await httpClient.post("/blog/admin/create-blog", payload);
     if (response.status === 200 && "data" in response) {
-      window.location.replace(
-        `/dashboard/preview/?blogSlug=${response.data}&type=blog`
-      );
+      this.redirectToPreview(response.data);
     }
     return response;
   }
+
   async updateBlog(payload: UpdateBlogRequest) {
     const response = await httpClient.patch("/blog/admin/update-blog", payload);
     if (response.status === 200 && "data" in response) {
-      window.location.replace(
-        `/dashboard/preview/?blogSlug=${response.data}&type=blog`
-      );
+      this.redirectToPreview(response.data);
     }
     return response;
   }
@@ -42,61 +43,45 @@ class BlogService {
   async getBlogTTS(payload: GetBlogTTSRequest) {
     return httpClient.get(`/blog/get-blog-tts/${payload.blog_id}`);
   }
+
   async getBlogSummary(payload: GetBlogSummaryRequest) {
     return httpClient.get(`/blog/get-blog-summary/${payload.blog_id}`);
   }
+
   async getBlogCommentLists(payload: GetBlogCommentListsRequest) {
     return httpClient.get(`/blog/get-blog-comment-lists/${payload.blog_id}`, {
-      params: {
-        limit: payload.limit,
-        cursor: payload.cursor,
-      },
+      params: { limit: payload.limit, cursor: payload.cursor },
     });
   }
+
   async createBlogComment(payload: CreateBlogCommentRequest) {
-    const response = await httpClient.post(
-      "/blog/create-blog-comment",
-      payload
-    );
-    return response;
+    return httpClient.post("/blog/create-blog-comment", payload);
   }
+
   async updateBlogComment(payload: UpdateBlogCommentRequest) {
-    const response = await httpClient.patch(
-      "/blog/update-blog-comment",
-      payload
-    );
-    return response;
+    return httpClient.patch("/blog/update-blog-comment", payload);
   }
+
   async deleteBlogComment(payload: DeleteBlogCommentRequest) {
-    const response = await httpClient.delete(
-      `/blog/delete-blog-comment/${payload.comment_id}`
-    );
-    return response;
+    return httpClient.delete(`/blog/delete-blog-comment/${payload.comment_id}`);
   }
+
   async saveBlogButton(payload: SaveBlogButtonRequest) {
-    const response = await httpClient.post("/blog/save-blog-button", payload);
-    return response;
+    return httpClient.post("/blog/save-blog-button", payload);
   }
 
   async likeBlogButton(payload: LikeBlogButtonRequest) {
-    const response = await httpClient.post("/blog/like-blog-button", payload);
-    return response;
+    return httpClient.post("/blog/like-blog-button", payload);
   }
 
   async updateBlogStatus(payload: UpdateBlogStatusRequest) {
-    const response = await httpClient.patch(
-      "/blog/update-blog-status",
-      payload
-    );
-    return response;
+    return httpClient.patch("/blog/update-blog-status", payload);
   }
 
   async deleteBlog(payload: DeleteBlogRequest) {
-    const response = await httpClient.delete(
-      `/blog/admin/delete-blog/${payload.blog_id}`
-    );
-    return response;
+    return httpClient.delete(`/blog/admin/delete-blog/${payload.blog_id}`);
   }
 }
 
-export default new BlogService();
+export const blogService = new BlogService();
+export default blogService;

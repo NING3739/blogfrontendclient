@@ -1,16 +1,13 @@
-import React, { forwardRef } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import type React from "react";
+import { forwardRef } from "react";
 
 interface InputFieldProps {
   type: "email" | "password" | "text" | "textarea";
   id: string;
   value: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  onKeyDown?: (
-    e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   placeholder: string;
   showPassword?: boolean;
   setShowPassword?: (show: boolean) => void;
@@ -21,10 +18,7 @@ interface InputFieldProps {
   className?: string;
 }
 
-const InputField = forwardRef<
-  HTMLTextAreaElement | HTMLInputElement,
-  InputFieldProps
->(
+const InputField = forwardRef<HTMLTextAreaElement | HTMLInputElement, InputFieldProps>(
   (
     {
       type,
@@ -41,7 +35,7 @@ const InputField = forwardRef<
       rows = 3,
       className,
     },
-    ref
+    ref,
   ) => {
     const baseClassName =
       className ||
@@ -89,7 +83,7 @@ const InputField = forwardRef<
         )}
       </div>
     );
-  }
+  },
 );
 
 InputField.displayName = "InputField";
