@@ -34,7 +34,11 @@ interface UploadFile {
   error?: string;
 }
 
-const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModalProps) => {
+const MediaUploadModal = ({
+  isOpen,
+  onClose,
+  onUploadSuccess,
+}: MediaUploadModalProps) => {
   const [files, setFiles] = useState<UploadFile[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -80,14 +84,29 @@ const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModal
     return `${parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
   };
 
+  // 最大单文件大小：80MB
+  const MAX_FILE_SIZE = 80 * 1024 * 1024;
+
   const handleFiles = useCallback((fileList: FileList | File[]) => {
-    const newFiles: UploadFile[] = Array.from(fileList).map((file) => ({
-      file,
-      id: Math.random().toString(36).substr(2, 9),
-      status: "pending",
-      progress: 0,
-    }));
-    setFiles((prev) => [...prev, ...newFiles]);
+    const newFiles = Array.from(fileList).reduce<UploadFile[]>((acc, file) => {
+      if (file.size > MAX_FILE_SIZE) {
+        // 超过 80MB 的文件直接忽略，不加入上传列表
+        return acc;
+      }
+
+      acc.push({
+        file,
+        id: Math.random().toString(36).substr(2, 9),
+        status: "pending",
+        progress: 0,
+      });
+
+      return acc;
+    }, []);
+
+    if (newFiles.length > 0) {
+      setFiles((prev) => [...prev, ...newFiles]);
+    }
   }, []);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -107,7 +126,7 @@ const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModal
       const droppedFiles = e.dataTransfer.files;
       handleFiles(droppedFiles);
     },
-    [handleFiles],
+    [handleFiles]
   );
 
   const handleFileInput = useCallback(
@@ -117,7 +136,7 @@ const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModal
         handleFiles(selectedFiles);
       }
     },
-    [handleFiles],
+    [handleFiles]
   );
 
   const removeFile = (fileId: string) => {
@@ -136,8 +155,8 @@ const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModal
         prev.map((f) =>
           filesToUpload.some((ftu) => ftu.id === f.id)
             ? { ...f, status: "uploading" as const, progress: 0 }
-            : f,
-        ),
+            : f
+        )
       );
 
       // Upload files with progress tracking
@@ -147,19 +166,23 @@ const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModal
         },
         (progressEvent) => {
           // Calculate overall progress
-          const totalSize = filesToUpload.reduce((sum, f) => sum + f.file.size, 0);
+          const totalSize = filesToUpload.reduce(
+            (sum, f) => sum + f.file.size,
+            0
+          );
           const uploadedSize = progressEvent.loaded || 0;
           const progress = Math.round((uploadedSize / totalSize) * 100);
 
           // Update progress for all uploading files
           setFiles((prev) =>
             prev.map((f) =>
-              filesToUpload.some((ftu) => ftu.id === f.id) && f.status === "uploading"
+              filesToUpload.some((ftu) => ftu.id === f.id) &&
+              f.status === "uploading"
                 ? { ...f, progress }
-                : f,
-            ),
+                : f
+            )
           );
-        },
+        }
       );
 
       if (response.status === 200 && "message" in response) {
@@ -170,8 +193,8 @@ const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModal
           prev.map((f) =>
             filesToUpload.some((ftu) => ftu.id === f.id)
               ? { ...f, status: "success" as const, progress: 100 }
-              : f,
-          ),
+              : f
+          )
         );
 
         // Call success callback
@@ -200,8 +223,8 @@ const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModal
                 status: "error" as const,
                 error: errorMsg,
               }
-            : f,
-        ),
+            : f
+        )
       );
     } finally {
       setIsUploading(false);
@@ -269,15 +292,75 @@ const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModal
         onDrop={handleDrop}
       >
         <Upload className="w-12 h-12 text-foreground-300 mx-auto mb-4" />
-        <p className="text-foreground-200 mb-2">拖拽文件到此处或点击选择文件</p>
-        <p className="text-sm text-foreground-300 mb-4">
-          支持格式：图片(jpg/png/gif)、视频(mp4/avi/mov/mkv)、音频(mp3/wav/aac)、文档(pdf/docx/xlsx/ppt/pptx/txt)、压缩包(zip/gz)
+        <p className="text-foreground-200 mb-3">拖拽文件到此处或点击选择文件</p>
+        <div className="mb-3 max-w-xl mx-auto">
+          <div className="rounded-sm border border-border-100 bg-background-50/60 px-3 py-2.5 text-left">
+            <p className="text-xs font-medium text-foreground-300 mb-2">
+              支持的文件类型
+            </p>
+            <div className="space-y-1.5 text-xs text-foreground-300">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary-50 text-primary-500">
+                  <ImageIcon className="h-3.5 w-3.5" />
+                </span>
+                <span className="truncate">
+                  图片：
+                  <span className="text-foreground-200">
+                    jpg / jpeg / png / gif
+                  </span>
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-indigo-50 text-indigo-500">
+                  <Video className="h-3.5 w-3.5" />
+                </span>
+                <span className="truncate">
+                  视频：
+                  <span className="text-foreground-200">
+                    mp4 / avi / mov / mkv
+                  </span>
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50 text-emerald-500">
+                  <FileAudio className="h-3.5 w-3.5" />
+                </span>
+                <span className="truncate">
+                  音频：
+                  <span className="text-foreground-200">mp3 / wav / aac</span>
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                  <FileText className="h-3.5 w-3.5" />
+                </span>
+                <span className="truncate">
+                  文档：
+                  <span className="text-foreground-200">
+                    pdf / docx / xlsx / ppt / pptx / txt
+                  </span>
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                  <Folder className="h-3.5 w-3.5" />
+                </span>
+                <span className="truncate">
+                  压缩包：<span className="text-foreground-200">zip / gz</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p className="text-xs text-foreground-300 mb-4">
+          单个文件最大 80MB，超出将无法上传
         </p>
         <Button
           onClick={() => fileInputRef.current?.click()}
           variant="outline"
-          size="sm"
+          size="md"
           disabled={isUploading}
+          className="mt-1 px-8 py-2 text-sm font-medium min-w-[190px]"
         >
           选择文件
         </Button>
@@ -330,7 +413,9 @@ const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModal
                       {fileItem.status === "uploading" && (
                         <div className="flex items-center space-x-2">
                           <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
-                          <span className="text-xs text-foreground-300">{fileItem.progress}%</span>
+                          <span className="text-xs text-foreground-300">
+                            {fileItem.progress}%
+                          </span>
                         </div>
                       )}
                       {fileItem.status === "success" && (
@@ -373,7 +458,9 @@ const MediaUploadModal = ({ isOpen, onClose, onUploadSuccess }: MediaUploadModal
       {/* Error Message */}
       {hasErrorFiles && (
         <div className="mt-4 p-3 bg-error-50 border border-error-200 rounded-sm">
-          <p className="text-sm text-error-600">部分文件上传失败，请检查文件格式和大小</p>
+          <p className="text-sm text-error-600">
+            部分文件上传失败，请检查文件格式和大小
+          </p>
         </div>
       )}
     </Modal>

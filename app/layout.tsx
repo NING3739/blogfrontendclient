@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Crimson_Pro, JetBrains_Mono, Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
+import {
+  Crimson_Pro,
+  JetBrains_Mono,
+  Noto_Sans_SC,
+  Noto_Serif_SC,
+} from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { ThemeProvider } from "next-themes";
