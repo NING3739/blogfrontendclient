@@ -57,7 +57,12 @@ const HomeDetails = () => {
 
   if (isLoading) {
     return (
-      <LoadingSpinner variant="wave" size="lg" message={commonT("loading")} fullScreen={true} />
+      <LoadingSpinner
+        variant="wave"
+        size="lg"
+        message={commonT("loading")}
+        fullScreen={true}
+      />
     );
   }
 
@@ -81,7 +86,7 @@ const HomeDetails = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
+    <div className="max-w-4xl mx-auto px-3 py-12">
       {/* 头像 */}
       <div className="mb-6 sm:mb-8 md:mb-10 relative flex justify-center sm:justify-start">
         <div className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48">
@@ -261,7 +266,9 @@ const HomeDetails = () => {
             </span>
             {homeT("second.believePrefix")}
             <span className="relative inline-block mx-1">
-              <span className="text-primary-400 font-semibold">{homeT("second.details")}</span>
+              <span className="text-primary-400 font-semibold">
+                {homeT("second.details")}
+              </span>
               <motion.span
                 className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary-400"
                 initial={{ scaleX: 0 }}

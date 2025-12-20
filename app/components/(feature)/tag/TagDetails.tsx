@@ -37,7 +37,12 @@ const TagDetails: React.FC<TagDetailsProps> = ({ tagSlug }) => {
 
   if (isLoading) {
     return (
-      <LoadingSpinner variant="wave" size="lg" message={commonT("loading")} fullScreen={true} />
+      <LoadingSpinner
+        variant="wave"
+        size="lg"
+        message={commonT("loading")}
+        fullScreen={true}
+      />
     );
   }
 
@@ -84,7 +89,7 @@ const TagDetails: React.FC<TagDetailsProps> = ({ tagSlug }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+      <div className="max-w-4xl mx-auto px-3 py-12">
         {/* 页面标题区域 */}
         <motion.div
           className="text-center mb-8 sm:mb-12 lg:mb-16"

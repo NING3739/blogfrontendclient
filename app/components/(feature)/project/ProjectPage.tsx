@@ -30,18 +30,31 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ sectionData }) => {
     data: projectLists,
     isLoading,
     error,
-  } = useSWR([`/project/get-project-lists?page=${currentPage}&size=6&published_only=true`, locale]);
+  } = useSWR([
+    `/project/get-project-lists?page=${currentPage}&size=6&published_only=true`,
+    locale,
+  ]);
 
   // 如果 sectionData 不存在，显示加载状态
   if (!sectionData) {
     return (
-      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
+      <LoadingSpinner
+        message={commonT("loading")}
+        size="md"
+        variant="wave"
+        fullScreen={true}
+      />
     );
   }
 
   if (isLoading) {
     return (
-      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
+      <LoadingSpinner
+        message={commonT("loading")}
+        size="md"
+        variant="wave"
+        fullScreen={true}
+      />
     );
   }
 
@@ -66,7 +79,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ sectionData }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-3 py-12">
         {/* 页面标题区域 */}
         <motion.div
           className="text-center mb-16"

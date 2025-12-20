@@ -19,20 +19,34 @@ interface FriendPageProps {
 
 const FriendPage: React.FC<FriendPageProps> = ({ sectionData }) => {
   const commonT = useTranslations("common");
-  const { data: friendDetails, isLoading, error } = useSWR("/friend/get-friend-details");
+  const {
+    data: friendDetails,
+    isLoading,
+    error,
+  } = useSWR("/friend/get-friend-details");
   const { isAuthenticated } = useAuth();
 
   // 如果 sectionData 不存在，显示加载状态
   if (!sectionData) {
     return (
-      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
+      <LoadingSpinner
+        message={commonT("loading")}
+        size="md"
+        variant="wave"
+        fullScreen={true}
+      />
     );
   }
 
   // 简洁的加载状态
   if (isLoading) {
     return (
-      <LoadingSpinner message={commonT("loading")} size="md" variant="wave" fullScreen={true} />
+      <LoadingSpinner
+        message={commonT("loading")}
+        size="md"
+        variant="wave"
+        fullScreen={true}
+      />
     );
   }
 
@@ -55,7 +69,7 @@ const FriendPage: React.FC<FriendPageProps> = ({ sectionData }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-3 py-12">
         {/* 页面标题区域 */}
         <motion.div
           className="text-center mb-16"

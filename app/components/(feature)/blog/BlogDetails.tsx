@@ -87,7 +87,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blogSlug }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-3 py-12">
         {blogDetails ? (
           <>
             {/* 博客封面区域 */}
