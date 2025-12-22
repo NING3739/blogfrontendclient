@@ -54,6 +54,10 @@ class AuthService {
   async checkAuthToken() {
     return httpClient.get("/auth/check-auth-token");
   }
+
+  async generateAccessToken() {
+    return httpClient.patch("/auth/generate-access-token");
+  }
 }
 
 export const authService = new AuthService();

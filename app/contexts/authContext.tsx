@@ -122,6 +122,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const checkAuthStatus = useCallback(async () => {
     try {
       const response = await authService.checkAuthToken();
+      
+      // 【主动刷新】如果只有 refresh_token，主动刷新 access_token
+      // 说明：这是页面加载时的预防性刷新，避免首次 API 调用失败
+      // 与 client.ts 中的自动刷新（被动刷新）互补，提升用户体验
+      if (
+        response.status === 200 &&
+        "data" in response &&
+        response.data.refresh_token === true &&
+        response.data.access_token === false
+      ) {
+        try {
+          // 调用刷新接口生成新的 access_token
+          const refreshResponse = await authService.generateAccessToken();
+          
+          if (refreshResponse.status === 200) {
+            // 刷新成功，设置为已认证
+            setIsAuthenticated(true);
+            return;
+          }
+        } catch (refreshError) {
+          // 刷新失败，可能 refresh_token 也过期了
+          console.warn("Token refresh failed:", refreshError);
+          setIsAuthenticated(false);
+          return;
+        }
+      }
+      
+      // 正常情况：检查 access_token 是否有效
       setIsAuthenticated(
         response.status === 200 && "data" in response && response.data.access_token === true,
       );

@@ -178,7 +178,9 @@ class HttpClient {
       async (error: AxiosError<ErrorResponse>) => {
         const originalRequest = error.config;
 
-        // 处理401错误 - 根据endpoint类型决定是否需要token刷新
+        // 【自动刷新】处理401错误 - 根据endpoint类型决定是否需要token刷新
+        // 说明：这是使用过程中的透明刷新，当 API 返回 401 时自动触发
+        // 与 authContext 中的主动刷新（页面加载时）互补，确保会话持续性
         if (error.response?.status === 401 && originalRequest && !(originalRequest as any)._retry) {
           const url = originalRequest.url || "";
 
