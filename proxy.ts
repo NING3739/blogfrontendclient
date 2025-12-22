@@ -17,36 +17,39 @@ export default async function proxy(request: NextRequest) {
       const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/check-auth-token`;
 
       // 获取请求中的所有 cookies，构建 Cookie 头
-      // 由于后端设置了 domain=.heyxiaoli.com，cookie 可以在 heyxiaoli.com 和 api.heyxiaoli.com 之间共享
-      // Next.js middleware 可以读取这些共享的 cookies
       const cookies = request.cookies.getAll();
       const cookieHeader = cookies
         .map((cookie) => `${cookie.name}=${cookie.value}`)
         .join("; ");
 
       // 调用 API 检查认证状态
-      // 转发 cookies 到后端 API，后端会验证这些 cookies 的有效性
       const response = await fetch(apiUrl, {
         method: "GET",
         headers: {
-          Cookie: cookieHeader || "", // 转发所有可用的 cookies
+          Cookie: cookieHeader || "",
           "Content-Type": "application/json",
-          // 转发原始请求的其他相关头信息
           "User-Agent": request.headers.get("user-agent") || "",
           Accept: request.headers.get("accept") || "application/json",
         },
-        credentials: "include", // 确保包含 cookies（虽然手动设置 Cookie 头已经足够）
+        credentials: "include",
       });
 
       if (response.ok) {
         const result = await response.json();
-        // 后端返回格式: { status: 200, message: "...", data: { access_token: true/false, refresh_token: true/false } }
         const data = result.data || result;
+        
+        // 【主动刷新】如果只有 refresh_token，尝试刷新 access_token
+        // 注意：middleware 中无法直接接收后端设置的 cookie
+        // 所以我们采用"允许通过"的策略，让客户端 authContext 来处理刷新
+        if (data && data.refresh_token === true && data.access_token === false) {
+          // 有有效的 refresh_token，允许访问，让客户端处理刷新
+          return true;
+        }
+        
         return data && data.access_token === true;
       }
       return false;
     } catch (error) {
-      // 静默处理连接错误
       console.debug("API server not available");
       return false;
     }
