@@ -191,7 +191,7 @@ export default function DashboardPage() {
       <LoadingSpinner
         message="加载中..."
         size="lg"
-        variant="gradient"
+        variant="wave"
         fullScreen
         className="bg-background-100"
       />
