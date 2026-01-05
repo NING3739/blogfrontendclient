@@ -65,19 +65,6 @@ export default function DashboardPage() {
   const router = useRouter();
   const dashboardT = useTranslations("dashboard");
 
-  // 如果已认证但用户数据还未加载，显示加载状态
-  if (isAuthenticated && (userLoading || !user)) {
-    return (
-      <LoadingSpinner
-        message="加载中..."
-        size="lg"
-        variant="gradient"
-        fullScreen
-        className="bg-background-100"
-      />
-    );
-  }
-
   const quickActions = React.useMemo(
     () =>
       user && user.role === "admin"
@@ -197,6 +184,19 @@ export default function DashboardPage() {
           ],
     [user, dashboardT, router],
   );
+
+  // 如果已认证但用户数据还未加载，显示加载状态
+  if (isAuthenticated && (userLoading || !user)) {
+    return (
+      <LoadingSpinner
+        message="加载中..."
+        size="lg"
+        variant="gradient"
+        fullScreen
+        className="bg-background-100"
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background-100 p-6">

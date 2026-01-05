@@ -30,12 +30,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // 只有在认证状态下才获取用户信息
-  const { data: user, isValidating: userLoading } = useSWR(
+  // 注意：useSWR的key可以是null，这不会违反hooks规则
+  const { data: user, isValidating } = useSWR(
     isAuthenticated ? "/user/me/get-my-profile" : null,
     {
       revalidateOnMount: true,
     }
   );
+  
+  // 计算userLoading状态：当已认证但用户数据还未加载时为true
+  const userLoading = Boolean(isAuthenticated && (isValidating || !user));
 
   const accountLogin = useCallback(
     async (payload: AccountLoginRequest) => {
