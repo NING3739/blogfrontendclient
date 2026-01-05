@@ -17,6 +17,7 @@ import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import React from "react";
+import LoadingSpinner from "@/app/components/ui/loading/LoadingSpinner";
 import { useAuth } from "@/app/contexts/hooks/useAuth";
 
 interface QuickActionButtonProps {
@@ -60,9 +61,22 @@ const QuickActionButton: React.FC<QuickActionButtonProps> = React.memo(
 QuickActionButton.displayName = "QuickActionButton";
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, isAuthenticated, userLoading } = useAuth();
   const router = useRouter();
   const dashboardT = useTranslations("dashboard");
+
+  // 如果已认证但用户数据还未加载，显示加载状态
+  if (isAuthenticated && (userLoading || !user)) {
+    return (
+      <LoadingSpinner
+        message="加载中..."
+        size="lg"
+        variant="gradient"
+        fullScreen
+        className="bg-background-100"
+      />
+    );
+  }
 
   const quickActions = React.useMemo(
     () =>

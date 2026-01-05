@@ -16,6 +16,7 @@ interface AuthContextType {
   checkAuthStatus: () => Promise<void>;
   isAuthenticated: boolean;
   loading: boolean;
+  userLoading: boolean;
   error: string | null;
   user: any | null;
 }
@@ -29,7 +30,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // 只有在认证状态下才获取用户信息
-  const { data: user } = useSWR(isAuthenticated ? "/user/me/get-my-profile" : null);
+  // keepPreviousData: true 可以在重新验证时保留之前的数据，避免闪烁
+  const { data: user, isLoading: userLoading } = useSWR(
+    isAuthenticated ? "/user/me/get-my-profile" : null,
+    {
+      keepPreviousData: true,
+      revalidateOnMount: true,
+    }
+  );
 
   const accountLogin = useCallback(
     async (payload: AccountLoginRequest) => {
@@ -173,6 +181,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       checkAuthStatus,
       isAuthenticated,
       loading,
+      userLoading,
       error,
       user,
     }),
@@ -185,6 +194,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       checkAuthStatus,
       isAuthenticated,
       loading,
+      userLoading,
       error,
       user,
     ],
